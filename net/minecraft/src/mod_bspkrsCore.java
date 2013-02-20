@@ -5,7 +5,7 @@ import bspkrs.util.ModVersionChecker;
 
 public class mod_bspkrsCore extends BaseMod
 {
-    @MLProp(info = "Set to true to allow checking for updates for any of the mods I maintain, false to disable")
+    @MLProp(info = "Set to true to allow checking for updates for ALL of my mods, false to disable")
     public static boolean     allowUpdateCheck = true;
     
     private ModVersionChecker versionChecker;
@@ -26,7 +26,7 @@ public class mod_bspkrsCore extends BaseMod
     @Override
     public String getVersion()
     {
-        return "v1.0(1.4.7)";
+        return "v1.01(1.4.7)";
     }
     
     @Override
@@ -41,9 +41,9 @@ public class mod_bspkrsCore extends BaseMod
         if (allowUpdateCheck)
         {
             versionChecker = new ModVersionChecker(getName(), getVersion(), versionURL, mcfTopic, ModLoader.getLogger());
-            versionChecker.checkVersionWithLoggingBySubStringAsFloat(2, 4);
+            versionChecker.checkVersionWithLoggingBySubStringAsFloat(1, 4);
+            ModLoader.setInGameHook(this, true, true);
         }
-        ModLoader.setInGameHook(this, true, true);
     }
     
     @Override

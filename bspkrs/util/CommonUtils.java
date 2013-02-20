@@ -9,6 +9,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGameOver;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.world.World;
 
 /*
@@ -269,6 +272,12 @@ public final class CommonUtils
                     if (xd * xd + yd * yd + zd * zd <= 1.5D)
                         world.setBlockAndMetadata(x, y, z, id, damage);
                 }
+    }
+    
+    public static boolean isGamePaused(Minecraft mc)
+    {
+        return mc.currentScreen != null && (mc.currentScreen.doesGuiPauseGame() || mc.currentScreen instanceof GuiGameOver
+                || mc.currentScreen instanceof GuiMainMenu);
     }
     
     public static String getMCTimeString(long worldTime, long fmt)

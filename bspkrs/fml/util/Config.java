@@ -14,6 +14,15 @@ public class Config
             config.categories.get(newCtgy).put(name, config.categories.get(oldCtgy).get(name));
     }
     
+    public static void renameProperty(Configuration config, String category, String oldName, String newName)
+    {
+        if (config.categories.get(category).containsKey(oldName))
+        {
+            config.get(category, newName, config.getCategory(category).get(oldName).value);
+            config.categories.get(category).remove(oldName);
+        }
+    }
+    
     public static void renameCtgy(Configuration config, String oldCtgy, String newCtgy)
     {
         if (!oldCtgy.equalsIgnoreCase(newCtgy))
