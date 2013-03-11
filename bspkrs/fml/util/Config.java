@@ -10,16 +10,16 @@ public class Config
 {
     public static void setFromOldCtgy(Configuration config, String name, String oldCtgy, String newCtgy)
     {
-        if (config.categories.get(oldCtgy).containsKey(name))
-            config.categories.get(newCtgy).put(name, config.categories.get(oldCtgy).get(name));
+        if (config.getCategory(oldCtgy).containsKey(name))
+            config.getCategory(newCtgy).put(name, config.getCategory(oldCtgy).get(name));
     }
     
     public static void renameProperty(Configuration config, String category, String oldName, String newName)
     {
-        if (config.categories.get(category).containsKey(oldName))
+        if (config.getCategory(category).containsKey(oldName))
         {
-            config.get(category, newName, config.getCategory(category).get(oldName).value);
-            config.categories.get(category).remove(oldName);
+            config.get(category, newName, config.getCategory(category).get(oldName).getString());
+            config.getCategory(category).remove(oldName);
         }
     }
     
@@ -28,16 +28,16 @@ public class Config
         if (!oldCtgy.equalsIgnoreCase(newCtgy))
         {
             for (String prop : config.getCategory(oldCtgy).keySet())
-                config.get(newCtgy, prop, config.getCategory(oldCtgy).get(prop).value);
+                config.get(newCtgy, prop, config.getCategory(oldCtgy).get(prop).getString());
             
             Map<String, HashMap<String, String>> toAdd = new HashMap<String, HashMap<String, String>>();
             
-            for (String key : config.categories.keySet())
+            for (String key : config.getCategoryNames())
                 if (key.contains(oldCtgy + "."))
                 {
                     HashMap<String, String> props = new HashMap<String, String>();
                     for (String prop : config.getCategory(key).keySet())
-                        props.put(prop, config.getCategory(key).get(prop).value);
+                        props.put(prop, config.getCategory(key).get(prop).getString());
                     
                     toAdd.put(newCtgy + key.substring(key.indexOf(".")), props);
                 }
@@ -46,7 +46,7 @@ public class Config
                 for (String newProp : toAdd.get(newName).keySet())
                     config.get(newName, newProp, toAdd.get(newName).get(newProp));
             
-            config.categories.remove(oldCtgy);
+            //config.categories.remove(oldCtgy);
         }
     }
     
@@ -67,7 +67,7 @@ public class Config
     {
         Property prop = config.get(category, name, defaultValue);
         prop.comment = comment + " [default: " + defaultValue + "]";
-        return prop.value;
+        return prop.getString();
     }
     
     /**
@@ -87,7 +87,7 @@ public class Config
     {
         Property prop = config.get(category, name, defaultValue);
         prop.comment = comment + " [default: " + defaultValue + "]";
-        return prop.valueList;
+        return prop.getStringList();
     }
     
     /**
@@ -157,7 +157,7 @@ public class Config
         prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
         try
         {
-            return Float.parseFloat(prop.value) < minValue ? minValue : (Float.parseFloat(prop.value) > maxValue ? maxValue : Float.parseFloat(prop.value));
+            return Float.parseFloat(prop.getString()) < minValue ? minValue : (Float.parseFloat(prop.getString()) > maxValue ? maxValue : Float.parseFloat(prop.getString()));
         }
         catch (Exception e)
         {

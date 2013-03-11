@@ -256,7 +256,7 @@ public final class CommonUtils
         for (int x = x1; x <= x2; x++)
             for (int y = y1; y <= y2; y++)
                 for (int z = z1; z <= z2; z++)
-                    world.setBlockAndMetadata(x, y, z, id, damage);
+                    world.setBlockAndMetadataWithNotify(x, y, z, id, damage, 3);
     }
     
     public static void fillWithBlocksRounded(World world, int x1, int y1, int z1, int x2, int y2, int z2, int id, int damage)
@@ -269,7 +269,7 @@ public final class CommonUtils
                     double yd = getDistanceRatioToCenter(y1, y2, y);
                     double zd = getDistanceRatioToCenter(z1, z2, z);
                     if (xd * xd + yd * yd + zd * zd <= 1.5D)
-                        world.setBlockAndMetadata(x, y, z, id, damage);
+                        world.setBlockAndMetadataWithNotify(x, y, z, id, damage, 3);
                 }
     }
     
