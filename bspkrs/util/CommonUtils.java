@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 /*
@@ -215,6 +216,12 @@ public final class CommonUtils
         {
             return defaultValue;
         }
+    }
+    
+    public void playAtPitch(int i, World world, EntityPlayer entityplayer)
+    {
+        float f = (float) Math.pow(2D, (i - 12) / 12D);
+        world.playSoundAtEntity(entityplayer, "note.pling", 0.5F, f);
     }
     
     public static int getHighestGroundBlock(World world, int x, int y, int z)
