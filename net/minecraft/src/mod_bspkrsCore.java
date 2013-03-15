@@ -9,7 +9,7 @@ public class mod_bspkrsCore extends BaseMod
     public static boolean     allowUpdateCheck = true;
     
     private ModVersionChecker versionChecker;
-    private final String      versionURL       = "https://dl.dropbox.com/u/20748481/Minecraft/1.4.6/bspkrsCore.version";
+    private final String      versionURL       = "https://dl.dropbox.com/u/20748481/Minecraft/1.5.0/bspkrsCore.version";
     private final String      mcfTopic         = "http://www.minecraftforum.net/topic/1114612-";
     
     public mod_bspkrsCore()
@@ -26,7 +26,7 @@ public class mod_bspkrsCore extends BaseMod
     @Override
     public String getVersion()
     {
-        return "v1.02(1.4.7)";
+        return "v1.03(1.5.0)";
     }
     
     @Override
@@ -49,7 +49,7 @@ public class mod_bspkrsCore extends BaseMod
     @Override
     public boolean onTickInGame(float f, Minecraft mc)
     {
-        if (allowUpdateCheck)
+        if (allowUpdateCheck && mc.theWorld.isRemote)
         {
             if (!versionChecker.isCurrentVersion())
                 for (String msg : versionChecker.getInGameMessage())
