@@ -120,6 +120,7 @@ public class ModVersionChecker
         catch (Throwable e)
         {
             logger.log(Level.WARNING, "Error getting current version info: " + e.getMessage());
+            //e.printStackTrace();
             return new String[] { oldVer };
         }
         
