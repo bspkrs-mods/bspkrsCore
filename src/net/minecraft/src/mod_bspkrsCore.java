@@ -9,7 +9,7 @@ public class mod_bspkrsCore extends BaseMod
     public static boolean     allowUpdateCheck = true;
     
     private ModVersionChecker versionChecker;
-    private final String      versionURL       = "http://bspk.rs/Minecraft/1.5.0/bspkrsCore.version";
+    private final String      versionURL       = "http://bspk.rs/Minecraft/1.5.1/bspkrsCore.version";
     private final String      mcfTopic         = "http://www.minecraftforum.net/topic/1114612-";
     
     public mod_bspkrsCore()
@@ -26,7 +26,7 @@ public class mod_bspkrsCore extends BaseMod
     @Override
     public String getVersion()
     {
-        return "v1.03(1.5.0)";
+        return "v1.03(1.5.1)";
     }
     
     @Override
