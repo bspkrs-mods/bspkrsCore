@@ -17,6 +17,9 @@ public class ModVersionChecker
     private String[]     loadMsg;
     private String[]     inGameMsg;
     
+    private int          remoteBeginIndex, remoteEndIndex = -1;
+    private boolean      useRemoteStringIndices = false;
+    
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg, Logger logger)
     {
         this.modName = modName;
@@ -41,8 +44,23 @@ public class ModVersionChecker
         
         // Override instantiated updateURL with second line of version file if
         // it exists and is non-blank
-        if (versionLines.length > 1 && !versionLines[1].trim().equals(""))
+        if (versionLines.length > 1 && versionLines[1].trim().length() != 0)
             this.updateURL = versionLines[1];
+        
+        if (versionLines.length > 2 && versionLines[2].trim().length() != 0 && versionLines[2].contains(","))
+        {
+            try
+            {
+                String[] indices = versionLines[2].split(",");
+                remoteBeginIndex = Integer.parseInt(indices[0]);
+                remoteEndIndex = Integer.parseInt(indices[1]);
+                useRemoteStringIndices = remoteBeginIndex <= remoteEndIndex;
+            }
+            catch (Throwable e)
+            {
+                remoteBeginIndex = remoteEndIndex = -1;
+            }
+        }
         
         setLoadMessage(loadMsg);
         setInGameMessage(inGameMsg);
@@ -101,7 +119,18 @@ public class ModVersionChecker
     
     public boolean isCurrentVersionBySubStringAsFloatNewer(int beginIndex, int endIndex)
     {
-        return Float.valueOf(newVer.substring(beginIndex, endIndex)) <= Float.valueOf(oldVer.substring(beginIndex, endIndex));
+        try
+        {
+            if (useRemoteStringIndices)
+                return Float.valueOf(newVer.substring(remoteBeginIndex, remoteEndIndex)) <= Float.valueOf(oldVer.substring(beginIndex, endIndex));
+            else
+                return Float.valueOf(newVer.substring(beginIndex, endIndex)) <= Float.valueOf(oldVer.substring(beginIndex, endIndex));
+        }
+        catch (Throwable e)
+        {
+            logger.warning("Method isCurrentVersionBySubStringAsFloatNewer() encountered an error while comparing version substrings: " + e.getMessage());
+            return true;
+        }
     }
     
     private String replaceAllTags(String s)

@@ -1,5 +1,6 @@
 package bspkrs.util;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 
 /*
@@ -346,5 +348,11 @@ public final class CommonUtils
         }
         scanner.close();
         return (String[]) arraylist.toArray(new String[arraylist.size()]);
+    }
+    
+    public static String getConfigDir()
+    {
+        File configDir = new File(ModLoader.getMinecraftInstance().getMinecraftDir(), "config");
+        return configDir.getAbsolutePath();
     }
 }
