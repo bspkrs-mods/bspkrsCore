@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-public class PropHandler
+public class BSPropHandler
 {
     private String     cfgDir;
     private Logger     logger;
@@ -20,7 +20,7 @@ public class PropHandler
     private String     customFilename;
     private Properties props;
     
-    public PropHandler(String cfgDir, String customFilename, Class<?> clazz, Logger logger)
+    public BSPropHandler(String cfgDir, String customFilename, Class<?> clazz, Logger logger)
     {
         this.cfgDir = cfgDir;
         this.customFilename = customFilename;
@@ -37,7 +37,7 @@ public class PropHandler
         }
     }
     
-    public PropHandler(String cfgDir, Class<?> clazz, Logger logger)
+    public BSPropHandler(String cfgDir, Class<?> clazz, Logger logger)
     {
         this(cfgDir, clazz.getSimpleName() + ".bsprop.cfg", clazz, logger);
     }

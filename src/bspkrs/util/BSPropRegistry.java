@@ -14,7 +14,7 @@ import net.minecraft.src.ModLoader;
 
 public final class BSPropRegistry
 {
-    private static List<PropHandler> registeredPropHandlers  = new ArrayList<PropHandler>();
+    private static List<BSPropHandler> registeredPropHandlers  = new ArrayList<BSPropHandler>();
     private static List<Class>       registeredBSPropClasses = new ArrayList<Class>();
     private static Logger            logger                  = Logger.getLogger("bspkrsCore");
     
@@ -43,9 +43,9 @@ public final class BSPropRegistry
         if (!registeredBSPropClasses.contains(clazz))
         {
             if (customFilename != null && customFilename.length() > 0)
-                registeredPropHandlers.add(new PropHandler(CommonUtils.getConfigDir(), customFilename, clazz, logger));
+                registeredPropHandlers.add(new BSPropHandler(CommonUtils.getConfigDir(), customFilename, clazz, logger));
             else
-                registeredPropHandlers.add(new PropHandler(CommonUtils.getConfigDir(), clazz, logger));
+                registeredPropHandlers.add(new BSPropHandler(CommonUtils.getConfigDir(), clazz, logger));
             registeredBSPropClasses.add(clazz);
         }
     }
