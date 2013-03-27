@@ -15,8 +15,8 @@ import net.minecraft.src.ModLoader;
 public final class BSPropRegistry
 {
     private static List<BSPropHandler> registeredPropHandlers  = new ArrayList<BSPropHandler>();
-    private static List<Class>       registeredBSPropClasses = new ArrayList<Class>();
-    private static Logger            logger                  = Logger.getLogger("bspkrsCore");
+    private static List<Class>         registeredBSPropClasses = new ArrayList<Class>();
+    private static Logger              logger                  = Logger.getLogger("bspkrsCore");
     
     /**
      * Registers a new BSProp annotation handler and initializes annotated fields for the specified class using the default prop filename.
@@ -40,7 +40,7 @@ public final class BSPropRegistry
         if (!logger.getParent().equals(ModLoader.getLogger()))
             logger.setParent(ModLoader.getLogger());
         
-        if (!registeredBSPropClasses.contains(clazz))
+        if (clazz != null && !registeredBSPropClasses.contains(clazz))
         {
             if (customFilename != null && customFilename.length() > 0)
                 registeredPropHandlers.add(new BSPropHandler(CommonUtils.getConfigDir(), customFilename, clazz, logger));

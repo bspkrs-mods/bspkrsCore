@@ -5,20 +5,20 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.security.DigestException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 public class BSPropHandler
 {
-    private String     cfgDir;
-    private Logger     logger;
-    private Class      clazz;
-    private String     customFilename;
-    private Properties props;
+    private String      cfgDir;
+    private Logger      logger;
+    private Class       clazz;
+    private String      customFilename;
+    private Properties  props;
+    private List<Field> propFields;
+    private String      comments;
     
     public BSPropHandler(String cfgDir, String customFilename, Class<?> clazz, Logger logger)
     {
@@ -42,12 +42,12 @@ public class BSPropHandler
         this(cfgDir, clazz.getSimpleName() + ".bsprop.cfg", clazz, logger);
     }
     
-    private void initProperties() throws IllegalArgumentException, IllegalAccessException, IOException, SecurityException, NoSuchFieldException, NoSuchAlgorithmException, DigestException
+    private void initProperties() throws IllegalArgumentException, IllegalAccessException, IOException, SecurityException
     {
-        LinkedList propFields = new LinkedList();
+        propFields = new LinkedList<Field>();
         props = new Properties();
-        int newCheckSum = 0;
-        int existingCheckSum = 0;
+        int fieldCheckSum = 0;
+        int propCheckSum = 0;
         File propFile = new File(cfgDir, customFilename);
         
         if (propFile.exists() && propFile.canRead())
@@ -57,31 +57,22 @@ public class BSPropHandler
         
         if (props.containsKey("checksum"))
         {
-            existingCheckSum = Integer.parseInt(props.getProperty("checksum"), 36);
+            propCheckSum = Integer.parseInt(props.getProperty("checksum"), 36);
         }
         
-        Field[] declaredFields;
-        int declaredFieldCount = (declaredFields = clazz.getDeclaredFields()).length;
-        
-        for (int i = 0; i < declaredFieldCount; ++i)
+        for (Field field : clazz.getDeclaredFields())
         {
-            Field field = declaredFields[i];
-            
             if ((field.getModifiers() & 8) != 0 && field.isAnnotationPresent(BSProp.class))
             {
                 propFields.add(field);
                 Object fieldValue = field.get((Object) null);
-                newCheckSum += fieldValue.hashCode();
+                fieldCheckSum += fieldValue.hashCode();
             }
         }
         
-        StringBuilder comments = new StringBuilder();
-        Iterator propFieldsIterator = propFields.iterator();
-        
-        while (propFieldsIterator.hasNext())
+        StringBuilder commentSB = new StringBuilder();
+        for (Field propField : propFields)
         {
-            Field propField = (Field) propFieldsIterator.next();
-            
             if ((propField.getModifiers() & 8) != 0 && propField.isAnnotationPresent(BSProp.class))
             {
                 Class fieldType = propField.getType();
@@ -108,9 +99,9 @@ public class BSPropHandler
                     propInfo.append(propAnnotation.info());
                 }
                 
-                comments.append(String.format("%s (%s:%s%s)%s\n", new Object[] { propName, fieldType.getName(), fieldValue, acceptableRange, propInfo }));
+                commentSB.append(String.format("%s (%s:%s%s)%s\n", new Object[] { propName, fieldType.getName(), fieldValue, acceptableRange, propInfo }));
                 
-                if (existingCheckSum == newCheckSum && props.containsKey(propName))
+                if (propCheckSum == fieldCheckSum && props.containsKey(propName))
                 {
                     String existingPropValue = props.getProperty(propName);
                     Object wrappedPropValue = null;
@@ -150,7 +141,8 @@ public class BSPropHandler
                         {
                             double doubleValue = ((Number) wrappedPropValue).doubleValue();
                             
-                            if (propAnnotation.min() != Double.NEGATIVE_INFINITY && doubleValue < propAnnotation.min() || propAnnotation.max() != Double.POSITIVE_INFINITY && doubleValue > propAnnotation.max())
+                            if ((propAnnotation.min() != Double.NEGATIVE_INFINITY && doubleValue < propAnnotation.min()) ||
+                                    (propAnnotation.max() != Double.POSITIVE_INFINITY && doubleValue > propAnnotation.max()))
                             {
                                 continue;
                             }
@@ -172,12 +164,22 @@ public class BSPropHandler
             }
         }
         
-        props.put("checksum", Integer.toString(newCheckSum, 36));
+        props.put("checksum", Integer.toString(fieldCheckSum, 36));
         
         if (!props.isEmpty() && (propFile.exists() || propFile.createNewFile()) && propFile.canWrite())
         {
-            props.store(new FileOutputStream(propFile), comments.toString());
+            comments = commentSB.toString();
+            props.store(new FileOutputStream(propFile), comments);
         }
     }
     
+    public void readFromFields()
+    {   
+        
+    }
+    
+    public void writeToFields()
+    {   
+        
+    }
 }
