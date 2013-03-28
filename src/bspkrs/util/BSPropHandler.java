@@ -130,7 +130,6 @@ public class BSPropHandler
     {
         if (forceUpdatePropsFromFieldValues && isInitialCall)
         {
-            logger.severe("bspkrs is an idiot. That is all.");
             throw new IllegalArgumentException("Tried to call BSPropHandler.synchPropsAndFields() with both parameters == true.");
         }
         
@@ -138,9 +137,12 @@ public class BSPropHandler
         if (!forceUpdatePropsFromFieldValues)
             this.readPropsFromFile();
         else
+            // Set the props checksum to 0 so that the fields will take priority
             this.propsCheckSum = 0;
         
-        this.getPropFieldsListAndCheckSum();
+        // We only want to do this when the fields have the default values in them
+        if (isInitialCall)
+            this.getPropFieldsListAndCheckSum();
         
         StringBuilder commentSB = new StringBuilder();
         for (Field propField : propFields)
@@ -241,6 +243,8 @@ public class BSPropHandler
         }
         
         props.put("checksum", Integer.toString(fieldsCheckSum, 36));
+        if (propsCheckSum != fieldsCheckSum)
+            propsCheckSum = fieldsCheckSum;
         
         // Only update the comments if this is the initialization call!
         if (isInitialCall)
