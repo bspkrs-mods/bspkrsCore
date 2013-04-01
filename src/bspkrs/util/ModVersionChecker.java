@@ -138,6 +138,7 @@ public class ModVersionChecker
         return s.replace("{oldVer}", oldVer).replace("{newVer}", newVer).replace("{modName}", modName).replace("{updateURL}", updateURL);
     }
     
+    @SuppressWarnings("resource")
     private String[] loadTextFromURL(URL url)
     {
         ArrayList arraylist = new ArrayList();

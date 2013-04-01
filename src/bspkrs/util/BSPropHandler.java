@@ -14,19 +14,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 public class BSPropHandler
 {
-    private String      cfgDir;
-    private Logger      logger;
-    private Class       clazz;
-    private String      propFilename;
-    private Properties  props;
-    private List<Field> propFields;
-    private String      comments;
-    private int         fieldsCheckSum, propsCheckSum;
+    private String       cfgDir;
+    private Logger       logger;
+    private Class        clazz;
+    private String       propFilename;
+    private BSProperties props;
+    private List<Field>  propFields;
+    private String       comments;
+    private int          fieldsCheckSum, propsCheckSum;
     
     public BSPropHandler(String cfgDir, String propFilename, Class<?> clazz, Logger logger)
     {
@@ -50,9 +49,10 @@ public class BSPropHandler
         this(cfgDir, clazz.getSimpleName() + ".bsprop.cfg", clazz, logger);
     }
     
+    @SuppressWarnings("resource")
     private void readPropsFromFile() throws FileNotFoundException, IOException
     {
-        props = new Properties();
+        props = new BSProperties();
         propsCheckSum = 0;
         File propFile = new File(cfgDir, propFilename);
         
@@ -69,6 +69,7 @@ public class BSPropHandler
         }
     }
     
+    @SuppressWarnings("resource")
     private void writePropsToFile() throws FileNotFoundException, IOException
     {
         File propFile = new File(cfgDir, propFilename);
@@ -121,20 +122,20 @@ public class BSPropHandler
         this.synchPropsAndFields(false, false);
     }
     
-    public static boolean isFieldModifierPermissible(int mod)
+    public static boolean isFieldModifierPermissible(int modifier)
     {
-        return Modifier.isStatic(mod) && Modifier.isPublic(mod) && !Modifier.isFinal(mod);
+        return Modifier.isStatic(modifier) && Modifier.isPublic(modifier) && !Modifier.isFinal(modifier);
     }
     
-    private void synchPropsAndFields(boolean forceUpdatePropsFromFieldValues, boolean isInitialCall) throws IllegalArgumentException, IllegalAccessException, FileNotFoundException, IOException
+    private void synchPropsAndFields(boolean forceUpdatePropsFromFields, boolean isInitialCall) throws IllegalArgumentException, IllegalAccessException, FileNotFoundException, IOException
     {
-        if (forceUpdatePropsFromFieldValues && isInitialCall)
+        if (forceUpdatePropsFromFields && isInitialCall)
         {
             throw new IllegalArgumentException("Tried to call BSPropHandler.synchPropsAndFields() with both parameters == true.");
         }
         
         // Only load the properties file if we are not forcing the field values into the props
-        if (!forceUpdatePropsFromFieldValues)
+        if (!forceUpdatePropsFromFields)
             this.readPropsFromFile();
         else
             // Set the props checksum to 0 so that the fields will take priority
@@ -157,7 +158,7 @@ public class BSPropHandler
                 StringBuilder acceptableRangeSB = new StringBuilder();
                 StringBuilder propInfoSB = new StringBuilder();
                 
-                if (!forceUpdatePropsFromFieldValues)
+                if (isInitialCall)
                 {
                     if (propAnnotation.min() != Double.NEGATIVE_INFINITY)
                     {
@@ -218,11 +219,17 @@ public class BSPropHandler
                         {
                             double doubleValue = ((Number) wrappedPropValue).doubleValue();
                             
-                            if ((propAnnotation.min() != Double.NEGATIVE_INFINITY && doubleValue < propAnnotation.min()) ||
-                                    (propAnnotation.max() != Double.POSITIVE_INFINITY && doubleValue > propAnnotation.max()))
+                            if (propAnnotation.min() != Double.NEGATIVE_INFINITY && doubleValue < propAnnotation.min())
                             {
-                                // TODO: log that the number value given is out of range and/or set it to be in range
-                                continue;
+                                logger.warning(String.format("Value %n is less than the specified min (%n) for %s. Value set to %n.", doubleValue, propAnnotation.min(), propName, propAnnotation.min()));
+                                wrappedPropValue = Double.valueOf(propAnnotation.min());
+                                props.setProperty(propName, wrappedPropValue.toString());
+                            }
+                            else if (propAnnotation.max() != Double.POSITIVE_INFINITY && doubleValue > propAnnotation.max())
+                            {
+                                logger.warning(String.format("Value %n is more than the specified max (%n) for %s. Value set to %n.", doubleValue, propAnnotation.max(), propName, propAnnotation.max()));
+                                wrappedPropValue = Double.valueOf(propAnnotation.max());
+                                props.setProperty(propName, wrappedPropValue.toString());
                             }
                         }
                         

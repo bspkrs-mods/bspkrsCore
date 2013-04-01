@@ -328,6 +328,7 @@ public final class CommonUtils
         return time;
     }
     
+    @SuppressWarnings("resource")
     public static String[] loadTextFromURL(URL url, Logger logger, String defaultValue)
     {
         ArrayList arraylist = new ArrayList();
