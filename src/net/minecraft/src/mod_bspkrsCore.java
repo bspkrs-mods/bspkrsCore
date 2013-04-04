@@ -1,6 +1,7 @@
 package net.minecraft.src;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.NetClientHandler;
 import bspkrs.util.BSProp;
 import bspkrs.util.BSPropRegistry;
 import bspkrs.util.ModVersionChecker;
@@ -15,7 +16,7 @@ public class mod_bspkrsCore extends BaseMod
     private ModVersionChecker versionChecker;
     private final String      versionURL       = "http://bspk.rs/Minecraft/1.5.1/bspkrsCore.version";
     private final String      mcfTopic         = "http://www.minecraftforum.net/topic/1114612-";
-    private static boolean    doUpdateCheck;
+    private boolean           doUpdateCheck;
     
     public mod_bspkrsCore()
     {
@@ -48,8 +49,13 @@ public class mod_bspkrsCore extends BaseMod
         {
             versionChecker = new ModVersionChecker(getName(), getVersion(), versionURL, mcfTopic, ModLoader.getLogger());
             versionChecker.checkVersionWithLoggingBySubStringAsFloat(1, 4);
-            ModLoader.setInGameHook(this, true, true);
         }
+    }
+    
+    @Override
+    public void clientConnect(NetClientHandler nch)
+    {
+        ModLoader.setInGameHook(this, true, true);
     }
     
     @Override

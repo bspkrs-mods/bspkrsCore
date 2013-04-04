@@ -3,12 +3,10 @@ package bspkrs.util;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ModVersionChecker
 {
-    private final Logger logger;
     private URL          versionURL;
     private final String modName;
     private final String newVer;
@@ -20,12 +18,17 @@ public class ModVersionChecker
     private int          remoteBeginIndex, remoteEndIndex = -1;
     private boolean      useRemoteStringIndices = false;
     
+    @Deprecated
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg, Logger logger)
+    {
+        this(modName, oldVer, versionURL, updateURL, loadMsg, inGameMsg);
+    }
+    
+    public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg)
     {
         this.modName = modName;
         this.oldVer = oldVer;
         this.updateURL = updateURL;
-        this.logger = logger;
         this.loadMsg = loadMsg;
         this.inGameMsg = inGameMsg;
         
@@ -35,7 +38,7 @@ public class ModVersionChecker
         }
         catch (Throwable e)
         {
-            logger.log(Level.WARNING, "Error initializing ModVersionChecker: " + e.getMessage());
+            BSLog.warning("Error initializing ModVersionChecker for mod %s: %s", modName, e.getMessage());
         }
         
         String[] versionLines = loadTextFromURL(this.versionURL);
@@ -66,23 +69,29 @@ public class ModVersionChecker
         setInGameMessage(inGameMsg);
     }
     
+    @Deprecated
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL, Logger logger)
     {
-        this(modName, oldVer, versionURL, updateURL, new String[] { "{modName} {oldVer} is out of date! Visit {updateURL} to download the latest release ({newVer})." }, new String[] { "\247c{modName} {newVer} \247ris out! Download the latest from \247a{updateURL}\247r" }, logger);
+        this(modName, oldVer, versionURL, updateURL);
+    }
+    
+    public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL)
+    {
+        this(modName, oldVer, versionURL, updateURL, new String[] { "{modName} {oldVer} is out of date! Visit {updateURL} to download the latest release ({newVer})." }, new String[] { "\247c{modName} {newVer} \247ris out! Download the latest from \247a{updateURL}\247r" });
     }
     
     public void checkVersionWithLogging()
     {
         if (!isCurrentVersion())
             for (String msg : loadMsg)
-                logger.log(Level.INFO, msg);
+                BSLog.info(msg);
     }
     
     public void checkVersionWithLoggingBySubStringAsFloat(int beginIndex, int endIndex)
     {
         if (!isCurrentVersionBySubStringAsFloatNewer(beginIndex, endIndex))
             for (String msg : loadMsg)
-                logger.log(Level.INFO, msg);
+                BSLog.info(msg);
     }
     
     public void setLoadMessage(String[] loadMsg)
@@ -128,7 +137,7 @@ public class ModVersionChecker
         }
         catch (Throwable e)
         {
-            logger.warning("Method isCurrentVersionBySubStringAsFloatNewer() encountered an error while comparing version substrings: " + e.getMessage());
+            BSLog.warning("Method isCurrentVersionBySubStringAsFloatNewer() encountered an error while comparing version substrings for mod %s: %s", modName, e.getMessage());
             return true;
         }
     }
@@ -138,7 +147,6 @@ public class ModVersionChecker
         return s.replace("{oldVer}", oldVer).replace("{newVer}", newVer).replace("{modName}", modName).replace("{updateURL}", updateURL);
     }
     
-    @SuppressWarnings("resource")
     private String[] loadTextFromURL(URL url)
     {
         ArrayList arraylist = new ArrayList();
@@ -149,7 +157,7 @@ public class ModVersionChecker
         }
         catch (Throwable e)
         {
-            logger.log(Level.WARNING, "Error getting current version info: " + e.getMessage());
+            BSLog.warning("Error getting current version info for mod %s: %s", modName, e.getMessage());
             //e.printStackTrace();
             return new String[] { oldVer };
         }

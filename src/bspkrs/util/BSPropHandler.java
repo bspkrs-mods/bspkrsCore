@@ -2,7 +2,7 @@ package bspkrs.util;
 
 /**
  * Much of this code is borrowed/adapted from the decompiled version of Risugami's ModLoader MLProp handling code.
- * @author Risugami, bspkrs
+ * @Authors: Risugami, bspkrs
  */
 
 import java.io.File;
@@ -14,12 +14,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class BSPropHandler
 {
     private String       cfgDir;
-    private Logger       logger;
     private Class        clazz;
     private String       propFilename;
     private BSProperties props;
@@ -27,12 +25,11 @@ public class BSPropHandler
     private String       comments;
     private int          fieldsCheckSum, propsCheckSum;
     
-    public BSPropHandler(String cfgDir, String propFilename, Class<?> clazz, Logger logger)
+    public BSPropHandler(String cfgDir, String propFilename, Class<?> clazz)
     {
         this.cfgDir = cfgDir;
         this.propFilename = propFilename;
         this.clazz = clazz;
-        this.logger = logger;
         
         try
         {
@@ -44,12 +41,11 @@ public class BSPropHandler
         }
     }
     
-    public BSPropHandler(String cfgDir, Class<?> clazz, Logger logger)
+    public BSPropHandler(String cfgDir, Class<?> clazz)
     {
-        this(cfgDir, clazz.getSimpleName() + ".bsprop.cfg", clazz, logger);
+        this(cfgDir, clazz.getSimpleName() + ".bsprop.cfg", clazz);
     }
     
-    @SuppressWarnings("resource")
     private void readPropsFromFile() throws FileNotFoundException, IOException
     {
         props = new BSProperties();
@@ -69,7 +65,6 @@ public class BSPropHandler
         }
     }
     
-    @SuppressWarnings("resource")
     private void writePropsToFile() throws FileNotFoundException, IOException
     {
         File propFile = new File(cfgDir, propFilename);
@@ -221,19 +216,19 @@ public class BSPropHandler
                             
                             if (propAnnotation.min() != Double.NEGATIVE_INFINITY && doubleValue < propAnnotation.min())
                             {
-                                logger.warning(String.format("Value %n is less than the specified min (%n) for %s. Value set to %n.", doubleValue, propAnnotation.min(), propName, propAnnotation.min()));
+                                BSLog.warning(String.format("Value %n is less than the specified min (%n) for %s. Value set to %n.", doubleValue, propAnnotation.min(), propName, propAnnotation.min()));
                                 wrappedPropValue = Double.valueOf(propAnnotation.min());
                                 props.setProperty(propName, wrappedPropValue.toString());
                             }
                             else if (propAnnotation.max() != Double.POSITIVE_INFINITY && doubleValue > propAnnotation.max())
                             {
-                                logger.warning(String.format("Value %n is more than the specified max (%n) for %s. Value set to %n.", doubleValue, propAnnotation.max(), propName, propAnnotation.max()));
+                                BSLog.warning(String.format("Value %n is more than the specified max (%n) for %s. Value set to %n.", doubleValue, propAnnotation.max(), propName, propAnnotation.max()));
                                 wrappedPropValue = Double.valueOf(propAnnotation.max());
                                 props.setProperty(propName, wrappedPropValue.toString());
                             }
                         }
                         
-                        logger.finer(propName + " set to " + wrappedPropValue);
+                        BSLog.info(propName + " set to " + wrappedPropValue);
                         
                         if (!wrappedPropValue.equals(fieldValue))
                         {
@@ -243,7 +238,7 @@ public class BSPropHandler
                 }
                 else
                 {
-                    logger.finer(propName + " not in config, using field value: " + fieldValue);
+                    BSLog.info(propName + " not in config, using field value: " + fieldValue);
                     props.setProperty(propName, fieldValue.toString());
                 }
             }

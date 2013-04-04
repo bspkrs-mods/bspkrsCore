@@ -13,7 +13,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 
 /*
@@ -23,6 +22,14 @@ import net.minecraft.world.World;
 
 public final class CommonUtils
 {
+    public static boolean isStringAllLettersOrDigits(CharSequence s)
+    {
+        for (int i = 0; i < s.length(); i++)
+            if (!Character.isLetterOrDigit(s.charAt(i)))
+                return false;
+        return true;
+    }
+    
     /*
      * List parser helpers
      */
@@ -220,6 +227,10 @@ public final class CommonUtils
         }
     }
     
+    /*
+     * General Minecraft methods
+     */
+    
     public void playAtPitch(int i, World world, EntityPlayer entityplayer)
     {
         float f = (float) Math.pow(2D, (i - 12) / 12D);
@@ -328,7 +339,6 @@ public final class CommonUtils
         return time;
     }
     
-    @SuppressWarnings("resource")
     public static String[] loadTextFromURL(URL url, Logger logger, String defaultValue)
     {
         ArrayList arraylist = new ArrayList();
@@ -351,9 +361,14 @@ public final class CommonUtils
         return (String[]) arraylist.toArray(new String[arraylist.size()]);
     }
     
+    public static String getMinecraftDir()
+    {
+        return Minecraft.getMinecraftDir().getAbsolutePath();
+    }
+    
     public static String getConfigDir()
     {
-        File configDir = new File(ModLoader.getMinecraftInstance().getMinecraftDir(), "config");
+        File configDir = new File(getMinecraftDir(), "config");
         return configDir.getAbsolutePath();
     }
 }

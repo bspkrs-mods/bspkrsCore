@@ -33,7 +33,7 @@ public class BSProperties extends Properties
         {
             writeComments(bw, comments);
         }
-        bw.write("#" + new Date().toString());
+        bw.write("# " + new Date().toString());
         bw.newLine();
         synchronized (this)
         {
@@ -58,7 +58,7 @@ public class BSProperties extends Properties
     private static void writeComments(BufferedWriter bw, String comments)
             throws IOException
     {
-        bw.write("#");
+        bw.write("# ");
         int len = comments.length();
         int current = 0;
         int last = 0;
@@ -92,7 +92,7 @@ public class BSProperties extends Properties
                     if (current == len - 1 ||
                             (comments.charAt(current + 1) != '#' &&
                             comments.charAt(current + 1) != '!'))
-                        bw.write("#");
+                        bw.write("# ");
                 }
                 last = current + 1;
             }
