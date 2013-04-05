@@ -924,4 +924,59 @@ public class Configuration
     {
         return categories.keySet();
     }
+    
+    /**
+     * Deletes a given category.
+     * @param category the category to delete
+     * @return         true if the category exists and was removed, false otherwise
+     */
+    public boolean deleteCategory(String category)
+    {
+        if(hasCategory(category))
+        {
+            categories.remove(category);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Renames a property in a given category.
+     * @param category    the category in which the property resides
+     * @param oldPropName the existing property name
+     * @param newPropName the 
+     * @return            true if the category and property exist, false otherwise
+     */
+    public boolean renameProperty(String category, String oldPropName, String newPropName)
+    {
+        if (hasCategory(category))
+        {
+            if (getCategory(category).containsKey(oldPropName) && !oldPropName.equalsIgnoreCase(newPropName))
+            {
+                get(category, newPropName, getCategory(category).get(oldPropName).getString());
+                getCategory(category).remove(oldPropName);
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Moves a property from one category to another.
+     * @param oldCategory the category the property currently resides in
+     * @param propName    the name of the property to move
+     * @param newCategory the category the property should be moved to
+     * @return            true if the old category and property exist, false otherwise
+     */
+    public boolean moveProperty(String oldCategory, String propName, String newCategory)
+    {
+        if (hasCategory(oldCategory))
+        {
+            if (getCategory(oldCategory).containsKey(propName))
+            {
+                getCategory(newCategory).put(propName, getCategory(oldCategory).get(propName));
+                return true;
+            }
+        }
+        return false;
+    }
 }
