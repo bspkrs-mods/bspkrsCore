@@ -341,9 +341,38 @@ public final class CommonUtils
         return time;
     }
     
+    public static String stringArrayToString(String[] sa)
+    {
+        return stringArrayToString(sa, "#");
+    }
+    
+    public static String stringArrayToString(String[] sa, String separator)
+    {
+        String ret = "";
+        for (String s : sa)
+            ret += separator + " " + s;
+        
+        return ret.replaceFirst(separator + " ", "");
+    }
+    
+    public static String[] loadTextFromURL(URL url, Logger logger)
+    {
+        return loadTextFromURL(url, logger, new String[] { "" }, 1000);
+    }
+    
+    public static String[] loadTextFromURL(URL url, Logger logger, int timeoutMS)
+    {
+        return loadTextFromURL(url, logger, new String[] { "" }, timeoutMS);
+    }
+    
     public static String[] loadTextFromURL(URL url, Logger logger, String defaultValue)
     {
         return loadTextFromURL(url, logger, new String[] { defaultValue }, 1000);
+    }
+    
+    public static String[] loadTextFromURL(URL url, Logger logger, String defaultValue, int timeoutMS)
+    {
+        return loadTextFromURL(url, logger, new String[] { defaultValue }, timeoutMS);
     }
     
     public static String[] loadTextFromURL(URL url, Logger logger, String[] defaultValue)
@@ -364,7 +393,7 @@ public final class CommonUtils
         }
         catch (Throwable e)
         {
-            logger.log(Level.WARNING, String.format("Error retrieving remote string value! Defaulting to %s", defaultValue.toString()));
+            logger.log(Level.WARNING, String.format("Error retrieving remote string value! Defaulting to %s", stringArrayToString(defaultValue)));
             return defaultValue;
         }
         
