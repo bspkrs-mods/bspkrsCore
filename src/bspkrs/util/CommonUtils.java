@@ -2,6 +2,7 @@ package bspkrs.util;
 
 import java.io.File;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
 /*
@@ -341,16 +343,29 @@ public final class CommonUtils
     
     public static String[] loadTextFromURL(URL url, Logger logger, String defaultValue)
     {
+        return loadTextFromURL(url, logger, new String[] { defaultValue }, 1000);
+    }
+    
+    public static String[] loadTextFromURL(URL url, Logger logger, String[] defaultValue)
+    {
+        return loadTextFromURL(url, logger, defaultValue, 1000);
+    }
+    
+    public static String[] loadTextFromURL(URL url, Logger logger, String[] defaultValue, int timeoutMS)
+    {
         ArrayList arraylist = new ArrayList();
         Scanner scanner = null;
         try
         {
-            scanner = new Scanner(url.openStream(), "UTF-8");
+            URLConnection uc = url.openConnection();
+            uc.setReadTimeout(timeoutMS);
+            uc.setConnectTimeout(timeoutMS);
+            scanner = new Scanner(uc.getInputStream(), "UTF-8");
         }
         catch (Throwable e)
         {
-            logger.log(Level.WARNING, "Error retrieving remote string value! Defaulting to " + defaultValue);
-            return new String[] { defaultValue };
+            logger.log(Level.WARNING, String.format("Error retrieving remote string value! Defaulting to %s", defaultValue.toString()));
+            return defaultValue;
         }
         
         while (scanner.hasNextLine())
@@ -363,7 +378,14 @@ public final class CommonUtils
     
     public static String getMinecraftDir()
     {
-        return Minecraft.getMinecraftDir().getAbsolutePath();
+        try
+        {
+            return Minecraft.getMinecraftDir().getAbsolutePath();
+        }
+        catch (NoClassDefFoundError e)
+        {
+            return MinecraftServer.getServer().getFile("").getAbsolutePath();
+        }
     }
     
     public static String getConfigDir()

@@ -1,9 +1,6 @@
 package bspkrs.util;
 
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.logging.Logger;
 
 public class ModVersionChecker
@@ -36,13 +33,14 @@ public class ModVersionChecker
         try
         {
             this.versionURL = new URL(versionURL);
+            BSLog.info("Initializing ModVersionChecker for mod %s", modName);
         }
         catch (Throwable e)
         {
             BSLog.warning("Error initializing ModVersionChecker for mod %s: %s", modName, e.getMessage());
         }
         
-        String[] versionLines = loadTextFromURL(this.versionURL);
+        String[] versionLines = CommonUtils.loadTextFromURL(this.versionURL, BSLog.INSTANCE.getLogger(), new String[] { oldVer }, 300);
         
         newVer = versionLines[0].trim();
         
@@ -146,30 +144,5 @@ public class ModVersionChecker
     private String replaceAllTags(String s)
     {
         return s.replace("{oldVer}", oldVer).replace("{newVer}", newVer).replace("{modName}", modName).replace("{updateURL}", updateURL);
-    }
-    
-    private String[] loadTextFromURL(URL url)
-    {
-        ArrayList arraylist = new ArrayList();
-        Scanner scanner = null;
-        try
-        {
-            URLConnection uc = url.openConnection();
-            uc.setReadTimeout(300);
-            uc.setConnectTimeout(300);
-            scanner = new Scanner(uc.getInputStream(), "UTF-8");
-        }
-        catch (Throwable e)
-        {
-            BSLog.warning("Error getting current version info for mod %s: %s", modName, e.getMessage());
-            return new String[] { oldVer };
-        }
-        
-        while (scanner.hasNextLine())
-        {
-            arraylist.add(scanner.nextLine());
-        }
-        scanner.close();
-        return (String[]) arraylist.toArray(new String[arraylist.size()]);
     }
 }
