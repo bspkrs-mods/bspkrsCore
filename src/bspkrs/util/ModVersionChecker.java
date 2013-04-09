@@ -1,6 +1,7 @@
 package bspkrs.util;
 
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Logger;
@@ -153,12 +154,14 @@ public class ModVersionChecker
         Scanner scanner = null;
         try
         {
-            scanner = new Scanner(url.openStream(), "UTF-8");
+            URLConnection uc = url.openConnection();
+            uc.setReadTimeout(300);
+            uc.setConnectTimeout(300);
+            scanner = new Scanner(uc.getInputStream(), "UTF-8");
         }
         catch (Throwable e)
         {
             BSLog.warning("Error getting current version info for mod %s: %s", modName, e.getMessage());
-            //e.printStackTrace();
             return new String[] { oldVer };
         }
         

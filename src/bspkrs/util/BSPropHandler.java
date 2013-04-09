@@ -216,19 +216,19 @@ public class BSPropHandler
                             
                             if (propAnnotation.min() != Double.NEGATIVE_INFINITY && doubleValue < propAnnotation.min())
                             {
-                                BSLog.warning(String.format("Value %n is less than the specified min (%n) for %s. Value set to %n.", doubleValue, propAnnotation.min(), propName, propAnnotation.min()));
+                                BSLog.warning(String.format("%s: Value %n is less than the specified min (%n) for %s. Value set to %n.", clazz.getSimpleName(), doubleValue, propAnnotation.min(), propName, propAnnotation.min()));
                                 wrappedPropValue = Double.valueOf(propAnnotation.min());
                                 props.setProperty(propName, wrappedPropValue.toString());
                             }
                             else if (propAnnotation.max() != Double.POSITIVE_INFINITY && doubleValue > propAnnotation.max())
                             {
-                                BSLog.warning(String.format("Value %n is more than the specified max (%n) for %s. Value set to %n.", doubleValue, propAnnotation.max(), propName, propAnnotation.max()));
+                                BSLog.warning(String.format("%s: Value %n is more than the specified max (%n) for %s. Value set to %n.", clazz.getSimpleName(), doubleValue, propAnnotation.max(), propName, propAnnotation.max()));
                                 wrappedPropValue = Double.valueOf(propAnnotation.max());
                                 props.setProperty(propName, wrappedPropValue.toString());
                             }
                         }
                         
-                        BSLog.info(propName + " set to " + wrappedPropValue);
+                        BSLog.info("%s: %s set to %s", clazz.getSimpleName(), propName, wrappedPropValue);
                         
                         if (!wrappedPropValue.equals(fieldValue))
                         {
@@ -238,7 +238,7 @@ public class BSPropHandler
                 }
                 else
                 {
-                    BSLog.info(propName + " not in config, using field value: " + fieldValue);
+                    BSLog.info("%s: %s not in config, using field value: %s", clazz.getSimpleName(), propName, fieldValue);
                     props.setProperty(propName, fieldValue.toString());
                 }
             }
