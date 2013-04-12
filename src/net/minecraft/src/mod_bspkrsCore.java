@@ -14,7 +14,7 @@ public class mod_bspkrsCore extends BaseMod
     public static boolean     allowDebugOutput = false;
     
     private ModVersionChecker versionChecker;
-    private final String      versionURL       = "http://192.210.150.163/Minecraft/1.5.1/bspkrsCore.version";
+    private final String      versionURL       = "http://bspk.rs/Minecraft/1.5.1/bspkrsCore.version";
     private final String      mcfTopic         = "http://www.minecraftforum.net/topic/1114612-";
     private boolean           doUpdateCheck;
     
