@@ -3,8 +3,8 @@ package bspkrs.fml.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
+import bspkrs.util.Configuration;
+import bspkrs.util.Property;
 
 public class Config
 {
@@ -53,14 +53,10 @@ public class Config
     /**
      * Creates a string property.
      * 
-     * @param name
-     *            Name of the property.
-     * @param category
-     *            Category of the property.
-     * @param defaultValue
-     *            Default value of the property.
-     * @param comment
-     *            A brief description what the property does.
+     * @param name Name of the property.
+     * @param category Category of the property.
+     * @param defaultValue Default value of the property.
+     * @param comment A brief description what the property does.
      * @return The value of the new string property.
      */
     public static String getString(Configuration config, String name, String category, String defaultValue, String comment)
@@ -73,14 +69,10 @@ public class Config
     /**
      * Creates a string list property.
      * 
-     * @param name
-     *            Name of the property.
-     * @param category
-     *            Category of the property.
-     * @param defaultValue
-     *            Default value of the property.
-     * @param comment
-     *            A brief description what the property does.
+     * @param name Name of the property.
+     * @param category Category of the property.
+     * @param defaultValue Default value of the property.
+     * @param comment A brief description what the property does.
      * @return The value of the new string property.
      */
     public static String[] getStringList(Configuration config, String name, String category, String[] defaultValue, String comment)
@@ -93,14 +85,10 @@ public class Config
     /**
      * Creates a boolean property.
      * 
-     * @param name
-     *            Name of the property.
-     * @param category
-     *            Category of the property.
-     * @param defaultValue
-     *            Default value of the property.
-     * @param comment
-     *            A brief description what the property does.
+     * @param name Name of the property.
+     * @param category Category of the property.
+     * @param defaultValue Default value of the property.
+     * @param comment A brief description what the property does.
      * @return The value of the new boolean property.
      */
     public static boolean getBoolean(Configuration config, String name, String category, boolean defaultValue, String comment)
@@ -113,18 +101,12 @@ public class Config
     /**
      * Creates a integer property.
      * 
-     * @param name
-     *            Name of the property.
-     * @param category
-     *            Category of the property.
-     * @param defaultValue
-     *            Default value of the property.
-     * @param minValue
-     *            Minimum value of the property.
-     * @param maxValue
-     *            Maximum value of the property.
-     * @param comment
-     *            A brief description what the property does.
+     * @param name Name of the property.
+     * @param category Category of the property.
+     * @param defaultValue Default value of the property.
+     * @param minValue Minimum value of the property.
+     * @param maxValue Maximum value of the property.
+     * @param comment A brief description what the property does.
      * @return The value of the new integer property.
      */
     public static int getInt(Configuration config, String name, String category, int defaultValue, int minValue, int maxValue, String comment)
@@ -137,18 +119,12 @@ public class Config
     /**
      * Creates a float property.
      * 
-     * @param name
-     *            Name of the property.
-     * @param category
-     *            Category of the property.
-     * @param defaultValue
-     *            Default value of the property.
-     * @param minValue
-     *            Minimum value of the property.
-     * @param maxValue
-     *            Maximum value of the property.
-     * @param comment
-     *            A brief description what the property does.
+     * @param name Name of the property.
+     * @param category Category of the property.
+     * @param defaultValue Default value of the property.
+     * @param minValue Minimum value of the property.
+     * @param maxValue Maximum value of the property.
+     * @param comment A brief description what the property does.
      * @return The value of the new float property.
      */
     public static float getFloat(Configuration config, String name, String category, float defaultValue, float minValue, float maxValue, String comment)
@@ -169,12 +145,9 @@ public class Config
     /**
      * Creates a block ID property.
      * 
-     * @param name
-     *            Name of the property.
-     * @param defaultValue
-     *            Default value of the property.
-     * @param comment
-     *            A brief description what the property does.
+     * @param name Name of the property.
+     * @param defaultValue Default value of the property.
+     * @param comment A brief description what the property does.
      * @return The value of the new block ID property.
      */
     public static int getBlockId(Configuration config, String name, int defaultValue, String comment)
