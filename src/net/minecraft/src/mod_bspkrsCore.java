@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.NetClientHandler;
 import bspkrs.util.BSProp;
 import bspkrs.util.BSPropRegistry;
+import bspkrs.util.Const;
 import bspkrs.util.ModVersionChecker;
 
 public class mod_bspkrsCore extends BaseMod
@@ -14,7 +15,7 @@ public class mod_bspkrsCore extends BaseMod
     public static boolean     allowDebugOutput = false;
     
     private ModVersionChecker versionChecker;
-    private final String      versionURL       = "http://bspk.rs/Minecraft/1.5.1/bspkrsCore.version";
+    private final String      versionURL       = "http://bspk.rs/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
     private final String      mcfTopic         = "http://www.minecraftforum.net/topic/1114612-";
     private boolean           doUpdateCheck;
     
@@ -33,7 +34,7 @@ public class mod_bspkrsCore extends BaseMod
     @Override
     public String getVersion()
     {
-        return "v2.03(1.5.1)";
+        return "v2.03(" + Const.MCVERSION + ")";
     }
     
     @Override
