@@ -254,6 +254,16 @@ public final class CommonUtils
         return y;
     }
     
+    public static int getSphericalDistance(Coord startPos, Coord endPos)
+    {
+        return (int) Math.round(Math.sqrt(CommonUtils.sqr(endPos.x - startPos.x) + CommonUtils.sqr(endPos.z - startPos.z) + CommonUtils.sqr(endPos.y - startPos.y)));
+    }
+    
+    public static int getCubicDistance(Coord startPos, Coord endPos)
+    {
+        return Math.abs(endPos.x - startPos.x) + Math.abs(endPos.y - startPos.y) + Math.abs(endPos.z - startPos.z);
+    }
+    
     public static double getDistanceRatioToCenter(int point1, int point2, int pos)
     {
         double radius = Math.abs(point2 - point1) / 2D;
