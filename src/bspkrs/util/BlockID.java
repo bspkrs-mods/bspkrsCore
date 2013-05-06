@@ -9,8 +9,35 @@ public class BlockID
     
     public BlockID(int id, int metadata)
     {
-        this.id = id;
-        this.metadata = metadata;
+        id = id;
+        metadata = metadata;
+    }
+    
+    /**
+     * String must be one or two integer values delimited with the delimiter string. ex "17|0","|"
+     * 
+     * @param format
+     * @param delimiter
+     */
+    public BlockID(String format, String delimiter)
+    {
+        String[] s = format.split(delimiter);
+        
+        id = CommonUtils.parseInt(s[0]);
+        if (s.length < 2)
+            metadata = -1;
+        else
+            metadata = CommonUtils.parseInt(s[1], -1);
+    }
+    
+    /**
+     * String must be one or two integer values delimited with a comma. ex "17,0"
+     * 
+     * @param format
+     */
+    public BlockID(String format)
+    {
+        this(format, ",");
     }
     
     public BlockID(net.minecraft.block.Block block, int metadata)
@@ -41,7 +68,7 @@ public class BlockID
     @Override
     public BlockID clone()
     {
-        return new BlockID(this.id, this.metadata);
+        return new BlockID(id, metadata);
     }
     
     @Override
@@ -54,10 +81,10 @@ public class BlockID
             return false;
         
         BlockID o = (BlockID) obj;
-        if (o.metadata == -1 || this.metadata == -1)
-            return this.id == o.id;
+        if (o.metadata == -1 || metadata == -1)
+            return id == o.id;
         else
-            return this.id == o.id && this.metadata == o.metadata;
+            return id == o.id && metadata == o.metadata;
     }
     
     @Override
