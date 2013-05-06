@@ -23,11 +23,11 @@ public class BlockID
     {
         String[] s = format.split(delimiter);
         
-        id = CommonUtils.parseInt(s[0]);
+        id = CommonUtils.parseInt(s[0].trim());
         if (s.length < 2)
             metadata = -1;
         else
-            metadata = CommonUtils.parseInt(s[1], -1);
+            metadata = CommonUtils.parseInt(s[1].trim(), -1);
     }
     
     /**
