@@ -9,8 +9,8 @@ public class BlockID
     
     public BlockID(int id, int metadata)
     {
-        id = id;
-        metadata = metadata;
+        this.id = id;
+        this.metadata = metadata;
     }
     
     /**
@@ -23,11 +23,11 @@ public class BlockID
     {
         String[] s = format.split(delimiter);
         
-        id = CommonUtils.parseInt(s[0].trim());
+        this.id = CommonUtils.parseInt(s[0].trim());
         if (s.length < 2)
-            metadata = -1;
+            this.metadata = -1;
         else
-            metadata = CommonUtils.parseInt(s[1].trim(), -1);
+            this.metadata = CommonUtils.parseInt(s[1].trim(), -1);
     }
     
     /**
@@ -99,6 +99,6 @@ public class BlockID
     @Override
     public String toString()
     {
-        return id + ", " + metadata;
+        return this.id + ", " + this.metadata;
     }
 }
