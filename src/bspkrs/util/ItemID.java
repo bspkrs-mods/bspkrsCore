@@ -86,10 +86,4 @@ public class ItemID extends BlockID
         result = HashCodeUtil.hash(result, metadata);
         return result;
     }
-    
-    @Override
-    public String toString()
-    {
-        return id + ", " + metadata;
-    }
 }

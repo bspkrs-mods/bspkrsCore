@@ -99,6 +99,6 @@ public class BlockID
     @Override
     public String toString()
     {
-        return this.id + ", " + this.metadata;
+        return (metadata == -1 ? id + "" : id + ", " + metadata);
     }
 }
