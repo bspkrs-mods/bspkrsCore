@@ -54,6 +54,11 @@ public class ConfigCategory implements Map<String, Property>
         return false;
     }
     
+    public String getName()
+    {
+        return name;
+    }
+    
     public String getQualifiedName()
     {
         return getQualifiedName(name, parent);
