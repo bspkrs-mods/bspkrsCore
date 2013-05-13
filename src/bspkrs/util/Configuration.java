@@ -33,7 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 
 /**
@@ -82,7 +81,7 @@ public class Configuration
     public Configuration(File file)
     {
         this.file = file;
-        String basePath = Minecraft.getMinecraftDir().getAbsolutePath().replace(File.separatorChar, '/').replace("/.", "");
+        String basePath = CommonUtils.getMinecraftDir().replace(File.separatorChar, '/').replace("/.", "");
         String path = file.getAbsolutePath().replace(File.separatorChar, '/').replace("/./", "/").replace(basePath, "");
         if (PARENT != null)
         {
