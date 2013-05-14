@@ -120,20 +120,19 @@ public class ConfigCategory implements Map<String, Property>
         String pad1 = getIndent(indent + 1);
         String pad2 = getIndent(indent + 2);
         
-        write(out, pad0, COMMENT_SEPARATOR);
-        write(out, pad0, "# ", name);
-        
         if (comment != null)
         {
+            write(out, pad0, COMMENT_SEPARATOR);
+            write(out, pad0, "# ", name);
             write(out, pad0, "#===================================================================================================");
             
             for (String line : comment.split("\r?\n"))
             {
                 write(out, pad0, "# ", line);
             }
+            
+            write(out, pad0, COMMENT_SEPARATOR, NEW_LINE);
         }
-        
-        write(out, pad0, COMMENT_SEPARATOR, NEW_LINE);
         
         if (!CommonUtils.isStringAllLettersOrDigits(name))
         {
