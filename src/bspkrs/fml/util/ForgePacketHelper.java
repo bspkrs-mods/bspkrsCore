@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.packet.Packet250CustomPayload;
 
 public final class ForgePacketHelper
 {
-    public static net.minecraft.network.packet.Packet250CustomPayload createPacket(String channel, int packetID, Object[] input)
+    public static Packet250CustomPayload createPacket(String channel, int packetID, Object[] input)
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         DataOutputStream data = new DataOutputStream(bytes);
@@ -96,6 +98,10 @@ public final class ForgePacketHelper
         {
             data.writeShort((Short) obj);
         }
+        else if (objClass.equals(NBTTagCompound.class))
+        {
+            writeNBTTagCompound((NBTTagCompound) obj, data);
+        }
     }
     
     private static Object readObjectFromStream(DataInputStream data, Class curClass) throws IOException
@@ -132,8 +138,48 @@ public final class ForgePacketHelper
         {
             return data.readShort();
         }
+        else if (curClass.equals(NBTTagCompound.class))
+        {
+            return readNBTTagCompound(data);
+        }
         
         return null;
+    }
+    
+    /**
+     * Reads a compressed NBTTagCompound from the InputStream
+     */
+    public static NBTTagCompound readNBTTagCompound(DataInputStream data) throws IOException
+    {
+        short length = data.readShort();
+        
+        if (length < 0)
+        {
+            return null;
+        }
+        else
+        {
+            byte[] buf = new byte[length];
+            data.readFully(buf);
+            return CompressedStreamTools.decompress(buf);
+        }
+    }
+    
+    /**
+     * Writes a compressed NBTTagCompound to the OutputStream
+     */
+    public static void writeNBTTagCompound(NBTTagCompound ntc, DataOutputStream data) throws IOException
+    {
+        if (ntc == null)
+        {
+            data.writeShort(-1);
+        }
+        else
+        {
+            byte[] buf = CompressedStreamTools.compress(ntc);
+            data.writeShort((short) buf.length);
+            data.write(buf);
+        }
     }
     
     public static int readPacketID(DataInputStream data)

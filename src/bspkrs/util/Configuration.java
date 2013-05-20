@@ -51,7 +51,7 @@ public class Configuration
     public static final String          DEFAULT_ENCODING  = "UTF-8";
     public static final String          CATEGORY_SPLITTER = ".";
     public static final String          NEW_LINE          = System.getProperty("line.separator");
-    public static final String          COMMENT_SEPARATOR = "####################################################################################################";
+    public static final String          COMMENT_SEPARATOR = "#-------------------------------------------------------------------------------------------------#";
     private static final Pattern        CONFIG_START      = Pattern.compile("START: \"([^\\\"]+)\"");
     private static final Pattern        CONFIG_END        = Pattern.compile("END: \"([^\\\"]+)\"");
     private static Configuration        PARENT            = null;
