@@ -124,7 +124,7 @@ public class ConfigCategory implements Map<String, Property>
         {
             write(out, pad0, COMMENT_SEPARATOR);
             write(out, pad0, "# ", name);
-            write(out, pad0, "#===================================================================================================");
+            write(out, pad0, "#--------------------------------------------------------------------------------------------------------#");
             
             for (String line : comment.split("\r?\n"))
             {

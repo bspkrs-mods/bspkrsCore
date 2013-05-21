@@ -19,15 +19,20 @@ public class BlockID
      * @param format
      * @param delimiter
      */
-    public BlockID(String format, String delimiter)
+    public BlockID(String format, String delimiter, int defaultVal)
     {
         String[] s = format.split(delimiter);
         
-        this.id = CommonUtils.parseInt(s[0].trim());
+        id = CommonUtils.parseInt(s[0].trim(), defaultVal);
         if (s.length < 2)
-            this.metadata = -1;
+            metadata = -1;
         else
-            this.metadata = CommonUtils.parseInt(s[1].trim(), -1);
+            metadata = CommonUtils.parseInt(s[1].trim(), -1);
+    }
+    
+    public BlockID(String format, String delimiter)
+    {
+        this(format, delimiter, 0);
     }
     
     /**

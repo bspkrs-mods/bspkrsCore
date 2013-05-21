@@ -40,7 +40,7 @@ public class ModVersionChecker
             BSLog.warning("Error initializing ModVersionChecker for mod %s: %s", modName, e.getMessage());
         }
         
-        String[] versionLines = CommonUtils.loadTextFromURL(this.versionURL, BSLog.INSTANCE.getLogger(), new String[] { oldVer }, 300);
+        String[] versionLines = CommonUtils.loadTextFromURL(this.versionURL, BSLog.INSTANCE.getLogger(), new String[] { oldVer }, 500);
         
         newVer = versionLines[0].trim();
         
