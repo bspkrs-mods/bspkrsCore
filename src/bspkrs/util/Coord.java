@@ -16,7 +16,7 @@ public class Coord
     @Override
     public Coord clone()
     {
-        return new Coord(this.x, this.y, this.z);
+        return new Coord(x, y, z);
     }
     
     @Override
@@ -29,7 +29,7 @@ public class Coord
             return false;
         
         Coord o = (Coord) obj;
-        return this.x == o.x && this.y == o.y && this.z == o.z;
+        return x == o.x && y == o.y && z == o.z;
     }
     
     @Override
@@ -40,5 +40,11 @@ public class Coord
         result = HashCodeUtil.hash(result, y);
         result = HashCodeUtil.hash(result, z);
         return result;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return x + "," + y + "," + z;
     }
 }

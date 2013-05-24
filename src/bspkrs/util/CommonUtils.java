@@ -264,6 +264,16 @@ public final class CommonUtils
         return Math.abs(endPos.x - startPos.x) + Math.abs(endPos.y - startPos.y) + Math.abs(endPos.z - startPos.z);
     }
     
+    public static int getHorSquaredDistance(Coord startPos, Coord endPos)
+    {
+        return Math.abs(endPos.x - startPos.x) + Math.abs(endPos.z - startPos.z);
+    }
+    
+    public static int getVerDistance(Coord startPos, Coord endPos)
+    {
+        return Math.abs(endPos.y - startPos.y);
+    }
+    
     public static double getDistanceRatioToCenter(int point1, int point2, int pos)
     {
         double radius = Math.abs(point2 - point1) / 2D;
