@@ -134,7 +134,7 @@ public class ConfigCategory implements Map<String, Property>
             write(out, pad0, COMMENT_SEPARATOR, NEW_LINE);
         }
         
-        if (!CommonUtils.isStringAllLettersOrDigits(name))
+        if (!CommonUtils.isStringAllLettersOrDigitsOr(name, Configuration.ALLOWED_CHARS))
         {
             name = '"' + name + '"';
         }
@@ -162,7 +162,7 @@ public class ConfigCategory implements Map<String, Property>
             
             String propName = prop.getName();
             
-            if (!CommonUtils.isStringAllLettersOrDigits(propName))
+            if (!CommonUtils.isStringAllLettersOrDigitsOr(propName, Configuration.ALLOWED_CHARS))
             {
                 propName = '"' + propName + '"';
             }
@@ -190,6 +190,9 @@ public class ConfigCategory implements Map<String, Property>
                 write(out, pad1, String.valueOf(type), ":", propName, "=", prop.getString());
             }
         }
+        
+        if (children.size() > 0)
+            out.newLine();
         
         for (ConfigCategory child : children)
         {
