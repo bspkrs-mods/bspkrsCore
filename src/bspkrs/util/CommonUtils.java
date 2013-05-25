@@ -32,6 +32,14 @@ public final class CommonUtils
         return true;
     }
     
+    public static boolean isStringAllLettersOrDigitsOr(CharSequence s, String chrs)
+    {
+        for (int i = 0; i < s.length(); i++)
+            if (!Character.isLetterOrDigit(s.charAt(i)) && !chrs.contains(s.subSequence(i, i + 1)))
+                return false;
+        return true;
+    }
+    
     /*
      * List parser helpers
      */
