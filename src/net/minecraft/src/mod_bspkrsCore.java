@@ -34,7 +34,7 @@ public class mod_bspkrsCore extends BaseMod
     @Override
     public String getVersion()
     {
-        return "v2.06(" + Const.MCVERSION + ")";
+        return "v2.07(" + Const.MCVERSION + ")";
     }
     
     @Override

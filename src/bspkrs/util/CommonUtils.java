@@ -450,4 +450,17 @@ public final class CommonUtils
         File configDir = new File(getMinecraftDir(), "config");
         return configDir.getAbsolutePath();
     }
+    
+    public static boolean isObfuscatedEnv()
+    {
+        try
+        {
+            Block.class.getField("anvil");
+            return false;
+        }
+        catch (Throwable e)
+        {
+            return true;
+        }
+    }
 }
