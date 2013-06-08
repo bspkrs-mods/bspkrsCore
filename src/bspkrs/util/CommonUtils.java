@@ -14,7 +14,11 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 /*
@@ -462,5 +466,29 @@ public final class CommonUtils
         {
             return true;
         }
+    }
+    
+    public static MovingObjectPosition getPlayerLookingSpot(EntityPlayer player, boolean restrict)
+    {
+        float scale = 1.0F;
+        float pitch = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * scale;
+        float yaw = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * scale;
+        double x = player.prevPosX + (player.posX - player.prevPosX) * scale;
+        double y = player.prevPosY + (player.posY - player.prevPosY) * scale + 1.62D - player.yOffset;
+        double z = player.prevPosZ + (player.posZ - player.prevPosZ) * scale;
+        Vec3 vector1 = player.worldObj.getWorldVec3Pool().getVecFromPool(x, y, z);
+        float cosYaw = MathHelper.cos(-yaw * 0.017453292F - (float) Math.PI);
+        float sinYaw = MathHelper.sin(-yaw * 0.017453292F - (float) Math.PI);
+        float cosPitch = -MathHelper.cos(-pitch * 0.017453292F);
+        float sinPitch = MathHelper.sin(-pitch * 0.017453292F);
+        float var18 = sinYaw * cosPitch;
+        float var20 = cosYaw * cosPitch;
+        double distance = 500D;
+        if (player instanceof EntityPlayerMP && restrict)
+        {
+            distance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
+        }
+        Vec3 vector2 = vector1.addVector(var18 * distance, sinPitch * distance, var20 * distance);
+        return player.worldObj.rayTraceBlocks_do_do(vector1, vector2, false, !true);
     }
 }

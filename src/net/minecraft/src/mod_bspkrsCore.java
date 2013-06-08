@@ -13,36 +13,36 @@ public class mod_bspkrsCore extends BaseMod
     public static boolean     allowUpdateCheck = true;
     @BSProp
     public static boolean     allowDebugOutput = false;
-    
+
     private ModVersionChecker versionChecker;
     private final String      versionURL       = "http://bspk.rs/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
     private final String      mcfTopic         = "http://www.minecraftforum.net/topic/1114612-";
     private boolean           doUpdateCheck;
-    
+
     public mod_bspkrsCore()
     {
         BSPropRegistry.registerPropHandler(this.getClass());
         doUpdateCheck = allowUpdateCheck;
     }
-    
+
     @Override
     public String getName()
     {
         return "bspkrsCore";
     }
-    
+
     @Override
     public String getVersion()
     {
-        return "v2.07(" + Const.MCVERSION + ")";
+        return "v2.08(" + Const.MCVERSION + ")";
     }
-    
+
     @Override
     public String getPriorities()
     {
         return "before:*";
     }
-    
+
     @Override
     public void load()
     {
@@ -52,13 +52,13 @@ public class mod_bspkrsCore extends BaseMod
             versionChecker.checkVersionWithLoggingBySubStringAsFloat(1, 4);
         }
     }
-    
+
     @Override
     public void clientConnect(NetClientHandler nch)
     {
         ModLoader.setInGameHook(this, true, true);
     }
-    
+
     @Override
     public boolean onTickInGame(float f, Minecraft mc)
     {
@@ -69,12 +69,12 @@ public class mod_bspkrsCore extends BaseMod
                     mc.thePlayer.addChatMessage(msg);
             doUpdateCheck = false;
         }
-        
+
         if (allowDebugOutput && mc.theWorld.isRemote)
         {
             mc.thePlayer.addChatMessage("\2470\2470\2471\2472\2473\2474\2475\2476\2477\247e\247f");
         }
-        
+
         return false;
     }
 }
