@@ -3,6 +3,8 @@ package bspkrs.util;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import net.minecraft.src.mod_bspkrsCore;
+
 public class ModVersionChecker
 {
     private URL          versionURL;
@@ -24,6 +26,11 @@ public class ModVersionChecker
     
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg)
     {
+        this(modName, oldVer, versionURL, updateURL, loadMsg, inGameMsg, mod_bspkrsCore.updateTimeoutMilliseconds);
+    }
+    
+    public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg, int timeoutMS)
+    {
         this.modName = modName;
         this.oldVer = oldVer;
         this.updateURL = updateURL;
@@ -40,7 +47,7 @@ public class ModVersionChecker
             BSLog.warning("Error initializing ModVersionChecker for mod %s: %s", modName, e.getMessage());
         }
         
-        String[] versionLines = CommonUtils.loadTextFromURL(this.versionURL, BSLog.INSTANCE.getLogger(), new String[] { oldVer }, 500);
+        String[] versionLines = CommonUtils.loadTextFromURL(this.versionURL, BSLog.INSTANCE.getLogger(), new String[] { oldVer }, timeoutMS);
         
         newVer = versionLines[0].trim();
         

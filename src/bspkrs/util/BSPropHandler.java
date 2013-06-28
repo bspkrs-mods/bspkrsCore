@@ -23,7 +23,9 @@ public class BSPropHandler
     private BSProperties props;
     private List<Field>  propFields;
     private String       comments;
-    private int          fieldsCheckSum, propsCheckSum;
+    
+    // Removed code related to checksums as they appear to cause issues with some players (probably OS / Java Version / hashing issue)
+    //    private int          fieldsCheckSum, propsCheckSum;
     
     public BSPropHandler(String cfgDir, String propFilename, Class<?> clazz)
     {
@@ -49,7 +51,7 @@ public class BSPropHandler
     private void readPropsFromFile() throws FileNotFoundException, IOException
     {
         props = new BSProperties();
-        propsCheckSum = 0;
+        //        propsCheckSum = 0;
         File propFile = new File(cfgDir, propFilename);
         
         // if the config file exists, load props from it
@@ -59,10 +61,10 @@ public class BSPropHandler
         }
         
         // get the checksum of the existing props
-        if (props.containsKey("checksum"))
-        {
-            propsCheckSum = Integer.parseInt(props.getProperty("checksum"), 36);
-        }
+        //        if (props.containsKey("checksum"))
+        //        {
+        //            propsCheckSum = Integer.parseInt(props.getProperty("checksum"), 36);
+        //        }
     }
     
     private void writePropsToFile() throws FileNotFoundException, IOException
@@ -78,7 +80,7 @@ public class BSPropHandler
     private void getPropFieldsListAndCheckSum() throws IllegalArgumentException, IllegalAccessException
     {
         propFields = new LinkedList<Field>();
-        fieldsCheckSum = 0;
+        //        fieldsCheckSum = 0;
         
         // for each declared field in clazz, check if it has the BSProp annotation, save a list of annotated fields, 
         // and generate the field checksum
@@ -88,7 +90,7 @@ public class BSPropHandler
             {
                 propFields.add(field);
                 Object fieldValue = field.get((Object) null);
-                fieldsCheckSum += fieldValue.hashCode();
+                //                fieldsCheckSum += fieldValue.hashCode();
             }
         }
     }
@@ -132,9 +134,9 @@ public class BSPropHandler
         // Only load the properties file if we are not forcing the field values into the props
         if (!forceUpdatePropsFromFields)
             this.readPropsFromFile();
-        else
-            // Set the props checksum to 0 so that the fields will take priority
-            this.propsCheckSum = 0;
+        //        else
+        //            // Set the props checksum to 0 so that the fields will take priority
+        //            this.propsCheckSum = 0;
         
         // We only want to do this when the fields have the default values in them
         if (isInitialCall)
@@ -174,7 +176,7 @@ public class BSPropHandler
                     commentSB.append(String.format("%s (%s:%s%s)%s\n", new Object[] { propName, fieldType.getName(), fieldValue, acceptableRangeSB, propInfoSB }));
                 }
                 
-                if (propsCheckSum == fieldsCheckSum && props.containsKey(propName))
+                if (/*propsCheckSum == fieldsCheckSum &&*/props.containsKey(propName))
                 {
                     String existingPropValue = props.getProperty(propName);
                     Object wrappedPropValue = null;
@@ -244,9 +246,9 @@ public class BSPropHandler
             }
         }
         
-        props.put("checksum", Integer.toString(fieldsCheckSum, 36));
-        if (propsCheckSum != fieldsCheckSum)
-            propsCheckSum = fieldsCheckSum;
+        //        props.put("checksum", Integer.toString(fieldsCheckSum, 36));
+        //        if (propsCheckSum != fieldsCheckSum)
+        //            propsCheckSum = fieldsCheckSum;
         
         // Only update the comments if this is the initialization call!
         if (isInitialCall)
