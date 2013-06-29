@@ -1,0 +1,33 @@
+v2.09 - 28-Jun-2013
+- removed checksum code from BSProp to hopefully fix reversion issue.
+- added timeout config setting
+v2.08 - 10-Jun-2013
+- added new method for raytracing
+v2.07 - 30-May-2013
+- added a new obfuscation detection method
+v2.06 - 25-May-2013
+- add back in deprecated class to support existing mods
+v2.05 - 24-May-2013
+- holy crap a lot of stuff
+- fixes for many shared bits of code
+- fixed up Configuration and ConfigCategory
+- added a Const class for things like MCVersion
+v2.04 - 10-May-2013
+- fixed server config crash with TC
+v2.03 - 03-May-2013
+- 1.5.2 update
+v2.02 - 09-Apr-2013
+- fixed server crash
+v2.01 - 09-Apr-2013
+- fixed update check timeouts
+- new bsprops config file
+- super secret feature
+- retrofitted fix to 1.4.7
+v1.03 - 15-Mar-2013
+- updated for 1.5
+- added proxy class for forge mods
+- updated for 1.5.1 (23-Mar-2013)
+v1.02 - 10-Mar-2013
+- fix for bad logic in isGamePaused method
+v1.01 - 20-Feb-2013
+- initial release
