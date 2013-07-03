@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -441,7 +442,7 @@ public final class CommonUtils
     {
         try
         {
-            return Minecraft.getMinecraftDir().getAbsolutePath();
+            return Minecraft.getMinecraft().mcDataDir.getAbsolutePath();
         }
         catch (NoClassDefFoundError e)
         {
@@ -481,14 +482,26 @@ public final class CommonUtils
         float sinYaw = MathHelper.sin(-yaw * 0.017453292F - (float) Math.PI);
         float cosPitch = -MathHelper.cos(-pitch * 0.017453292F);
         float sinPitch = MathHelper.sin(-pitch * 0.017453292F);
-        float var18 = sinYaw * cosPitch;
-        float var20 = cosYaw * cosPitch;
+        float pitchAdjustedSinYaw = sinYaw * cosPitch;
+        float pitchAdjustedCosYaw = cosYaw * cosPitch;
         double distance = 500D;
         if (player instanceof EntityPlayerMP && restrict)
         {
             distance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
         }
-        Vec3 vector2 = vector1.addVector(var18 * distance, sinPitch * distance, var20 * distance);
+        Vec3 vector2 = vector1.addVector(pitchAdjustedSinYaw * distance, sinPitch * distance, pitchAdjustedCosYaw * distance);
         return player.worldObj.rayTraceBlocks_do_do(vector1, vector2, false, !true);
+    }
+    
+    public static void spawnExplosionParticleAtEntity(Entity entity)
+    {
+        for (int i = 0; i < 20; ++i)
+        {
+            double d0 = entity.worldObj.rand.nextGaussian() * 0.02D;
+            double d1 = entity.worldObj.rand.nextGaussian() * 0.02D;
+            double d2 = entity.worldObj.rand.nextGaussian() * 0.02D;
+            double d3 = 10.0D;
+            entity.worldObj.spawnParticle("explode", entity.posX + entity.worldObj.rand.nextFloat() * entity.width * 2.0F - entity.width - d0 * d3, entity.posY + entity.worldObj.rand.nextFloat() * entity.height - d1 * d3, entity.posZ + entity.worldObj.rand.nextFloat() * entity.width * 2.0F - entity.width - d2 * d3, d0, d1, d2);
+        }
     }
 }

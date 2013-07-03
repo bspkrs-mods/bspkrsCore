@@ -1,7 +1,6 @@
 package bspkrs.client.util;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -24,11 +23,11 @@ public final class HUDUtils
         tessellator.addVertexWithUV((x + 0), (y + 0), zLevel, ((u + 0) * var7), ((v + 0) * var8));
         tessellator.draw();
     }
-
+    
     /**
      * Renders the item's overlay information. Examples being stack count or damage on top of the item's image at the specified position.
      */
-    public static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, RenderEngine renderEngine, ItemStack itemStack, int x, int y)
+    public static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int x, int y)
     {
         if (itemStack != null)
         {
@@ -50,9 +49,9 @@ public final class HUDUtils
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             }
-
+            
             int count = 0;
-
+            
             if (itemStack.getMaxStackSize() > 1)
                 count = HUDUtils.countInInventory(ModLoader.getMinecraftInstance().thePlayer, itemStack.itemID, itemStack.getItemDamage());
             else if (itemStack.itemID == Item.bow.itemID)
@@ -69,7 +68,7 @@ public final class HUDUtils
             }
         }
     }
-
+    
     /**
      * Adds a quad to the tesselator at the specified position with the set width and height and color. Args: tessellator, x, y, width,
      * height, color
@@ -84,12 +83,12 @@ public final class HUDUtils
         tessellator.addVertex((x + width), (y + 0), 0.0D);
         tessellator.draw();
     }
-
+    
     public static int countInInventory(EntityPlayer player, int ID)
     {
         return countInInventory(player, ID, 0);
     }
-
+    
     public static int countInInventory(EntityPlayer player, int ID, int md)
     {
         int count = 0;
@@ -98,7 +97,7 @@ public final class HUDUtils
                 count += player.inventory.mainInventory[i].stackSize;
         return count;
     }
-
+    
     public static String stripCtrl(String s)
     {
         return s.replaceAll("(?i)\247[0-9a-fklmnor]", "");
