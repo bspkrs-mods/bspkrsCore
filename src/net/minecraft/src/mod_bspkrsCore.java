@@ -14,10 +14,10 @@ public class mod_bspkrsCore extends BaseMod
     @BSProp
     public static boolean     allowDebugOutput          = false;
     @BSProp(info = "The timeout in milliseconds for the version update check.")
-    public static int         updateTimeoutMilliseconds = 5000;
+    public static int         updateTimeoutMilliseconds = 3000;
     
     private ModVersionChecker versionChecker;
-    private final String      versionURL                = "http://bspk.rs/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
+    private final String      versionURL                = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
     private final String      mcfTopic                  = "http://www.minecraftforum.net/topic/1114612-";
     private boolean           doUpdateCheck;
     
@@ -36,7 +36,7 @@ public class mod_bspkrsCore extends BaseMod
     @Override
     public String getVersion()
     {
-        return "v3.01(" + Const.MCVERSION + ")";
+        return "v3.02(" + Const.MCVERSION + ")";
     }
     
     @Override
