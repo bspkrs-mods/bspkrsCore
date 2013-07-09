@@ -14,7 +14,7 @@ public class mod_bspkrsCore extends BaseMod
     @BSProp
     public static boolean     allowDebugOutput          = false;
     @BSProp(info = "The timeout in milliseconds for the version update check.")
-    public static int         updateTimeoutMilliseconds = 1500;
+    public static int         updateTimeoutMilliseconds = 5000;
     
     private ModVersionChecker versionChecker;
     private final String      versionURL                = "http://bspk.rs/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
