@@ -21,6 +21,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import cpw.mods.fml.common.Loader;
 
 /*
  * @Authors: DaftPVF, bspkrs
@@ -390,7 +391,7 @@ public final class CommonUtils
     
     public static String[] loadTextFromURL(URL url, Logger logger)
     {
-        return loadTextFromURL(url, logger, new String[] { "" }, 1000);
+        return loadTextFromURL(url, logger, new String[] { "" }, 0);
     }
     
     public static String[] loadTextFromURL(URL url, Logger logger, int timeoutMS)
@@ -400,7 +401,7 @@ public final class CommonUtils
     
     public static String[] loadTextFromURL(URL url, Logger logger, String defaultValue)
     {
-        return loadTextFromURL(url, logger, new String[] { defaultValue }, 1000);
+        return loadTextFromURL(url, logger, new String[] { defaultValue }, 0);
     }
     
     public static String[] loadTextFromURL(URL url, Logger logger, String defaultValue, int timeoutMS)
@@ -410,7 +411,7 @@ public final class CommonUtils
     
     public static String[] loadTextFromURL(URL url, Logger logger, String[] defaultValue)
     {
-        return loadTextFromURL(url, logger, defaultValue, 1000);
+        return loadTextFromURL(url, logger, defaultValue, 0);
     }
     
     public static String[] loadTextFromURL(URL url, Logger logger, String[] defaultValue, int timeoutMS)
@@ -436,6 +437,27 @@ public final class CommonUtils
         }
         scanner.close();
         return (String[]) arraylist.toArray(new String[arraylist.size()]);
+    }
+    
+    public static String getLogFileName()
+    {
+        try
+        {
+            Loader.instance();
+            try
+            {
+                Minecraft.getMinecraft();
+                return "ForgeModLoader-client-0.log";
+            }
+            catch (Throwable e)
+            {
+                return "ForgeModLoader-server-0.log";
+            }
+        }
+        catch (Throwable e)
+        {
+            return "ModLoader.txt";
+        }
     }
     
     public static String getMinecraftDir()
