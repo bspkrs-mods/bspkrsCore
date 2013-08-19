@@ -41,14 +41,14 @@
 
     <target name="clean">
         <!-- clean minecraft sources -->
-        <delete verbose="true" failonerror="false">
+        <delete includeemptydirs="true" verbose="true" failonerror="false">
             <fileset dir="${mcp.src.minecraft}">
                 <present present="both" targetdir="${dev.src}"/>
             </fileset>
         </delete>
 
         <!-- clean classes -->
-        <delete verbose="true" failonerror="false">
+        <delete includeemptydirs="true" verbose="true" failonerror="false">
             <fileset dir="${mcp.bin}"/>
         </delete>
     </target>
