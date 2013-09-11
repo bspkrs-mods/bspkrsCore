@@ -86,14 +86,14 @@ public final class HUDUtils
     
     public static int countInInventory(EntityPlayer player, int ID)
     {
-        return countInInventory(player, ID, 0);
+        return countInInventory(player, ID, -1);
     }
     
     public static int countInInventory(EntityPlayer player, int ID, int md)
     {
         int count = 0;
         for (int i = 0; i < player.inventory.mainInventory.length; i++)
-            if (player.inventory.mainInventory[i] != null && player.inventory.mainInventory[i].itemID == ID && player.inventory.mainInventory[i].getItemDamage() == md)
+            if (player.inventory.mainInventory[i] != null && player.inventory.mainInventory[i].itemID == ID && (md == -1 || player.inventory.mainInventory[i].getItemDamage() == md))
                 count += player.inventory.mainInventory[i].stackSize;
         return count;
     }
