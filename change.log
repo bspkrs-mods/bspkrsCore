@@ -1,3 +1,5 @@
+v3.04 - 10-Sep-2013
+- slight tweak in HUDUtils for countInInventory method
 v3.03 - 18-Jul-2013
 - added new method to get the log filename
 v3.02 - 09-Jul-2013
