@@ -89,7 +89,7 @@
             <fileset dir="${dev.resources}" includes="LICENSE"/>
             <mappedresources>
                 <concat>
-                    <fileset dir="${dev.resources}" includes="mcmod.template"/>
+                    <fileset dir="${dev.resources}" includes="mcmod.template,template.pack.mcmeta"/>
                     <filterchain>
                         <replacetokens>
                             <token key="AUTHORS" value="${mod.authors}"/>
