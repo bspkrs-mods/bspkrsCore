@@ -1,3 +1,5 @@
+v3.05 - 23-Sep-2013
+- added new ForgeUtils class
 v3.04 - 10-Sep-2013
 - slight tweak in HUDUtils for countInInventory method
 - 1.6.4 update (20-Sep-2013)
