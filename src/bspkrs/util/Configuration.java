@@ -216,7 +216,7 @@ public class Configuration
             {
                 BSLog.warning(
                         "Mod attempted to get a item ID with a default value in the block ID section, " +
-                                "mod authors should make sure there defaults are above %d unless explicitly needed " +
+                                "mod authors should make sure their defaults are above %d unless explicitly needed " +
                                 "so that all block ids are free to store blocks.", MAX_BLOCKS - ITEM_SHIFT);
                 BSLog.warning("Config \"%s\" Category: \"%s\" Key: \"%s\" Default: %d", fileName, category, key, defaultID);
             }
