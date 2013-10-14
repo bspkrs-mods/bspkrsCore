@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+@Deprecated
 public class BSProperties extends Properties
 {
     
@@ -26,6 +27,7 @@ public class BSProperties extends Properties
                 true);
     }
     
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void store0(BufferedWriter bw, String comments, boolean escUnicode)
             throws IOException
     {

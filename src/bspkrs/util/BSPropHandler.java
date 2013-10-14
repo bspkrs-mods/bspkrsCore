@@ -15,10 +15,11 @@ import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 
+@Deprecated
 public class BSPropHandler
 {
     private String       cfgDir;
-    private Class        clazz;
+    private Class<?>     clazz;
     private String       propFilename;
     private BSProperties props;
     private List<Field>  propFields;
@@ -89,7 +90,7 @@ public class BSPropHandler
             if (isFieldModifierPermissible(field.getModifiers()) && field.isAnnotationPresent(BSProp.class))
             {
                 propFields.add(field);
-                Object fieldValue = field.get((Object) null);
+                //Object fieldValue = field.get((Object) null);
                 //                fieldsCheckSum += fieldValue.hashCode();
             }
         }
@@ -148,7 +149,7 @@ public class BSPropHandler
             // double-check that the field is annotated and we are able to modify its value
             if (isFieldModifierPermissible(propField.getModifiers()) && propField.isAnnotationPresent(BSProp.class))
             {
-                Class fieldType = propField.getType();
+                Class<?> fieldType = propField.getType();
                 BSProp propAnnotation = propField.getAnnotation(BSProp.class);
                 String propName = propAnnotation.name().length() != 0 ? propAnnotation.name() : propField.getName();
                 Object fieldValue = propField.get((Object) null);

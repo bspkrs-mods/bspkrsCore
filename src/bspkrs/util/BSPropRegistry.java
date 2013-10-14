@@ -9,9 +9,11 @@ import java.util.List;
  * @author bspkrs
  */
 
+@Deprecated
 public final class BSPropRegistry
 {
     private static List<BSPropHandler> registeredPropHandlers  = new ArrayList<BSPropHandler>();
+    @SuppressWarnings("rawtypes")
     private static List<Class>         registeredBSPropClasses = new ArrayList<Class>();
     
     /**

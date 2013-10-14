@@ -10,6 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+@Deprecated
 @Retention(value = RUNTIME)
 @Target(value = FIELD)
 public @interface BSProp
