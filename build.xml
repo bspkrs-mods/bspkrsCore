@@ -82,9 +82,7 @@
     <target name="build-ML-zip">
         <!-- build the zip -->
         <zip destfile="${release.home}/${release.zip}">
-            <fileset dir="${mcp.bin}" includes="bspkrs/util/*.class"/>
-            <fileset dir="${mcp.bin}" includes="bspkrs/fml/util/*.class"/>
-            <fileset dir="${mcp.bin}" includes="bspkrs/client/util/*.class"/>
+            <fileset dir="${mcp.bin}" includes="bspkrs/**/*.class"/>
             <fileset dir="${mcp.bin}" includes="mod_${mod.id}.class"/>
             <fileset dir="${dev.resources}" includes="LICENSE"/>
             <mappedresources>
