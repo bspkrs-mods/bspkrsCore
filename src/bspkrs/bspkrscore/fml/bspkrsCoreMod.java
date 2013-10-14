@@ -75,6 +75,7 @@ public class bspkrsCoreMod implements IConnectionHandler
         config.save();
     }
     
+    @EventHandler
     public void init(FMLInitializationEvent event)
     {
         if (allowUpdateCheck)
@@ -123,6 +124,7 @@ public class bspkrsCoreMod implements IConnectionHandler
     @Override
     public void connectionClosed(INetworkManager manager)
     {
+        // This is probably unnecessary, but I'll leave it
         ticker.removeTicks(EnumSet.of(TickType.CLIENT));
     }
     

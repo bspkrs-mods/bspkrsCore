@@ -81,7 +81,7 @@ public class ModVersionChecker
     @Deprecated
     public void checkVersionWithLoggingBySubStringAsFloat(int beginIndex, int endIndex)
     {
-        if (!isCurrentVersionBySubStringAsFloatNewer(beginIndex, endIndex))
+        if (!isCurrentVersion())
             for (String msg : loadMsg)
                 BSLog.info(msg);
     }
