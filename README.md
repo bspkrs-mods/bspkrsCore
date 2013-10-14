@@ -1,11 +1,11 @@
 bspkrsCore
 =================
 bspkrs' bspkrsCore dependency mod for Minecraft.  Contains the set of shared classes used in all mods released by bspkrs.
-This repo contains source files for ModLoader.
+This repo contains source files for FML/Forge.
 
 ### Links of Interest
  - [Official Minecraft Forum Thread](http://www.minecraftforum.net/topic/1114612-)
- - [ModLoader Downloads](http://bspk.rs/MC/bspkrsCore/index.html)
+ - [Downloads](http://bspk.rs/MC/bspkrsCore/index.html)
  - [Issue Tracking System](https://github.com/bspkrs/bspkrsCore/issues)
  
 * * *
@@ -14,7 +14,7 @@ This repo contains source files for ModLoader.
 
 1. Download the latest recommended [MinecraftForge](http://files.minecraftforge.net) src distribution.
 2. Extract the Forge src zip file and run install.bat/.sh in the forge folder.
-3. Clone this git repo and the to whatever locations you like.
+3. Clone this git repo to whatever locations you like.
 4. Use the eclipse folder in your Forge/MCP setup as your Eclipse workspace.
 5. Under the Minecraft project, add the "src" folder from the repo as a linked folder (rename as necessary) and set it as a source folder.
 
