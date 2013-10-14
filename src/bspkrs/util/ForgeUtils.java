@@ -2,6 +2,7 @@ package bspkrs.util;
 
 import net.minecraftforge.common.ForgeVersion;
 
+@Deprecated
 public final class ForgeUtils
 {
     public static boolean isForgeEnv()
