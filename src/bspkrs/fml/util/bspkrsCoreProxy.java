@@ -1,17 +1,11 @@
 package bspkrs.fml.util;
 
-import net.minecraft.src.mod_bspkrsCore;
+import bspkrs.bspkrscore.fml.bspkrsCoreMod;
 
-//@TransformerExclusions({ "bspkrs.fml.util.bspkrsCoreProxy" })
+@Deprecated
 public class bspkrsCoreProxy
 {
-    public boolean                allowUpdateCheck;
+    public boolean                allowUpdateCheck = bspkrsCoreMod.instance.allowUpdateCheck;
     
-    public static bspkrsCoreProxy instance;
-    
-    public bspkrsCoreProxy()
-    {
-        instance = this;
-        allowUpdateCheck = mod_bspkrsCore.allowUpdateCheck;
-    }
+    public static bspkrsCoreProxy instance         = new bspkrsCoreProxy();
 }
