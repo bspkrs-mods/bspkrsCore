@@ -1,9 +1,12 @@
 package bspkrs.util;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
-import net.minecraft.src.mod_bspkrsCore;
+import bspkrs.bspkrscore.fml.bspkrsCoreMod;
 
 public class ModVersionChecker
 {
@@ -15,9 +18,6 @@ public class ModVersionChecker
     private String[]     loadMsg;
     private String[]     inGameMsg;
     
-    private int          remoteBeginIndex, remoteEndIndex = -1;
-    private boolean      useRemoteStringIndices = false;
-    
     @Deprecated
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg, Logger logger)
     {
@@ -26,7 +26,7 @@ public class ModVersionChecker
     
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg)
     {
-        this(modName, oldVer, versionURL, updateURL, loadMsg, inGameMsg, mod_bspkrsCore.updateTimeoutMilliseconds);
+        this(modName, oldVer, versionURL, updateURL, loadMsg, inGameMsg, bspkrsCoreMod.instance.updateTimeoutMilliseconds);
     }
     
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg, int timeoutMS)
@@ -56,21 +56,6 @@ public class ModVersionChecker
         if (versionLines.length > 1 && versionLines[1].trim().length() != 0)
             this.updateURL = versionLines[1];
         
-        if (versionLines.length > 2 && versionLines[2].trim().length() != 0 && versionLines[2].contains(","))
-        {
-            try
-            {
-                String[] indices = versionLines[2].split(",");
-                remoteBeginIndex = Integer.parseInt(indices[0]);
-                remoteEndIndex = Integer.parseInt(indices[1]);
-                useRemoteStringIndices = remoteBeginIndex <= remoteEndIndex;
-            }
-            catch (Throwable e)
-            {
-                remoteBeginIndex = remoteEndIndex = -1;
-            }
-        }
-        
         setLoadMessage(loadMsg);
         setInGameMessage(inGameMsg);
     }
@@ -93,6 +78,7 @@ public class ModVersionChecker
                 BSLog.info(msg);
     }
     
+    @Deprecated
     public void checkVersionWithLoggingBySubStringAsFloat(int beginIndex, int endIndex)
     {
         if (!isCurrentVersionBySubStringAsFloatNewer(beginIndex, endIndex))
@@ -129,23 +115,18 @@ public class ModVersionChecker
     
     public boolean isCurrentVersion()
     {
-        return newVer.equalsIgnoreCase(oldVer);
+        List<String> list = new ArrayList<String>();
+        list.add(oldVer);
+        list.add(newVer);
+        Collections.sort(list, new NaturalOrderComparator());
+        
+        return list.get(1).equals(oldVer);
     }
     
+    @Deprecated
     public boolean isCurrentVersionBySubStringAsFloatNewer(int beginIndex, int endIndex)
     {
-        try
-        {
-            if (useRemoteStringIndices)
-                return Float.valueOf(newVer.substring(remoteBeginIndex, remoteEndIndex)) <= Float.valueOf(oldVer.substring(beginIndex, endIndex));
-            else
-                return Float.valueOf(newVer.substring(beginIndex, endIndex)) <= Float.valueOf(oldVer.substring(beginIndex, endIndex));
-        }
-        catch (Throwable e)
-        {
-            BSLog.warning("Method isCurrentVersionBySubStringAsFloatNewer() encountered an error while comparing version substrings for mod %s: %s", modName, e.getMessage());
-            return true;
-        }
+        return isCurrentVersion();
     }
     
     private String replaceAllTags(String s)
