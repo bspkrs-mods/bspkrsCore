@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ListUtils
 {
-    public static String getListAsDelimitedString(List list, String delimiter)
+    public static String getListAsDelimitedString(List<?> list, String delimiter)
     {
         String r = "";
         

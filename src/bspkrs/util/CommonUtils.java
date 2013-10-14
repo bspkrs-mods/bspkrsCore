@@ -416,7 +416,7 @@ public final class CommonUtils
     
     public static String[] loadTextFromURL(URL url, Logger logger, String[] defaultValue, int timeoutMS)
     {
-        ArrayList arraylist = new ArrayList();
+        List<String> arraylist = new ArrayList<String>();
         Scanner scanner = null;
         try
         {
@@ -436,7 +436,7 @@ public final class CommonUtils
             arraylist.add(scanner.nextLine());
         }
         scanner.close();
-        return (String[]) arraylist.toArray(new String[arraylist.size()]);
+        return arraylist.toArray(new String[arraylist.size()]);
     }
     
     public static String getLogFileName()

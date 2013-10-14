@@ -817,11 +817,9 @@ public class Configuration
     public static class UnicodeInputStreamReader extends Reader
     {
         private final InputStreamReader input;
-        private final String            defaultEnc;
         
         public UnicodeInputStreamReader(InputStream source, String encoding) throws IOException
         {
-            defaultEnc = encoding;
             String enc = encoding;
             byte[] data = new byte[4];
             
