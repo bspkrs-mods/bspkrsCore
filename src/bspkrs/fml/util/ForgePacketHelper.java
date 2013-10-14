@@ -43,6 +43,7 @@ public final class ForgePacketHelper
         return packet;
     }
     
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Object[] readPacketData(DataInputStream data, Class[] packetDataTypes)
     {
         List result = new ArrayList<Object>();
@@ -62,6 +63,7 @@ public final class ForgePacketHelper
         return result.toArray();
     }
     
+    @SuppressWarnings("rawtypes")
     private static void writeObjectToStream(Object obj, DataOutputStream data) throws IOException
     {
         Class objClass = obj.getClass();
@@ -104,6 +106,7 @@ public final class ForgePacketHelper
         }
     }
     
+    @SuppressWarnings("rawtypes")
     private static Object readObjectFromStream(DataInputStream data, Class curClass) throws IOException
     {
         if (curClass.equals(Boolean.class))
