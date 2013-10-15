@@ -17,15 +17,16 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.Metadata;
 import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.IConnectionHandler;
 import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "v4.0(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true)
+@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "v4.1(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true)
 public class bspkrsCoreMod implements IConnectionHandler
 {
     // config stuff
@@ -39,13 +40,17 @@ public class bspkrsCoreMod implements IConnectionHandler
     @Instance(value = "bspkrsCore")
     public static bspkrsCoreMod instance;
     
+    @SidedProxy(clientSide = "bspkrs.bspkrscore.fml.ClientProxy", serverSide = "bspkrs.bspkrscore.fml.CommonProxy")
+    public static CommonProxy   proxy;
+    
     protected ModVersionChecker versionChecker;
     private final String        versionURL                = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
     private final String        mcfTopic                  = "http://www.minecraftforum.net/topic/1114612-";
     
     private Configuration       config;
     
-    private BSCTicker           ticker;
+    @SideOnly(Side.CLIENT)
+    protected BSCTicker         ticker;
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -84,8 +89,7 @@ public class bspkrsCoreMod implements IConnectionHandler
             versionChecker.checkVersionWithLogging();
         }
         
-        ticker = new BSCTicker(EnumSet.noneOf(TickType.class));
-        TickRegistry.registerTickHandler(ticker, Side.CLIENT);
+        proxy.registerTickHandler();
     }
     
     /**
