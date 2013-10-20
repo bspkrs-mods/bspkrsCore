@@ -85,6 +85,7 @@
             <fileset dir="${mcp.bin}" includes="bspkrs/**/*.class"/>
             <fileset dir="${mcp.bin}" includes="mod_${mod.id}.class"/>
             <fileset dir="${dev.resources}" includes="LICENSE"/>
+            <fileset dir="${mcp.home}/.." includes="forgeversion.properties"/>
             <mappedresources>
                 <concat>
                     <fileset dir="${dev.resources}" includes="mcmod.template"/>

@@ -1,11 +1,11 @@
 package bspkrs.client.util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.src.ModLoader;
 
 import org.lwjgl.opengl.GL11;
 
@@ -53,9 +53,9 @@ public final class HUDUtils
             int count = 0;
             
             if (itemStack.getMaxStackSize() > 1)
-                count = HUDUtils.countInInventory(ModLoader.getMinecraftInstance().thePlayer, itemStack.itemID, itemStack.getItemDamage());
+                count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, itemStack.itemID, itemStack.getItemDamage());
             else if (itemStack.itemID == Item.bow.itemID)
-                count = HUDUtils.countInInventory(ModLoader.getMinecraftInstance().thePlayer, Item.arrow.itemID);
+                count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, Item.arrow.itemID);
             
             if (count > 1)
             {
