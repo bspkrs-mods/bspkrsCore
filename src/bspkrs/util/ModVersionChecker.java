@@ -1,22 +1,27 @@
 package bspkrs.util;
 
+import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 import net.minecraft.src.mod_bspkrsCore;
 
 public class ModVersionChecker
 {
-    private URL          versionURL;
-    private final String modName;
-    private final String newVer;
-    private final String oldVer;
-    private String       updateURL;
-    private String[]     loadMsg;
-    private String[]     inGameMsg;
-    
-    private int          remoteBeginIndex, remoteEndIndex = -1;
-    private boolean      useRemoteStringIndices = false;
+    private URL                  versionURL;
+    private final String         modName;
+    private final String         newVer;
+    private final String         oldVer;
+    private String               updateURL;
+    private String[]             loadMsg;
+    private String[]             inGameMsg;
+    private File                 trackerFile;
+    private File                 trackerDir;
+    private static Configuration versionCheckTracker;
+    private final String         lastNewVersionFound;
     
     @Deprecated
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg, Logger logger)
@@ -51,25 +56,34 @@ public class ModVersionChecker
         
         newVer = versionLines[0].trim();
         
+        // Keep track of the versions we've seen to keep from nagging players with new version notifications beyond the first one
+        if (trackerDir == null)
+        {
+            trackerDir = new File(CommonUtils.getConfigDir() + "/bspkrsCore/");
+            if (trackerDir.exists() || trackerDir.mkdirs())
+                trackerFile = new File(trackerDir, "ModVersionCheckerTracking.txt");
+        }
+        
+        if (versionCheckTracker == null)
+            versionCheckTracker = new Configuration(trackerFile);
+        
+        versionCheckTracker.load();
+        ConfigCategory cc = versionCheckTracker.getCategory("version_check_tracker");
+        
+        if (!cc.containsKey(modName))
+            versionCheckTracker.get("version_check_tracker", modName, oldVer);
+        
+        lastNewVersionFound = cc.get(modName).getString();
+        
+        if (!isCurrentVersion(lastNewVersionFound, newVer))
+            cc.get(modName).set(newVer);
+        
+        versionCheckTracker.save();
+        
         // Override instantiated updateURL with second line of version file if
         // it exists and is non-blank
         if (versionLines.length > 1 && versionLines[1].trim().length() != 0)
             this.updateURL = versionLines[1];
-        
-        if (versionLines.length > 2 && versionLines[2].trim().length() != 0 && versionLines[2].contains(","))
-        {
-            try
-            {
-                String[] indices = versionLines[2].split(",");
-                remoteBeginIndex = Integer.parseInt(indices[0]);
-                remoteEndIndex = Integer.parseInt(indices[1]);
-                useRemoteStringIndices = remoteBeginIndex <= remoteEndIndex;
-            }
-            catch (Throwable e)
-            {
-                remoteBeginIndex = remoteEndIndex = -1;
-            }
-        }
         
         setLoadMessage(loadMsg);
         setInGameMessage(inGameMsg);
@@ -88,14 +102,15 @@ public class ModVersionChecker
     
     public void checkVersionWithLogging()
     {
-        if (!isCurrentVersion())
+        if (!isCurrentVersion(oldVer, newVer))
             for (String msg : loadMsg)
                 BSLog.info(msg);
     }
     
+    @Deprecated
     public void checkVersionWithLoggingBySubStringAsFloat(int beginIndex, int endIndex)
     {
-        if (!isCurrentVersionBySubStringAsFloatNewer(beginIndex, endIndex))
+        if (!isCurrentVersion(oldVer, newVer))
             for (String msg : loadMsg)
                 BSLog.info(msg);
     }
@@ -129,23 +144,23 @@ public class ModVersionChecker
     
     public boolean isCurrentVersion()
     {
-        return newVer.equalsIgnoreCase(oldVer);
+        return isCurrentVersion(lastNewVersionFound, newVer);
     }
     
+    public static boolean isCurrentVersion(String oldVer, String newVer)
+    {
+        List<String> list = new ArrayList<String>();
+        list.add(oldVer);
+        list.add(newVer);
+        Collections.sort(list, new NaturalOrderComparator());
+        
+        return list.get(1).equals(oldVer);
+    }
+    
+    @Deprecated
     public boolean isCurrentVersionBySubStringAsFloatNewer(int beginIndex, int endIndex)
     {
-        try
-        {
-            if (useRemoteStringIndices)
-                return Float.valueOf(newVer.substring(remoteBeginIndex, remoteEndIndex)) <= Float.valueOf(oldVer.substring(beginIndex, endIndex));
-            else
-                return Float.valueOf(newVer.substring(beginIndex, endIndex)) <= Float.valueOf(oldVer.substring(beginIndex, endIndex));
-        }
-        catch (Throwable e)
-        {
-            BSLog.warning("Method isCurrentVersionBySubStringAsFloatNewer() encountered an error while comparing version substrings for mod %s: %s", modName, e.getMessage());
-            return true;
-        }
+        return isCurrentVersion();
     }
     
     private String replaceAllTags(String s)

@@ -36,7 +36,7 @@ public class mod_bspkrsCore extends BaseMod
     @Override
     public String getVersion()
     {
-        return "v3.05(" + Const.MCVERSION + ")";
+        return "v4.02(" + Const.MCVERSION + ")";
     }
     
     @Override
@@ -51,7 +51,7 @@ public class mod_bspkrsCore extends BaseMod
         if (doUpdateCheck)
         {
             versionChecker = new ModVersionChecker(getName(), getVersion(), versionURL, mcfTopic);
-            versionChecker.checkVersionWithLoggingBySubStringAsFloat(1, 4);
+            versionChecker.checkVersionWithLogging();
         }
     }
     
@@ -66,7 +66,7 @@ public class mod_bspkrsCore extends BaseMod
     {
         if (doUpdateCheck && mc.theWorld.isRemote)
         {
-            if (!versionChecker.isCurrentVersionBySubStringAsFloatNewer(1, 4))
+            if (!versionChecker.isCurrentVersion())
                 for (String msg : versionChecker.getInGameMessage())
                     mc.thePlayer.addChatMessage(msg);
             doUpdateCheck = false;
