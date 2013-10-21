@@ -26,7 +26,7 @@ import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "v4.1(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true)
+@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "v4.2(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true)
 public class bspkrsCoreMod implements IConnectionHandler
 {
     // config stuff

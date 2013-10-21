@@ -1,3 +1,5 @@
+v4.2 - 21-Oct-2013
+- changed ModVersionChecker to keep track of new version notifications and only show the chat message once per new version
 v4.1 - 14-Oct-2013
 - fixed server-side crash
 v4.0 - 14-Oct-2013

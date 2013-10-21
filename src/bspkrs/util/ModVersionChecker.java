@@ -1,5 +1,6 @@
 package bspkrs.util;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,13 +11,17 @@ import bspkrs.bspkrscore.fml.bspkrsCoreMod;
 
 public class ModVersionChecker
 {
-    private URL          versionURL;
-    private final String modName;
-    private final String newVer;
-    private final String oldVer;
-    private String       updateURL;
-    private String[]     loadMsg;
-    private String[]     inGameMsg;
+    private URL                  versionURL;
+    private final String         modName;
+    private final String         newVer;
+    private final String         oldVer;
+    private String               updateURL;
+    private String[]             loadMsg;
+    private String[]             inGameMsg;
+    private File                 trackerFile;
+    private File                 trackerDir;
+    private static Configuration versionCheckTracker;
+    private final String         lastNewVersionFound;
     
     @Deprecated
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg, Logger logger)
@@ -51,6 +56,30 @@ public class ModVersionChecker
         
         newVer = versionLines[0].trim();
         
+        // Keep track of the versions we've seen to keep from nagging players with new version notifications beyond the first one
+        if (trackerDir == null)
+        {
+            trackerDir = new File(CommonUtils.getConfigDir() + "/bspkrsCore/");
+            if (trackerDir.exists() || trackerDir.mkdirs())
+                trackerFile = new File(trackerDir, "ModVersionCheckerTracking.txt");
+        }
+        
+        if (versionCheckTracker == null)
+            versionCheckTracker = new Configuration(trackerFile);
+        
+        versionCheckTracker.load();
+        ConfigCategory cc = versionCheckTracker.getCategory("version_check_tracker");
+        
+        if (!cc.containsKey(modName))
+            versionCheckTracker.get("version_check_tracker", modName, oldVer);
+        
+        lastNewVersionFound = cc.get(modName).getString();
+        
+        if (!isCurrentVersion(lastNewVersionFound, newVer))
+            cc.get(modName).set(newVer);
+        
+        versionCheckTracker.save();
+        
         // Override instantiated updateURL with second line of version file if
         // it exists and is non-blank
         if (versionLines.length > 1 && versionLines[1].trim().length() != 0)
@@ -73,7 +102,7 @@ public class ModVersionChecker
     
     public void checkVersionWithLogging()
     {
-        if (!isCurrentVersion())
+        if (!isCurrentVersion(oldVer, newVer))
             for (String msg : loadMsg)
                 BSLog.info(msg);
     }
@@ -81,7 +110,7 @@ public class ModVersionChecker
     @Deprecated
     public void checkVersionWithLoggingBySubStringAsFloat(int beginIndex, int endIndex)
     {
-        if (!isCurrentVersion())
+        if (!isCurrentVersion(oldVer, newVer))
             for (String msg : loadMsg)
                 BSLog.info(msg);
     }
@@ -114,6 +143,11 @@ public class ModVersionChecker
     }
     
     public boolean isCurrentVersion()
+    {
+        return isCurrentVersion(lastNewVersionFound, newVer);
+    }
+    
+    public static boolean isCurrentVersion(String oldVer, String newVer)
     {
         List<String> list = new ArrayList<String>();
         list.add(oldVer);
