@@ -1,3 +1,5 @@
+v4.3 - 23-Oct-2013
+- fixed potential mod ordering issue
 v4.2 - 21-Oct-2013
 - changed ModVersionChecker to keep track of new version notifications and only show the chat message once per new version
 v4.1 - 14-Oct-2013
