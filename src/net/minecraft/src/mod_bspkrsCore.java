@@ -22,6 +22,12 @@ public class mod_bspkrsCore extends BaseMod
     }
     
     @Override
+    public String getPriorities()
+    {
+        return "required-after:bspkrsCore";
+    }
+    
+    @Override
     public void load()
     {}
 }
