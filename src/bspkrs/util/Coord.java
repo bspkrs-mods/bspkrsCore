@@ -35,11 +35,7 @@ public class Coord
     @Override
     public int hashCode()
     {
-        int result = 23;
-        result = HashCodeUtil.hash(result, x);
-        result = HashCodeUtil.hash(result, y);
-        result = HashCodeUtil.hash(result, z);
-        return result;
+        return x + z << 8 + y << 16;
     }
     
     @Override
