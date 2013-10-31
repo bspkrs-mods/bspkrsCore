@@ -2,7 +2,7 @@ package bspkrs.util;
 
 /*
  * @author: bspkrs
- * @desc: provides constants for the types of block notifications possible in World.setBlockAndMetadataWithNotify()
+ * @desc: provides constants for the types of block notifications possible in World.setBlock()
  */
 
 public class BlockNotifyType
