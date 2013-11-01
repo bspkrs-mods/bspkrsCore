@@ -3,64 +3,26 @@ package bspkrs.bspkrscore.fml;
 import java.util.EnumSet;
 
 import net.minecraft.client.Minecraft;
+import bspkrs.fml.util.TickerBase;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class BSCTicker implements ITickHandler
+public class BSCTicker extends TickerBase
 {
-    private EnumSet<TickType> tickTypes = EnumSet.noneOf(TickType.class);
-    private boolean           allowUpdateCheck;
-    private Minecraft         mcClient;
+    private boolean   allowUpdateCheck;
+    private Minecraft mcClient;
     
     public BSCTicker(EnumSet<TickType> tickTypes)
     {
-        this.tickTypes = tickTypes;
+        super(tickTypes);
         allowUpdateCheck = bspkrsCoreMod.instance.allowUpdateCheck;
         mcClient = FMLClientHandler.instance().getClient();
     }
     
-    public void addTicks(EnumSet<TickType> tickTypes)
-    {
-        for (TickType tt : tickTypes)
-            if (!this.tickTypes.contains(tt))
-                this.tickTypes.add(tt);
-    }
-    
-    public void removeTicks(EnumSet<TickType> tickTypes)
-    {
-        for (TickType tt : tickTypes)
-            if (this.tickTypes.contains(tt))
-                this.tickTypes.remove(tt);
-    }
-    
     @Override
-    public void tickStart(EnumSet<TickType> tickTypes, Object... tickData)
-    {
-        tick(tickTypes, true);
-    }
-    
-    @Override
-    public void tickEnd(EnumSet<TickType> tickTypes, Object... tickData)
-    {
-        tick(tickTypes, false);
-    }
-    
-    private void tick(EnumSet<TickType> tickTypes, boolean isStart)
-    {
-        for (TickType tickType : tickTypes)
-        {
-            if (!onTick(tickType, isStart))
-            {
-                tickTypes.remove(tickType);
-                tickTypes.removeAll(tickType.partnerTicks());
-            }
-        }
-    }
-    
     public boolean onTick(TickType tick, boolean isStart)
     {
         if (isStart)
@@ -86,12 +48,6 @@ public class BSCTicker implements ITickHandler
         }
         
         return keepTicking;
-    }
-    
-    @Override
-    public EnumSet<TickType> ticks()
-    {
-        return this.tickTypes;
     }
     
     @Override
