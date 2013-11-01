@@ -6,17 +6,17 @@ import cpw.mods.fml.common.TickType;
 
 public abstract class DelayedActionTicker extends TickerBase
 {
-    private int ticksRemaining;
+    private int delayTicks;
     
     public DelayedActionTicker(int delayTicks)
     {
-        ticksRemaining = delayTicks;
+        this.delayTicks = delayTicks;
     }
     
     public DelayedActionTicker(EnumSet<TickType> tickTypes, int delayTicks)
     {
         super(tickTypes);
-        ticksRemaining = delayTicks;
+        this.delayTicks = delayTicks;
     }
     
     @Override
@@ -24,17 +24,17 @@ public abstract class DelayedActionTicker extends TickerBase
     {
         if (isTickStart)
             return true;
-        else if (--ticksRemaining == 0)
+        else if (--delayTicks == 0)
             onDelayCompletion();
         
-        return ticksRemaining > 0;
+        return delayTicks > 0;
     }
     
     @Override
     public abstract String getLabel();
     
     /**
-     * This method will be called when ticksRemaining ticks have passed.
+     * This method will be called when delayTicks ticks have elapsed.
      */
     protected abstract void onDelayCompletion();
 }

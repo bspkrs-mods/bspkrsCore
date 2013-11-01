@@ -8,6 +8,7 @@ import net.minecraft.network.NetLoginHandler;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.server.MinecraftServer;
+import bspkrs.fml.util.TickerBase;
 import bspkrs.util.CommonUtils;
 import bspkrs.util.Configuration;
 import bspkrs.util.Const;
@@ -50,7 +51,7 @@ public class bspkrsCoreMod implements IConnectionHandler
     private Configuration       config;
     
     @SideOnly(Side.CLIENT)
-    protected BSCTicker         ticker;
+    protected TickerBase        ticker;
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
