@@ -1,3 +1,6 @@
+v5.0 - ???
+- added lots of helper methods to Coord
+- added abstract convenience classes for various tick applications
 v4.3 - 23-Oct-2013
 - fixed potential mod ordering issue
 v4.2 - 21-Oct-2013

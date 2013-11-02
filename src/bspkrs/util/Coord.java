@@ -3,6 +3,7 @@ package bspkrs.util;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ForgeDirection;
 
 public class Coord
@@ -189,6 +190,11 @@ public class Coord
     public BlockID getBlockIDObject(World world)
     {
         return new BlockID(getBlockID(world), getBlockMetadata(world));
+    }
+    
+    public BiomeGenBase getBiomeGenBase(World world)
+    {
+        return world.getBiomeGenForCoords(x, z);
     }
     
     public static boolean moveBlock(World world, Coord src, Coord tgt, boolean allowBlockReplacement)
