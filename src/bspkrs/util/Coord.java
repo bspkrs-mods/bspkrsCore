@@ -1,5 +1,6 @@
 package bspkrs.util;
 
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -66,10 +67,10 @@ public class Coord
     
     public Coord getAdjacentCoord(ForgeDirection fd)
     {
-        return getDirectionallyOffsetCoord(fd, 1);
+        return getOffsetCoord(fd, 1);
     }
     
-    public Coord getDirectionallyOffsetCoord(ForgeDirection fd, int distance)
+    public Coord getOffsetCoord(ForgeDirection fd, int distance)
     {
         return new Coord(x + (fd.offsetX * distance), y + (fd.offsetY * distance), z + (fd.offsetZ * distance));
     }
@@ -175,6 +176,23 @@ public class Coord
     public boolean isBlockNormalCube(World world)
     {
         return world.isBlockNormalCube(x, y, z);
+    }
+    
+    public boolean isBlockOpaqueCube(World world)
+    {
+        return world.isBlockOpaqueCube(x, y, z);
+    }
+    
+    public boolean isWood(World world)
+    {
+        Block block = Block.blocksList[this.getBlockID(world)];
+        return block != null && block.isWood(world, x, y, z);
+    }
+    
+    public boolean isLeaves(World world)
+    {
+        Block block = Block.blocksList[this.getBlockID(world)];
+        return block != null && block.isLeaves(world, x, y, z);
     }
     
     public int getBlockID(World world)
