@@ -9,6 +9,13 @@ import java.util.logging.Logger;
 
 import bspkrs.bspkrscore.fml.bspkrsCoreMod;
 
+/**
+ * This class retrieves a version string from a text file at a given URL and compares it against the locally provided version string. It
+ * uses NaturalOrderComparator.java to determine if the remote version is newer than our local version.
+ * 
+ * @author bspkrs
+ */
+
 public class ModVersionChecker
 {
     private URL                  versionURL;
@@ -73,10 +80,12 @@ public class ModVersionChecker
         if (!cc.containsKey(modName))
             versionCheckTracker.get("version_check_tracker", modName, oldVer);
         
-        lastNewVersionFound = cc.get(modName).getString();
+        if (isCurrentVersion(oldVer, newVer))
+            lastNewVersionFound = newVer;
+        else
+            lastNewVersionFound = cc.get(modName).getString();
         
-        if (!isCurrentVersion(lastNewVersionFound, newVer))
-            cc.get(modName).set(newVer);
+        cc.get(modName).set(newVer);
         
         versionCheckTracker.save();
         
