@@ -83,8 +83,8 @@
         <!-- build the zip -->
         <zip destfile="${release.home}/${release.zip}">
             <fileset dir="${mcp.bin}" includes="bspkrs/**/*.class"/>
-            <fileset dir="${mcp.bin}" includes="mod_${mod.id}.class"/>
             <fileset dir="${dev.resources}" includes="LICENSE"/>
+            <fileset dir="${dev.resources}" includes="assets/**/*"/>
             <fileset dir="${mcp.home}/.." includes="forgeversion.properties"/>
             <mappedresources>
                 <concat>
