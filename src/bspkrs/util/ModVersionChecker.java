@@ -115,7 +115,7 @@ public class ModVersionChecker
     
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL)
     {
-        this(modName, oldVer, versionURL, updateURL, new String[] { "{modID} {oldVer} is out of date! Visit {updateURL} to download the latest release ({newVer})." }, new String[] { "\247c{modName} {newVer} \247ris out! Download the latest from \247a{updateURL}\247r" });
+        this(modName, oldVer, versionURL, updateURL, new String[] { "{modID} {oldVer} is out of date! Visit {updateURL} to download the latest release ({newVer})." }, new String[] { "\247c{modID} {newVer} \247ris out! Download the latest from \247a{updateURL}\247r" });
     }
     
     public void checkVersionWithLogging()
