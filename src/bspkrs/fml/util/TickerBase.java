@@ -53,8 +53,8 @@ public abstract class TickerBase implements ITickHandler
         {
             if (!onTick(tickType, isStart))
             {
-                tickTypes.remove(tickType);
-                tickTypes.removeAll(tickType.partnerTicks());
+                this.tickTypes.remove(tickType);
+                this.tickTypes.removeAll(tickType.partnerTicks());
             }
         }
     }
