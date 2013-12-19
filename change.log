@@ -1,3 +1,5 @@
+v5.2 - 19-Dec-2013
+- added new command /bs to manually show version check info
 v5.1 - 18-Dec-2013
 - fixed crappy code in TickerBase that prevented tickers from stopping (ugh)
 v5.0 - 05-Nov-2013
