@@ -1,4 +1,6 @@
-v5.0 - ???
+v5.1 - 18-Dec-2013
+- fixed crappy code in TickerBase that prevented tickers from stopping (ugh)
+v5.0 - 05-Nov-2013
 - added lots of helper methods to Coord
 - added abstract convenience classes for various tick applications
 v4.3 - 23-Oct-2013
