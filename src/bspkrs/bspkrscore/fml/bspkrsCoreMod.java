@@ -8,6 +8,7 @@ import net.minecraft.network.NetLoginHandler;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.client.ClientCommandHandler;
 import bspkrs.fml.util.TickerBase;
 import bspkrs.util.CommonUtils;
 import bspkrs.util.Configuration;
@@ -22,6 +23,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.IConnectionHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
@@ -52,6 +54,7 @@ public class bspkrsCoreMod implements IConnectionHandler
     
     @SideOnly(Side.CLIENT)
     protected TickerBase        ticker;
+    private boolean             isCommandRegistered;
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -91,6 +94,19 @@ public class bspkrsCoreMod implements IConnectionHandler
         }
         
         proxy.registerTickHandler();
+        
+        if (event.getSide().isClient())
+        {
+            ClientCommandHandler.instance.registerCommand(new CommandBS());
+            isCommandRegistered = true;
+        }
+    }
+    
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent event)
+    {
+        if (!isCommandRegistered)
+            event.registerServerCommand(new CommandBS());
     }
     
     /**

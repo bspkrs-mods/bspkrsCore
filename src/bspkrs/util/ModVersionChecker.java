@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.util.StatCollector;
 import bspkrs.bspkrscore.fml.bspkrsCoreMod;
 
 import com.google.common.collect.Ordering;
@@ -110,12 +111,14 @@ public class ModVersionChecker
         setLoadMessage(loadMsg);
         setInGameMessage(inGameMsg);
         
-        versionCheckerMap.put(modID, this);
+        versionCheckerMap.put(modID.toLowerCase(), this);
     }
     
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL)
     {
-        this(modName, oldVer, versionURL, updateURL, new String[] { "{modID} {oldVer} is out of date! Visit {updateURL} to download the latest release ({newVer})." }, new String[] { "\247c{modID} {newVer} \247ris out! Download the latest from \247a{updateURL}\247r" });
+        this(modName, oldVer, versionURL, updateURL,
+                new String[] { "{modID} {oldVer} is out of date! Visit {updateURL} to download the latest release ({newVer})." },
+                new String[] { "\247c{modID} {newVer} \247ris out! Download the latest from \247a{updateURL}\247r" });
     }
     
     public void checkVersionWithLogging()
@@ -202,21 +205,21 @@ public class ModVersionChecker
     {
         String[] r = { "" };
         
-        if (versionCheckerMap.containsKey(modID))
+        if (versionCheckerMap.containsKey(modID.toLowerCase()))
         {
-            ModVersionChecker versionChecker = versionCheckerMap.get(modID);
+            ModVersionChecker versionChecker = versionCheckerMap.get(modID.toLowerCase());
             if (!versionChecker.errorDetected)
             {
-                if (isCurrentVersion(versionChecker.currentVersion, versionChecker.newVersion))
+                if (!isCurrentVersion(versionChecker.currentVersion, versionChecker.newVersion))
                     r = versionChecker.getInGameMessage();
                 else
-                    r = new String[] { String.format("Mod %s is up to date.", versionChecker.modID) };
+                    r = new String[] { StatCollector.translateToLocalFormatted("bspkrs.modversionchecker.uptodate", versionChecker.modID) };
             }
             else
-                r = new String[] { String.format("An error occurred when the version check was performed for mod %s.", versionChecker.modID) };
+                r = new String[] { StatCollector.translateToLocalFormatted("bspkrs.modversionchecker.error", versionChecker.modID) };
         }
         else
-            r = new String[] { "Invalid Mod ID specified for version check." };
+            r = new String[] { StatCollector.translateToLocal("bspkrs.modversionchecker.invalidmodid") };
         
         return r;
     }
