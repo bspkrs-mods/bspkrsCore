@@ -1,0 +1,21 @@
+{
+  "modinfoversion": 2,
+  "modlist": [{
+    "modid": "bspkrsCore",
+    "name": "bspkrsCore",
+    "description": "Shared classes used in the mods maintained by bspkrs.",
+    "version": "${mod_version}",
+    "mcversion": "${minecraft_version}",
+    "url": "http://www.minecraftforum.net/topic/1114612-/",
+    "updateUrl": "",
+    "authors": [ "DaftPVF", "bspkrs" ],
+    "credits": "Much of this code was originally part of DaftPVF's mods that I maintain.\nAdditional credit to Risugami and LexManos.",
+    "logoFile": "",
+    "screenshots": [],
+    "parent": ",
+    "requiredMods": [],
+    "dependencies": [],
+    "dependants": [],
+    "useDependencyInformation": "true"
+  }]
+}
