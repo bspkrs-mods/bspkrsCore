@@ -69,4 +69,10 @@ public class CommandBS extends CommandBase
     {
         return args.length == 2 ? getListOfStringsMatchingLastWord(args, ModVersionChecker.getVersionCheckerMap().keySet().toArray(new String[] {})) : args.length == 1 ? version : null;
     }
+
+    @Override
+    public int compareTo(Object object)
+    {
+        return 0;
+    }
 }
