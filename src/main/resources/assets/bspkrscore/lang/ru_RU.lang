@@ -1,0 +1,5 @@
+commands.bs.usage=bs version <modid>
+commands.bs.disabled=Проверка версий отключена в bspkrsCore.cfg. Установите allowUpdateCheck=true, чтобы использовать эту команду.
+bspkrs.modversionchecker.uptodate=Модификация %s в актуальном состоянии.
+bspkrs.modversionchecker.error=Произошла ошибка при проверки версии модификации %s.
+bspkrs.modversionchecker.invalidmodid=Указан неверный Mod ID для проверки версии.
