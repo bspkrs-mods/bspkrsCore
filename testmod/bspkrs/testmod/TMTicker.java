@@ -3,7 +3,7 @@ package bspkrs.testmod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import bspkrs.bspkrscore.fml.bspkrsCoreMod;
-import bspkrs.helpers.client.entity.EntityPlayerSPHelper;
+import bspkrs.helpers.entity.player.EntityPlayerHelper;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -15,11 +15,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class TMTicker
 {
-    private Minecraft mcClient;
+    private Minecraft      mcClient;
+    private static boolean isRegistered = false;
     
     public TMTicker()
     {
         mcClient = FMLClientHandler.instance().getClient();
+        isRegistered = true;
     }
     
     @SubscribeEvent
@@ -33,13 +35,18 @@ public class TMTicker
                 if (TestMod.instance.versionChecker != null)
                     if (!TestMod.instance.versionChecker.isCurrentVersion())
                         for (String msg : TestMod.instance.versionChecker.getInGameMessage())
-                            EntityPlayerSPHelper.addChatMessage(mcClient.thePlayer, new ChatComponentText(msg));
+                            EntityPlayerHelper.addChatMessage(mcClient.thePlayer, new ChatComponentText(msg));
             
             if (!keepTicking)
             {
                 FMLCommonHandler.instance().bus().unregister(this);
-                TestMod.instance.ticker = null;
+                isRegistered = false;
             }
         }
+    }
+    
+    public static boolean isRegistered()
+    {
+        return isRegistered;
     }
 }

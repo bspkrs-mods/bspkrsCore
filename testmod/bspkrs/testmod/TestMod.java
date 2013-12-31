@@ -11,8 +11,6 @@ import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(modid = "TestMod", name = "TestMod", version = "2.0", dependencies = "required-after:bspkrsCore")
 public class TestMod
@@ -29,9 +27,6 @@ public class TestMod
     protected ModVersionChecker versionChecker;
     private final String        versionURL = Const.VERSION_URL + "/Minecraft/TestMod/testMod.version";
     private final String        mcfTopic   = "http://www.minecraftforum.net/topic/1114612-";
-    
-    @SideOnly(Side.CLIENT)
-    protected TMTicker          ticker;
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
