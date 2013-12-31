@@ -1,54 +1,45 @@
 package bspkrs.testmod;
 
-import java.util.EnumSet;
-
 import net.minecraft.client.Minecraft;
-import bspkrs.fml.util.TickerBase;
+import net.minecraft.util.ChatComponentText;
+import bspkrs.bspkrscore.fml.bspkrsCoreMod;
+import bspkrs.helpers.client.entity.EntityPlayerSPHelper;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class TMTicker extends TickerBase
+public class TMTicker
 {
     private Minecraft mcClient;
-    private boolean   allowUpdateCheck;
     
-    public TMTicker(EnumSet<TickType> tickTypes)
+    public TMTicker()
     {
-        super(tickTypes);
-        allowUpdateCheck = TestMod.instance.allowUpdateCheck;
         mcClient = FMLClientHandler.instance().getClient();
     }
     
-    @Override
-    public boolean onTick(TickType tick, boolean isStart)
+    @SubscribeEvent
+    public void onTick(ClientTickEvent event)
     {
-        if (isStart)
-        {
-            return true;
-        }
-        
         boolean keepTicking = !(mcClient != null && mcClient.thePlayer != null && mcClient.theWorld != null);
         
-        if (allowUpdateCheck && !keepTicking)
+        if (!event.phase.equals(Phase.START))
         {
-            if (TestMod.instance.versionChecker != null)
-                if (!TestMod.instance.versionChecker.isCurrentVersion())
-                    for (String msg : TestMod.instance.versionChecker.getInGameMessage())
-                        mcClient.thePlayer.addChatMessage(msg);
+            if (bspkrsCoreMod.instance.allowUpdateCheck && !keepTicking)
+                if (TestMod.instance.versionChecker != null)
+                    if (!TestMod.instance.versionChecker.isCurrentVersion())
+                        for (String msg : TestMod.instance.versionChecker.getInGameMessage())
+                            EntityPlayerSPHelper.addChatMessage(mcClient.thePlayer, new ChatComponentText(msg));
             
-            allowUpdateCheck = false;
+            if (!keepTicking)
+            {
+                FMLCommonHandler.instance().bus().unregister(this);
+                TestMod.instance.ticker = null;
+            }
         }
-        
-        return keepTicking;
     }
-    
-    @Override
-    public String getLabel()
-    {
-        return "TMTicker";
-    }
-    
 }

@@ -3,7 +3,6 @@ package bspkrs.bspkrscore.fml;
 import java.io.File;
 
 import net.minecraftforge.client.ClientCommandHandler;
-import bspkrs.fml.util.TickerBase;
 import bspkrs.util.BSConfiguration;
 import bspkrs.util.CommonUtils;
 import bspkrs.util.Const;
@@ -45,7 +44,7 @@ public class bspkrsCoreMod
     private BSConfiguration     config;
     
     @SideOnly(Side.CLIENT)
-    protected TickerBase        ticker;
+    protected BSCTicker         ticker;
     private boolean             isCommandRegistered;
     
     @EventHandler
@@ -85,7 +84,7 @@ public class bspkrsCoreMod
             versionChecker.checkVersionWithLogging();
         }
         
-        proxy.registerTickHandler();
+        //proxy.registerTickHandler();
         
         if (event.getSide().isClient())
         {
