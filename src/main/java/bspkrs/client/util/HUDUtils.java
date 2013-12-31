@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -53,9 +54,9 @@ public final class HUDUtils
             int count = 0;
             
             if (itemStack.getMaxStackSize() > 1)
-                count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, itemStack.itemID, itemStack.getItemDamage());
-            else if (itemStack.itemID == Item.bow.itemID)
-                count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, Item.arrow.itemID);
+                count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, itemStack.getItem(), itemStack.getItemDamage());
+            else if (itemStack.getItem().equals(Items.bow))
+                count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, Items.arrow);
             
             if (count > 1)
             {
@@ -84,16 +85,16 @@ public final class HUDUtils
         tessellator.draw();
     }
     
-    public static int countInInventory(EntityPlayer player, int ID)
+    public static int countInInventory(EntityPlayer player, Item item)
     {
-        return countInInventory(player, ID, -1);
+        return countInInventory(player, item, -1);
     }
     
-    public static int countInInventory(EntityPlayer player, int ID, int md)
+    public static int countInInventory(EntityPlayer player, Item item, int md)
     {
         int count = 0;
         for (int i = 0; i < player.inventory.mainInventory.length; i++)
-            if (player.inventory.mainInventory[i] != null && player.inventory.mainInventory[i].itemID == ID && (md == -1 || player.inventory.mainInventory[i].getItemDamage() == md))
+            if (player.inventory.mainInventory[i] != null && player.inventory.mainInventory[i].getItem().equals(item) && (md == -1 || player.inventory.mainInventory[i].getItemDamage() == md))
                 count += player.inventory.mainInventory[i].stackSize;
         return count;
     }
