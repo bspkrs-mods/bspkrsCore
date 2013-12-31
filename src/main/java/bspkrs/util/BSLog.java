@@ -1,7 +1,8 @@
 package bspkrs.util;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import cpw.mods.fml.common.FMLLog;
 
@@ -24,8 +25,7 @@ public enum BSLog
         if (logger != null)
             return;
         
-        logger = Logger.getLogger("bspkrsCore");
-        logger.setParent(FMLLog.getLogger());
+        logger = LogManager.getLogger("bspkrsCore");
     }
     
     public static void info(String format, Object... args)
@@ -40,12 +40,12 @@ public enum BSLog
     
     public static void severe(String format, Object... args)
     {
-        INSTANCE.log(Level.SEVERE, format, args);
+        INSTANCE.log(Level.ERROR, format, args);
     }
     
     public static void warning(String format, Object... args)
     {
-        INSTANCE.log(Level.WARNING, format, args);
+        INSTANCE.log(Level.WARN, format, args);
     }
     
     private void log(Level level, String format, Object... data)
