@@ -7,7 +7,7 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentText;
 import bspkrs.util.ModVersionChecker;
 
 @SuppressWarnings("unchecked")
@@ -60,7 +60,8 @@ public class CommandBS extends CommandBase
         String[] message = ModVersionChecker.checkVersionForMod(args[1]);
         
         for (String s : message)
-            sender.sendChatToPlayer(ChatMessageComponent.createFromText(s));
+            //sender.sendChatToPlayer(new ChatComponentText(s));
+            sender.func_145747_a(new ChatComponentText(s));
     }
     
     @SuppressWarnings("rawtypes")
@@ -69,7 +70,7 @@ public class CommandBS extends CommandBase
     {
         return args.length == 2 ? getListOfStringsMatchingLastWord(args, ModVersionChecker.getVersionCheckerMap().keySet().toArray(new String[] {})) : args.length == 1 ? version : null;
     }
-
+    
     @Override
     public int compareTo(Object object)
     {
