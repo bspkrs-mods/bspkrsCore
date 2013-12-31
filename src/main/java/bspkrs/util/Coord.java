@@ -5,7 +5,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
+import bspkrs.helpers.tileentity.TileEntityHelper;
+import bspkrs.helpers.world.WorldHelper;
 
 public class Coord
 {
@@ -170,44 +172,40 @@ public class Coord
     
     public boolean isAirBlock(World world)
     {
-        return world.isAirBlock(x, y, z);
+        //return world.isAirBlock(x, y, z);
+        return world.func_147437_c(x, y, z);
     }
     
     public boolean isBlockNormalCube(World world)
     {
-        return world.isBlockNormalCube(x, y, z);
+        return WorldHelper.isBlockNormalCube(world, x, y, z, false);
     }
     
     public boolean isBlockOpaqueCube(World world)
     {
-        return world.isBlockOpaqueCube(x, y, z);
+        return WorldHelper.isBlockOpaqueCube(world, x, y, z);
     }
     
     public boolean isWood(World world)
     {
-        Block block = Block.blocksList[this.getBlockID(world)];
+        Block block = WorldHelper.getBlock(world, x, y, z);
         return block != null && block.isWood(world, x, y, z);
     }
     
     public boolean isLeaves(World world)
     {
-        Block block = Block.blocksList[this.getBlockID(world)];
+        Block block = WorldHelper.getBlock(world, x, y, z);
         return block != null && block.isLeaves(world, x, y, z);
     }
     
-    public int getBlockID(World world)
+    public Block getBlock(World world)
     {
-        return world.getBlockId(x, y, z);
+        return WorldHelper.getBlock(world, x, y, z);
     }
     
     public int getBlockMetadata(World world)
     {
         return world.getBlockMetadata(x, y, z);
-    }
-    
-    public BlockID getBlockIDObject(World world)
-    {
-        return new BlockID(getBlockID(world), getBlockMetadata(world));
     }
     
     public BiomeGenBase getBiomeGenBase(World world)
@@ -219,30 +217,27 @@ public class Coord
     {
         if (!world.isRemote && !src.isAirBlock(world) && (tgt.isAirBlock(world) || allowBlockReplacement))
         {
-            int blockID = src.getBlockID(world);
+            Block blockID = src.getBlock(world);
             int metadata = src.getBlockMetadata(world);
             
-            world.setBlock(tgt.x, tgt.y, tgt.z, blockID, metadata, BlockNotifyType.ALL);
+            WorldHelper.setBlock(world, tgt.x, tgt.y, tgt.z, blockID, metadata, BlockNotifyType.ALL);
             
-            if (world.blockHasTileEntity(src.x, src.y, src.z))
+            TileEntity te = WorldHelper.getBlockTileEntity(world, src.x, src.y, src.z);
+            if (te != null)
             {
-                TileEntity te = world.getBlockTileEntity(src.x, src.y, src.z);
+                NBTTagCompound nbt = new NBTTagCompound();
+                TileEntityHelper.writeToNBT(te, nbt);
+                
+                nbt.setInteger("x", tgt.x);
+                nbt.setInteger("y", tgt.y);
+                nbt.setInteger("z", tgt.z);
+                
+                te = WorldHelper.getBlockTileEntity(world, tgt.x, tgt.y, tgt.z);
                 if (te != null)
-                {
-                    NBTTagCompound nbt = new NBTTagCompound();
-                    te.writeToNBT(nbt);
-                    
-                    nbt.setInteger("x", tgt.x);
-                    nbt.setInteger("y", tgt.y);
-                    nbt.setInteger("z", tgt.z);
-                    
-                    te = world.getBlockTileEntity(tgt.x, tgt.y, tgt.z);
-                    if (te != null)
-                        te.readFromNBT(nbt);
-                }
+                    TileEntityHelper.readFromNBT(te, nbt);
             }
             
-            world.setBlockToAir(src.x, src.y, src.z);
+            WorldHelper.setBlockToAir(world, src.x, src.y, src.z);
             return true;
         }
         return false;

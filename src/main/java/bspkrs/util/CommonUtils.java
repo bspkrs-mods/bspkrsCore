@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -21,7 +19,11 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.Loader;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+
+import bspkrs.helpers.world.WorldHelper;
 
 /*
  * @Authors: DaftPVF, bspkrs
@@ -255,7 +257,8 @@ public final class CommonUtils
     
     public static int getHighestGroundBlock(World world, int x, int y, int z)
     {
-        for (; y > 0 && (world.isAirBlock(x, y, z) || !world.isBlockNormalCube(x, y, z) || world.getBlockId(x, y, z) == Block.wood.blockID); y--)
+        for (; y > 0 && (WorldHelper.isAirBlock(world, x, y, z) || !WorldHelper.isBlockNormalCube(world, x, y, z, true)
+                || WorldHelper.getBlock(world, x, y, z).isWood(world, x, y, z)); y--)
         {}
         return y;
     }
@@ -263,7 +266,7 @@ public final class CommonUtils
     public static int getFirstNonAirBlockFromTop(World world, int x, int z)
     {
         int y;
-        for (y = world.getActualHeight(); world.isAirBlock(x, y - 1, z) && y > 0; y--)
+        for (y = world.getActualHeight(); WorldHelper.isAirBlock(world, x, y - 1, z) && y > 0; y--)
         {}
         return y;
     }
@@ -295,27 +298,27 @@ public final class CommonUtils
         return radius != 0.0D ? dar / radius : 0.0D;
     }
     
-    public static void setHugeMushroom(World world, Random random, int x, int y, int z, int id)
+    public static void setHugeMushroom(World world, Random random, int x, int y, int z, Block block)
     {
         byte w = 3;
         byte cw = 4;
         byte h = 4;
-        fillWithBlocks(world, (x - w) + 1, y, z - w, (x + w) - 1, (y + h) - 1, z - w, id, 10);
-        fillWithBlocks(world, (x - w) + 1, y, z + w, (x + w) - 1, (y + h) - 1, z + w, id, 10);
-        fillWithBlocks(world, x - w, y, (z - w) + 1, x - w, (y + h) - 1, (z + w) - 1, id, 10);
-        fillWithBlocks(world, x + w, y, (z - w) + 1, x + w, (y + h) - 1, (z + w) - 1, id, 10);
-        fillWithBlocksRounded(world, x - cw, y + h, z - cw, x + cw, y + h, z + cw, id, 14);
+        fillWithBlocks(world, (x - w) + 1, y, z - w, (x + w) - 1, (y + h) - 1, z - w, block, 10);
+        fillWithBlocks(world, (x - w) + 1, y, z + w, (x + w) - 1, (y + h) - 1, z + w, block, 10);
+        fillWithBlocks(world, x - w, y, (z - w) + 1, x - w, (y + h) - 1, (z + w) - 1, block, 10);
+        fillWithBlocks(world, x + w, y, (z - w) + 1, x + w, (y + h) - 1, (z + w) - 1, block, 10);
+        fillWithBlocksRounded(world, x - cw, y + h, z - cw, x + cw, y + h, z + cw, block, 14);
     }
     
-    public static void fillWithBlocks(World world, int x1, int y1, int z1, int x2, int y2, int z2, int id, int damage)
+    public static void fillWithBlocks(World world, int x1, int y1, int z1, int x2, int y2, int z2, Block block, int metadata)
     {
         for (int x = x1; x <= x2; x++)
             for (int y = y1; y <= y2; y++)
                 for (int z = z1; z <= z2; z++)
-                    world.setBlock(x, y, z, id, damage, 3);
+                    WorldHelper.setBlock(world, x, y, z, block, metadata, 3);
     }
     
-    public static void fillWithBlocksRounded(World world, int x1, int y1, int z1, int x2, int y2, int z2, int id, int damage)
+    public static void fillWithBlocksRounded(World world, int x1, int y1, int z1, int x2, int y2, int z2, Block block, int metadata)
     {
         for (int x = x1; x <= x2; x++)
             for (int y = y1; y <= y2; y++)
@@ -325,7 +328,7 @@ public final class CommonUtils
                     double yd = getDistanceRatioToCenter(y1, y2, y);
                     double zd = getDistanceRatioToCenter(z1, z2, z);
                     if (xd * xd + yd * yd + zd * zd <= 1.5D)
-                        world.setBlock(x, y, z, id, damage, 3);
+                        WorldHelper.setBlock(world, x, y, z, block, metadata, 3);
                 }
     }
     
@@ -427,7 +430,7 @@ public final class CommonUtils
         }
         catch (Throwable e)
         {
-            logger.log(Level.WARNING, String.format("Error retrieving remote string value! Defaulting to %s", stringArrayToString(defaultValue)));
+            logger.log(Level.WARN, String.format("Error retrieving remote string value! Defaulting to %s", stringArrayToString(defaultValue)));
             return defaultValue;
         }
         
@@ -443,20 +446,12 @@ public final class CommonUtils
     {
         try
         {
-            Loader.instance();
-            try
-            {
-                Minecraft.getMinecraft();
-                return "ForgeModLoader-client-0.log";
-            }
-            catch (Throwable e)
-            {
-                return "ForgeModLoader-server-0.log";
-            }
+            Minecraft.getMinecraft();
+            return "ForgeModLoader-client-0.log";
         }
         catch (Throwable e)
         {
-            return "ModLoader.txt";
+            return "ForgeModLoader-server-0.log";
         }
     }
     
@@ -512,7 +507,7 @@ public final class CommonUtils
             distance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
         }
         Vec3 vector2 = vector1.addVector(pitchAdjustedSinYaw * distance, sinPitch * distance, pitchAdjustedCosYaw * distance);
-        return player.worldObj.rayTraceBlocks_do_do(vector1, vector2, false, !true);
+        return player.worldObj.clip(vector1, vector2);
     }
     
     public static void spawnExplosionParticleAtEntity(Entity entity)

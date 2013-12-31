@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.config.ConfigCategory;
 import bspkrs.bspkrscore.fml.bspkrsCoreMod;
 
 import com.google.common.collect.Ordering;
@@ -29,7 +30,7 @@ public class ModVersionChecker
     private String[]                                    inGameMsg;
     private File                                        trackerFile;
     private File                                        trackerDir;
-    private static Configuration                        versionCheckTracker;
+    private static BSConfiguration                      versionCheckTracker;
     private final String                                lastNewVersionFound;
     private final String                                CHECK_ERROR       = "check_error";
     private final boolean                               errorDetected;
@@ -77,7 +78,7 @@ public class ModVersionChecker
         }
         
         if (versionCheckTracker == null)
-            versionCheckTracker = new Configuration(trackerFile);
+            versionCheckTracker = new BSConfiguration(trackerFile);
         
         versionCheckTracker.load();
         ConfigCategory cc = versionCheckTracker.getCategory("version_check_tracker");
@@ -126,12 +127,6 @@ public class ModVersionChecker
         if (!isCurrentVersion(currentVersion, newVersion))
             for (String msg : loadMsg)
                 BSLog.info(msg);
-    }
-    
-    @Deprecated
-    public void checkVersionWithLoggingBySubStringAsFloat(int i, int j)
-    {
-        checkVersionWithLogging();
     }
     
     public void setLoadMessage(String[] loadMsg)
