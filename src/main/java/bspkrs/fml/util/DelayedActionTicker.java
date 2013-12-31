@@ -1,10 +1,9 @@
 package bspkrs.fml.util;
 
-import java.util.EnumSet;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 
-import cpw.mods.fml.common.TickType;
-
-public abstract class DelayedActionTicker extends TickerBase
+public abstract class DelayedActionTicker<T extends TickEvent> extends TickerBase<T>
 {
     private int delayTicks;
     
@@ -13,25 +12,16 @@ public abstract class DelayedActionTicker extends TickerBase
         this.delayTicks = delayTicks;
     }
     
-    public DelayedActionTicker(EnumSet<TickType> tickTypes, int delayTicks)
-    {
-        super(tickTypes);
-        this.delayTicks = delayTicks;
-    }
-    
     @Override
-    public boolean onTick(TickType tickType, boolean isTickStart)
+    public boolean onTick(T event)
     {
-        if (isTickStart)
+        if (event.phase.equals(Phase.START))
             return true;
         else if (--delayTicks == 0)
             onDelayCompletion();
         
         return delayTicks > 0;
     }
-    
-    @Override
-    public abstract String getLabel();
     
     /**
      * This method will be called when delayTicks ticks have elapsed.

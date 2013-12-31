@@ -1,31 +1,29 @@
 package bspkrs.bspkrscore.fml;
 
-import java.util.EnumSet;
-
 import net.minecraft.client.Minecraft;
 import bspkrs.fml.util.TickerBase;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class BSCTicker extends TickerBase
+public class BSCTicker<T extends TickEvent> extends TickerBase<T>
 {
     private boolean   allowUpdateCheck;
     private Minecraft mcClient;
     
-    public BSCTicker(EnumSet<TickType> tickTypes)
+    public BSCTicker()
     {
-        super(tickTypes);
         allowUpdateCheck = bspkrsCoreMod.instance.allowUpdateCheck;
         mcClient = FMLClientHandler.instance().getClient();
     }
     
     @Override
-    public boolean onTick(TickType tick, boolean isStart)
+    public boolean onTick(T event)
     {
-        if (isStart)
+        if (event.phase.equals(Phase.START))
         {
             return true;
         }
@@ -37,23 +35,16 @@ public class BSCTicker extends TickerBase
             if (bspkrsCoreMod.instance.allowUpdateCheck && bspkrsCoreMod.instance.versionChecker != null)
                 if (!bspkrsCoreMod.instance.versionChecker.isCurrentVersion())
                     for (String msg : bspkrsCoreMod.instance.versionChecker.getInGameMessage())
-                        mcClient.thePlayer.addChatMessage(msg);
+                        mcClient.thePlayer.sendChatMessage(msg);
             
             allowUpdateCheck = false;
         }
         
         if (bspkrsCoreMod.instance.allowDebugOutput && !keepTicking && mcClient.theWorld.isRemote)
         {
-            mcClient.thePlayer.addChatMessage("\2470\2470\2471\2472\2473\2474\2475\2476\2477\247e\247f");
+            mcClient.thePlayer.sendChatMessage("\2470\2470\2471\2472\2473\2474\2475\2476\2477\247e\247f");
         }
         
         return keepTicking;
     }
-    
-    @Override
-    public String getLabel()
-    {
-        return "BSCTicker";
-    }
-    
 }

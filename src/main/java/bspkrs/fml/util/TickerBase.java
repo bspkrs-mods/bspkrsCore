@@ -1,73 +1,19 @@
 package bspkrs.fml.util;
 
-import java.util.EnumSet;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
-
-public abstract class TickerBase implements ITickHandler
+public abstract class TickerBase<T extends TickEvent>
 {
-    private EnumSet<TickType> tickTypes = EnumSet.noneOf(TickType.class);
-    
-    public TickerBase()
-    {}
-    
-    public TickerBase(EnumSet<TickType> tickTypes)
+    @SubscribeEvent
+    public void tickEventListener(T event)
     {
-        this.addTicks(tickTypes);
-    }
-    
-    public TickerBase addTicks(EnumSet<TickType> tickTypes)
-    {
-        for (TickType tt : tickTypes)
-            if (!this.tickTypes.contains(tt))
-                this.tickTypes.add(tt);
-        
-        return this;
-    }
-    
-    public TickerBase removeTicks(EnumSet<TickType> tickTypes)
-    {
-        for (TickType tt : tickTypes)
-            if (this.tickTypes.contains(tt))
-                this.tickTypes.remove(tt);
-        
-        return this;
-    }
-    
-    @Override
-    public void tickStart(EnumSet<TickType> tickTypes, Object... tickData)
-    {
-        tick(tickTypes, true);
-    }
-    
-    @Override
-    public void tickEnd(EnumSet<TickType> tickTypes, Object... tickData)
-    {
-        tick(tickTypes, false);
-    }
-    
-    private void tick(EnumSet<TickType> tickTypes, boolean isStart)
-    {
-        for (TickType tickType : tickTypes)
+        if (!onTick(event))
         {
-            if (!onTick(tickType, isStart))
-            {
-                this.tickTypes.remove(tickType);
-                this.tickTypes.removeAll(tickType.partnerTicks());
-            }
+            FMLCommonHandler.instance().bus().unregister(this);
         }
     }
     
-    public abstract boolean onTick(TickType tickType, boolean isTickStart);
-    
-    @Override
-    public EnumSet<TickType> ticks()
-    {
-        return this.tickTypes;
-    }
-    
-    @Override
-    public abstract String getLabel();
-    
+    public abstract boolean onTick(T event);
 }
