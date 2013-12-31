@@ -172,8 +172,7 @@ public class Coord
     
     public boolean isAirBlock(World world)
     {
-        //return world.isAirBlock(x, y, z);
-        return world.func_147437_c(x, y, z);
+        return WorldHelper.isAirBlock(world, x, y, z);
     }
     
     public boolean isBlockNormalCube(World world)
@@ -188,14 +187,12 @@ public class Coord
     
     public boolean isWood(World world)
     {
-        Block block = WorldHelper.getBlock(world, x, y, z);
-        return block != null && block.isWood(world, x, y, z);
+        return WorldHelper.getBlock(world, x, y, z).isWood(world, x, y, z);
     }
     
     public boolean isLeaves(World world)
     {
-        Block block = WorldHelper.getBlock(world, x, y, z);
-        return block != null && block.isLeaves(world, x, y, z);
+        return WorldHelper.getBlock(world, x, y, z).isLeaves(world, x, y, z);
     }
     
     public Block getBlock(World world)
