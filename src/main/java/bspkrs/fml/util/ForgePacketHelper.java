@@ -1,5 +1,8 @@
 package bspkrs.fml.util;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,14 +12,15 @@ import java.util.List;
 
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.network.play.server.S3FPacketCustomPayload;
 
 public final class ForgePacketHelper
 {
-    public static Packet250CustomPayload createPacket(String channel, int packetID, Object[] input)
+    public static S3FPacketCustomPayload createServerPacket(String channel, int packetID, Object[] input)
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         DataOutputStream data = new DataOutputStream(bytes);
+        ByteBuf buffer = Unpooled.buffer();
         try
         {
             data.write(packetID);
@@ -35,10 +39,7 @@ public final class ForgePacketHelper
             e.printStackTrace();
         }
         
-        Packet250CustomPayload packet = new Packet250CustomPayload();
-        packet.channel = channel;
-        packet.data = bytes.toByteArray();
-        packet.length = packet.data.length;
+        S3FPacketCustomPayload packet = new S3FPacketCustomPayload(channel, buffer);
         
         return packet;
     }
@@ -64,7 +65,7 @@ public final class ForgePacketHelper
     }
     
     @SuppressWarnings("rawtypes")
-    private static void writeObjectToStream(Object obj, DataOutputStream data) throws IOException
+    private static void writeObjectToStream(Object obj, ByteBuf data) throws IOException
     {
         Class objClass = obj.getClass();
         
