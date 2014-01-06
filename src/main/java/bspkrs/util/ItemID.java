@@ -3,63 +3,36 @@ package bspkrs.util;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class ItemID extends BlockID
+public class ItemID
 {
-    public ItemID(int id, int damage)
-    {
-        super(id, damage);
-    }
-    
-    /**
-     * String must be one or two integer values delimited with the delimiter string. ex "17|0","|"
-     * 
-     * @param format
-     * @param delimiter
-     */
-    public ItemID(String format, String delimiter)
-    {
-        super(format, delimiter);
-    }
-    
-    /**
-     * String must be one or two integer values delimited with a comma. ex "17,0"
-     * 
-     * @param format
-     */
-    public ItemID(String format)
-    {
-        super(format, ",");
-    }
+    public Item item;
+    public int  damage;
     
     public ItemID(Item item, int damage)
     {
-        super(item.itemID, damage);
+        this.item = item;
+        this.damage = damage;
     }
     
     public ItemID(ItemStack itemStack, int damage)
     {
-        super(itemStack.getItem().itemID, damage);
+        this(itemStack.getItem(), damage);
     }
     
     public ItemID(ItemStack itemStack)
     {
-        super(itemStack.getItem().itemID, -1);
+        this(itemStack.getItem(), -1);
     }
     
     public ItemID(Item item)
     {
-        super(item.itemID, -1);
-    }
-    
-    public ItemID(int id)
-    {
-        super(id, -1);
+        this(item, -1);
     }
     
     @Override
     public ItemID clone()
     {
-        return new ItemID(id, metadata);
+        return new ItemID(item, damage);
     }
     
     @Override
@@ -72,18 +45,18 @@ public class ItemID extends BlockID
             return false;
         
         ItemID o = (ItemID) obj;
-        if (o.metadata == -1 || metadata == -1)
-            return id == o.id;
+        if (o.damage == -1 || damage == -1)
+            return item.equals(o.item);
         else
-            return id == o.id && metadata == o.metadata;
+            return item.equals(o.item) && damage == o.damage;
     }
     
     @Override
     public int hashCode()
     {
         int result = 31;
-        result = HashCodeUtil.hash(result, id);
-        result = HashCodeUtil.hash(result, metadata);
+        result = HashCodeUtil.hash(result, item);
+        result = HashCodeUtil.hash(result, damage);
         return result;
     }
 }

@@ -1,3 +1,5 @@
 /.settings/
 /bin/
 /release/
+/build/
+/.gradle

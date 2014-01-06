@@ -29,7 +29,7 @@ public final class ForgePacketHelper
             {
                 for (Object obj : input)
                 {
-                    writeObjectToStream(obj, data);
+                    //writeObjectToStream(obj, data);
                 }
             }
             
@@ -83,7 +83,7 @@ public final class ForgePacketHelper
         }
         else if (objClass.equals(String.class))
         {
-            data.writeUTF((String) obj);
+            //data.writeUTF((String) obj);
         }
         else if (objClass.equals(Double.class))
         {
@@ -103,7 +103,7 @@ public final class ForgePacketHelper
         }
         else if (objClass.equals(NBTTagCompound.class))
         {
-            writeNBTTagCompound((NBTTagCompound) obj, data);
+            //writeNBTTagCompound((NBTTagCompound) obj, data);
         }
     }
     

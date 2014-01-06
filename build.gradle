@@ -33,7 +33,7 @@ minecraft {
 }
 
 // add some stuff to the version
-version = "${config.minecraft_version}-${config.mod_version}.${System.getenv().BUILD_NUMBER}"
+version = "${config.minecraft_version}-${config.mod_version}}"
 
 processResources {
     // replace stuff in the files we want.
