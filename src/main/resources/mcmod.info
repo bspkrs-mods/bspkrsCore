@@ -1,6 +1,6 @@
 {
   "modListVersion": 2,
-  "modlist": [{
+  "modList": [{
     "modid": "bspkrsCore",
     "name": "bspkrsCore",
     "description": "Shared classes used in the mods maintained by bspkrs.",
