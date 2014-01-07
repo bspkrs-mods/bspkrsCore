@@ -27,9 +27,9 @@ configFile.withReader {
     project.ext.config = new ConfigSlurper().parse prop
 }
 
-group = "bspkrscore"
+group = config.group_name
 version = config.mod_version
-archivesBaseName = "bspkrsCore"
+archivesBaseName = "[${config.minecraft_version}]${config.mod_id}"
 
 minecraft {
     version = config.minecraft_version + "-" + config.forge_version // grab latest forge
@@ -37,7 +37,7 @@ minecraft {
 }
 
 // add some stuff to the version
-version = "${config.minecraft_version}-${config.mod_version}"
+version = "${config.mod_version}(${config.minecraft_version})"
 
 processResources {
     // replace stuff in the files we want.

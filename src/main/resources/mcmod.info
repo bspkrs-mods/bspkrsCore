@@ -1,5 +1,5 @@
 {
-  "modinfoversion": 2,
+  "modListVersion": 2,
   "modlist": [{
     "modid": "bspkrsCore",
     "name": "bspkrsCore",
@@ -8,11 +8,11 @@
     "mcversion": "${minecraft_version}",
     "url": "http://www.minecraftforum.net/topic/1114612-/",
     "updateUrl": "",
-    "authors": [ "DaftPVF", "bspkrs" ],
-    "credits": "Much of this code was originally part of DaftPVF's mods that I maintain.\nAdditional credit to Risugami and LexManos.",
+    "authorList": [ "DaftPVF", "bspkrs" ],
+    "credits": "Much of this code was originally part of DaftPVF's mods that I maintain.",
     "logoFile": "",
     "screenshots": [],
-    "parent": ",
+    "parent": "",
     "requiredMods": [],
     "dependencies": [],
     "dependants": [],
