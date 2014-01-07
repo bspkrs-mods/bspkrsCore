@@ -2,4 +2,7 @@
 /bin/
 /release/
 /build/
-/.gradle
+/.gradle/
+/run/
+.project
+.classpath
