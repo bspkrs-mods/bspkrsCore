@@ -44,7 +44,7 @@ public class bspkrsCoreMod
     private BSConfiguration     config;
     
     @SideOnly(Side.CLIENT)
-    protected BSCTicker         ticker;
+    protected BSCClientTicker         ticker;
     private boolean             isCommandRegistered;
     
     @EventHandler

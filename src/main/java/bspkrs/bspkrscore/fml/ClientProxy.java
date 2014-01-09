@@ -7,9 +7,9 @@ public class ClientProxy extends CommonProxy
     @Override
     protected void registerTickHandler()
     {
-        if (!BSCTicker.isRegistered())
+        if (!BSCClientTicker.isRegistered())
         {
-            bspkrsCoreMod.instance.ticker = new BSCTicker();
+            bspkrsCoreMod.instance.ticker = new BSCClientTicker();
             FMLCommonHandler.instance().bus().register(bspkrsCoreMod.instance.ticker);
         }
     }
