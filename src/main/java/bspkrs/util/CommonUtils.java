@@ -72,6 +72,21 @@ public final class CommonUtils
         return false;
     }
     
+    public static boolean isIDInList(String id, int md, String list)
+    {
+        String[] itemArray = list.split(";");
+        for (int i = 0; i < itemArray.length; i++)
+        {
+            String[] values = itemArray[i].split(",");
+            
+            if (values.length > 1 && values[0].trim().equals(id) && parseInt(values[1], -1) == md)
+                return true;
+            else if (values[0].trim().equals(id))
+                return true;
+        }
+        return false;
+    }
+    
     public static boolean isIDInList(int id, int md, String list)
     {
         String[] itemArray = list.split(";");
@@ -83,7 +98,7 @@ public final class CommonUtils
             if (tempID == Integer.MAX_VALUE)
                 continue;
             
-            if (values.length > 1 && parseInt(values[1], -1) == md)
+            if (values.length > 1 && tempID == id && parseInt(values[1], -1) == md)
                 return true;
             else if (tempID == id)
                 return true;
