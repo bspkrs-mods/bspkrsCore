@@ -12,13 +12,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class BSCTicker
+public class BSCClientTicker
 {
     private boolean        allowUpdateCheck;
     private Minecraft      mcClient;
     private static boolean isRegistered = false;
     
-    public BSCTicker()
+    public BSCClientTicker()
     {
         allowUpdateCheck = bspkrsCoreMod.instance.allowUpdateCheck;
         mcClient = FMLClientHandler.instance().getClient();
