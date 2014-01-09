@@ -30,11 +30,6 @@ public class WorldHelper
         return getBlock(world, x, y, z).func_149662_c();
     }
     
-    public static boolean blockHasTileEntity(World world, int x, int y, int z)
-    {
-        return false;
-    }
-    
     public static Block getBlock(World world, int x, int y, int z)
     {
         return world.func_147439_a(x, y, z);
