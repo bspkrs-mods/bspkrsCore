@@ -19,8 +19,8 @@ public class ItemHelper
         return GameData.itemRegistry.func_148750_c(item);
     }
     
-    public static Item getItem(String id)
+    public static Item getItem(String uniqueID)
     {
-        return (Item) Item.field_150901_e.getObject(id);
+        return GameData.itemRegistry.getObject(uniqueID);
     }
 }

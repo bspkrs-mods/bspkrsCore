@@ -24,4 +24,9 @@ public class BlockHelper
     {
         return GameData.blockRegistry.func_148750_c(block);
     }
+    
+    public static Block getBlock(String uniqueID)
+    {
+        return GameData.blockRegistry.getObject(uniqueID);
+    }
 }
