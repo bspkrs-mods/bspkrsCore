@@ -2,16 +2,23 @@ package bspkrs.util;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import bspkrs.helpers.item.ItemHelper;
 
 public class ItemID
 {
-    public Item item;
-    public int  damage;
+    // Unique ID of the item from the namespace registry
+    public String id;
+    public int    damage;
     
-    public ItemID(Item item, int damage)
+    public ItemID(String id, int damage)
     {
-        this.item = item;
+        this.id = id;
         this.damage = damage;
+    }
+    
+    public ItemID(String id)
+    {
+        this(id, -1);
     }
     
     public ItemID(ItemStack itemStack, int damage)
@@ -24,15 +31,36 @@ public class ItemID
         this(itemStack.getItem(), -1);
     }
     
+    public ItemID(Item item, int damage)
+    {
+        this(ItemHelper.getUniqueID(item), damage);
+    }
+    
     public ItemID(Item item)
     {
-        this(item, -1);
+        this(ItemHelper.getUniqueID(item), -1);
+    }
+    
+    public ItemID(String format, String delimiter)
+    {
+        String[] parts = format.split(delimiter);
+        
+        if (parts.length > 1)
+        {
+            id = parts[0].trim();
+            damage = CommonUtils.parseInt(parts[1], -1);
+        }
+        else
+        {
+            id = parts[0].trim();
+            damage = -1;
+        }
     }
     
     @Override
     public ItemID clone()
     {
-        return new ItemID(item, damage);
+        return new ItemID(id, damage);
     }
     
     @Override
@@ -46,16 +74,16 @@ public class ItemID
         
         ItemID o = (ItemID) obj;
         if (o.damage == -1 || damage == -1)
-            return item.equals(o.item);
+            return id.equals(o.id);
         else
-            return item.equals(o.item) && damage == o.damage;
+            return id.equals(o.id) && damage == o.damage;
     }
     
     @Override
     public int hashCode()
     {
         int result = 31;
-        result = HashCodeUtil.hash(result, item);
+        result = HashCodeUtil.hash(result, id);
         result = HashCodeUtil.hash(result, damage);
         return result;
     }

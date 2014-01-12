@@ -2,22 +2,49 @@ package bspkrs.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
+import bspkrs.helpers.block.BlockHelper;
 import bspkrs.helpers.world.WorldHelper;
 
 public class BlockID
 {
-    public Block block;
-    public int   metadata;
+    public final String id;
+    public final int    metadata;
+    
+    public BlockID(String id, int metadata)
+    {
+        this.id = id;
+        this.metadata = metadata;
+    }
+    
+    public BlockID(String block)
+    {
+        this(block, -1);
+    }
     
     public BlockID(Block block, int metadata)
     {
-        this.block = block;
-        this.metadata = metadata;
+        this(BlockHelper.getUniqueID(block), metadata);
     }
     
     public BlockID(Block block)
     {
-        this(block, -1);
+        this(BlockHelper.getUniqueID(block), -1);
+    }
+    
+    public BlockID(String format, String delimiter)
+    {
+        String[] parts = format.split(delimiter);
+        
+        if (parts.length > 1)
+        {
+            id = parts[0].trim();
+            metadata = CommonUtils.parseInt(parts[1], -1);
+        }
+        else
+        {
+            id = parts[0].trim();
+            metadata = -1;
+        }
     }
     
     public BlockID(World world, int x, int y, int z)
@@ -30,10 +57,20 @@ public class BlockID
         this(WorldHelper.getBlock(world, x, y, z), metadata);
     }
     
+    public boolean isValid()
+    {
+        return getBlock() != null;
+    }
+    
+    public Block getBlock()
+    {
+        return BlockHelper.getBlock(id);
+    }
+    
     @Override
     public BlockID clone()
     {
-        return new BlockID(block, metadata);
+        return new BlockID(id, metadata);
     }
     
     @Override
@@ -47,16 +84,16 @@ public class BlockID
         
         BlockID o = (BlockID) obj;
         if (o.metadata == -1 || metadata == -1)
-            return block.equals(o.block);
+            return id.equals(o.id);
         else
-            return block.equals(o.block) && metadata == o.metadata;
+            return id.equals(o.id) && metadata == o.metadata;
     }
     
     @Override
     public int hashCode()
     {
         int result = 23;
-        result = HashCodeUtil.hash(result, block);
+        result = HashCodeUtil.hash(result, id);
         result = HashCodeUtil.hash(result, metadata);
         return result;
     }
@@ -64,6 +101,6 @@ public class BlockID
     @Override
     public String toString()
     {
-        return (metadata == -1 ? block + "" : block + ", " + metadata);
+        return (metadata == -1 ? id + "" : id + ", " + metadata);
     }
 }

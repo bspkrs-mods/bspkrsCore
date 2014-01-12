@@ -11,6 +11,7 @@ package bspkrs.helpers.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.world.World;
 import cpw.mods.fml.common.registry.GameData;
 
 public class BlockHelper
@@ -28,5 +29,15 @@ public class BlockHelper
     public static Block getBlock(String uniqueID)
     {
         return GameData.blockRegistry.getObject(uniqueID);
+    }
+    
+    public static int damageDropped(Block block, int metadata)
+    {
+        return block.func_149692_a(metadata);
+    }
+    
+    public static void dropBlockAsItem(Block block, World world, int x, int y, int z, int metadata, int fortuneLevel)
+    {
+        block.func_149697_b(world, x, y, z, metadata, fortuneLevel);
     }
 }

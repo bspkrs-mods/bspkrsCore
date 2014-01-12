@@ -40,6 +40,11 @@ public class WorldHelper
         return world.func_147438_o(x, y, z);
     }
     
+    public static void removeBlockTileEntity(World world, int x, int y, int z)
+    {
+        world.func_147475_p(x, y, z);
+    }
+    
     public static boolean setBlock(World world, int x, int y, int z, Block block, int metadata, int notifyFlag)
     {
         return world.func_147465_d(x, y, z, block, metadata, notifyFlag);

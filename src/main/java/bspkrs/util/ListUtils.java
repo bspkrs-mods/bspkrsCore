@@ -20,8 +20,7 @@ public class ListUtils
         List<BlockID> list = new ArrayList<BlockID>();
         
         for (String format : dList.split(delimiter))
-        //TODO: list.add(new BlockID(format));
-        ;
+            list.add(new BlockID(format, ","));
         
         return list;
     }
@@ -31,8 +30,7 @@ public class ListUtils
         List<ItemID> list = new ArrayList<ItemID>();
         
         for (String format : dList.split(delimiter))
-        //TODO: list.add(new ItemID(format));
-        ;
+            list.add(new ItemID(format, ","));
         
         return list;
     }
