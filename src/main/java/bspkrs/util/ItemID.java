@@ -87,4 +87,10 @@ public class ItemID
         result = HashCodeUtil.hash(result, damage);
         return result;
     }
+    
+    @Override
+    public String toString()
+    {
+        return (damage == -1 ? id + "" : id + ", " + damage);
+    }
 }
