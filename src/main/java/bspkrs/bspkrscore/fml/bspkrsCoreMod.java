@@ -20,7 +20,8 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "v6.0(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true)
+@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "v6.0(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true,
+        guiFactory = "bspkrs.bspkrscore.fml.gui.ModGuiFactoryHandler")
 public class bspkrsCoreMod
 {
     // config stuff
@@ -41,17 +42,15 @@ public class bspkrsCoreMod
     private final String        versionURL                = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
     private final String        mcfTopic                  = "http://www.minecraftforum.net/topic/1114612-";
     
-    private BSConfiguration     config;
+    public BSConfiguration      config;
     
     @SideOnly(Side.CLIENT)
-    protected BSCClientTicker         ticker;
+    protected BSCClientTicker   ticker;
     private boolean             isCommandRegistered;
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        String ctgyGen = BSConfiguration.CATEGORY_GENERAL;
-        
         metadata = event.getModMetadata();
         
         File file = event.getSuggestedConfigurationFile();
@@ -64,6 +63,12 @@ public class bspkrsCoreMod
         
         config = new BSConfiguration(file);
         
+        syncConfig();
+    }
+    
+    public void syncConfig()
+    {
+        String ctgyGen = BSConfiguration.CATEGORY_GENERAL;
         config.load();
         
         allowUpdateCheck = config.getBoolean("allowUpdateCheck", ctgyGen, allowUpdateCheck,

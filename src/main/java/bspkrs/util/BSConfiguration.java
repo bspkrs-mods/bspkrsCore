@@ -10,9 +10,17 @@ import net.minecraftforge.common.config.Property;
  */
 public class BSConfiguration extends Configuration
 {
+    private final File fileRef;
+    
     public BSConfiguration(File file)
     {
         super(file);
+        fileRef = file;
+    }
+    
+    public File getConfigFile()
+    {
+        return fileRef;
     }
     
     /**
