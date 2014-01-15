@@ -20,7 +20,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "v6.0(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true,
+@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "6.0(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true,
         guiFactory = "bspkrs.bspkrscore.fml.gui.ModGuiFactoryHandler")
 public class bspkrsCoreMod
 {
@@ -88,8 +88,6 @@ public class bspkrsCoreMod
             versionChecker = new ModVersionChecker(metadata.name, metadata.version, versionURL, mcfTopic);
             versionChecker.checkVersionWithLogging();
         }
-        
-        //proxy.registerTickHandler();
         
         if (event.getSide().isClient())
         {
