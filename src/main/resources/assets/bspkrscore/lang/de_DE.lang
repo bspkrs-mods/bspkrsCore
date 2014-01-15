@@ -1,0 +1,9 @@
+commands.bs.usage=bs version <modid>
+commands.bs.disabled=Versionsprüfung ist deaktiviert in bspkrsCore.cfg. Setze allowUpdateCheck=true, um diesen Befehl zu nutzen.
+bspkrs.modversionchecker.uptodate=Mod %s ist auf dem neuesten Stand.
+bspkrs.modversionchecker.error=Beim der Versionsprüfung für Mon %s ist ein Fehler aufgetreten.
+bspkrs.modversionchecker.invalidmodid=Ungültige Mod ID für Versionsprüfung angegeben.
+bspkrs.configgui.save=Speichern
+bspkrs.configgui.allowUpdateCheck=Erlaube Update-Prüfung
+bspkrs.configgui.allowDebugOutput=Erlaube Debug-Output
+bspkrs.configgui.updateTimeoutMilliseconds=Update-Prüfungs-Timeout (ms)
