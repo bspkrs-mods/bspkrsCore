@@ -144,9 +144,9 @@ public class GuiBSConfig extends GuiScreenWrapper
         updateTimeoutMillisecondsTextBox.drawTextBox();
         
         drawCenteredString(field_146289_q, guiTitle, width() / 2, height() / 4 - 16, 0xffffff);
-        drawString(field_146289_q, "allowUpdateCheck", width() / 2 - 3 - field_146289_q.getStringWidth("allowUpdateCheck"), height() / 4 + 24 - 16 + 6, 0xffffff);
-        drawString(field_146289_q, "allowDebugOutput", width() / 2 - 3 - field_146289_q.getStringWidth("allowDebugOutput"), height() / 4 + 24 * 2 - 16 + 6, 0xffffff);
-        drawString(field_146289_q, "updateTimeoutMilliseconds", width() / 2 - 3 - field_146289_q.getStringWidth("updateTimeoutMilliseconds"), height() / 4 + 24 * 3 - 16 + 6, 0xffffff);
+        drawString(field_146289_q, StatCollector.translateToLocal("bspkrs.configgui.allowUpdateCheck"), width() / 2 - 3 - field_146289_q.getStringWidth(StatCollector.translateToLocal("bspkrs.configgui.allowUpdateCheck")), height() / 4 + 24 - 16 + 6, 0xffffff);
+        drawString(field_146289_q, StatCollector.translateToLocal("bspkrs.configgui.allowDebugOutput"), width() / 2 - 3 - field_146289_q.getStringWidth(StatCollector.translateToLocal("bspkrs.configgui.allowDebugOutput")), height() / 4 + 24 * 2 - 16 + 6, 0xffffff);
+        drawString(field_146289_q, StatCollector.translateToLocal("bspkrs.configgui.updateTimeoutMilliseconds"), width() / 2 - 3 - field_146289_q.getStringWidth(StatCollector.translateToLocal("bspkrs.configgui.updateTimeoutMilliseconds")), height() / 4 + 24 * 3 - 16 + 6, 0xffffff);
         super.drawScreen(par1, par2, par3);
     }
 }

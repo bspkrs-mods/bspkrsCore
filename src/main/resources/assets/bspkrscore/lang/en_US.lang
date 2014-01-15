@@ -4,3 +4,6 @@ bspkrs.modversionchecker.uptodate=Mod %s is up to date.
 bspkrs.modversionchecker.error=An error occurred when the version check was performed for mod %s.
 bspkrs.modversionchecker.invalidmodid=Invalid Mod ID specified for version check.
 bspkrs.configgui.save=Save
+bspkrs.configgui.allowUpdateCheck=Allow Update Check
+bspkrs.configgui.allowDebugOutput=Allow Debug Output
+bspkrs.configgui.updateTimeoutMilliseconds=Update check timeout (ms)
