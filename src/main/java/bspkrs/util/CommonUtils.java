@@ -14,6 +14,7 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -492,7 +493,7 @@ public final class CommonUtils
     {
         try
         {
-            Block.class.getField("anvil");
+            Blocks.class.getField("air");
             return false;
         }
         catch (Throwable e)
