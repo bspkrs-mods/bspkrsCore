@@ -3,3 +3,7 @@ commands.bs.disabled=Проверка версий отключена в bspkrsC
 bspkrs.modversionchecker.uptodate=Модификация %s в актуальном состоянии.
 bspkrs.modversionchecker.error=Произошла ошибка при проверки версии модификации %s.
 bspkrs.modversionchecker.invalidmodid=Указан неверный Mod ID для проверки версии.
+bspkrs.configgui.save=Сохранить
+bspkrs.configgui.allowUpdateCheck=Разрешить проверку обновлений
+bspkrs.configgui.allowDebugOutput=Разрешить вывод отладочной информации
+bspkrs.configgui.updateTimeoutMilliseconds=Тайм-аут проверки обновлений (ms)
