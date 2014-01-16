@@ -58,6 +58,7 @@ public class GuiBSConfig extends GuiScreenWrapper
         allowDebugOutputButton = new GuiButton(-2, width() / 2 + 2, row2, 60, 20, String.valueOf(allowDebugOutput.getBoolean(true)));
         updateTimeoutMillisecondsTextBox = new GuiTextFieldWrapper(field_146289_q, width() / 2 + 2, row3, 60, 20);
         updateTimeoutMillisecondsTextBox.setText(String.valueOf(updateTimeoutMilliseconds.getInt()));
+        updateTimeoutMillisecondsTextBox.setEnabled(allowUpdateCheck.getBoolean(true));
         save = new GuiButton(-3, width() / 2 - 62, row5, 60, 20, StatCollector.translateToLocal("bspkrs.configgui.save"));
         back = new GuiButton(-4, width() / 2 + 2, row5, 60, 20, StatCollector.translateToLocal("gui.cancel"));
         
@@ -78,6 +79,7 @@ public class GuiBSConfig extends GuiScreenWrapper
             case -1:
                 allowUpdateCheck.set(!allowUpdateCheck.getBoolean(true));
                 allowUpdateCheckButton.field_146126_j = String.valueOf(allowUpdateCheck.getBoolean(true));
+                updateTimeoutMillisecondsTextBox.setEnabled(allowUpdateCheck.getBoolean(true));
                 break;
             
             case -2:

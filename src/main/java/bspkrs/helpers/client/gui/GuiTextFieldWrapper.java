@@ -44,6 +44,11 @@ public class GuiTextFieldWrapper extends GuiTextField
         return this.func_146206_l();
     }
     
+    public void setEnabled(boolean bol)
+    {
+        this.func_146184_c(bol);
+    }
+    
     public boolean textboxKeyTyped(char ch, int i)
     {
         return this.func_146201_a(ch, i);
