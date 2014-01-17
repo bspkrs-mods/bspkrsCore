@@ -1,5 +1,5 @@
 /**
- * Copyright © 2014 bspkrs <bspkrs@gmail.com>
+ * Copyright (C) 2014 bspkrs <bspkrs@gmail.com>
  * 
  * This Java package (bspkrs.helpers.**.*) is free software. It comes
  * without any warranty, to the extent permitted by applicable law.
