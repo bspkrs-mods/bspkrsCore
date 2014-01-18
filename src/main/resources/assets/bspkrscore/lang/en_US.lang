@@ -6,4 +6,5 @@ bspkrs.modversionchecker.invalidmodid=Invalid Mod ID specified for version check
 bspkrs.configgui.save=Save
 bspkrs.configgui.allowUpdateCheck=Allow Update Check
 bspkrs.configgui.allowDebugOutput=Allow Debug Output
+bspkrs.configgui.generateUniqueNamesFile=Generate UniqueNames.txt file
 bspkrs.configgui.updateTimeoutMilliseconds=Update check timeout (ms)

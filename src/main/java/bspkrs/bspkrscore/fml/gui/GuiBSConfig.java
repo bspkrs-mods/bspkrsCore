@@ -19,11 +19,12 @@ public class GuiBSConfig extends GuiScreenWrapper
 {
     String                        guiTitle;
     private GuiScreen             parent;
-    private GuiButton             back, save, allowUpdateCheckButton, allowDebugOutputButton;
+    private GuiButton             back, save, allowUpdateCheckButton, allowDebugOutputButton, generateUniqueNamesFileButton;
     private GuiTextFieldWrapper   updateTimeoutMillisecondsTextBox;
     private final BSConfiguration config;
     private Property              allowUpdateCheck;
     private Property              allowDebugOutput;
+    private Property              generateUniqueNamesFile;
     private Property              updateTimeoutMilliseconds;
     
     public GuiBSConfig(GuiScreen parent)
@@ -31,9 +32,10 @@ public class GuiBSConfig extends GuiScreenWrapper
         this.parent = parent;
         config = bspkrsCoreMod.instance.config;
         config.load();
-        allowUpdateCheck = config.get(Configuration.CATEGORY_GENERAL, "allowUpdateCheck", true);
-        allowDebugOutput = config.get(Configuration.CATEGORY_GENERAL, "allowDebugOutput", false);
-        updateTimeoutMilliseconds = config.get(Configuration.CATEGORY_GENERAL, "updateTimeoutMilliseconds", 3000);
+        allowUpdateCheck = config.get(Configuration.CATEGORY_GENERAL, "allowUpdateCheck", bspkrsCoreMod.instance.allowUpdateCheck, bspkrsCoreMod.instance.allowUpdateCheckDesc);
+        allowDebugOutput = config.get(Configuration.CATEGORY_GENERAL, "allowDebugOutput", bspkrsCoreMod.instance.allowDebugOutput, bspkrsCoreMod.instance.allowDebugOutputDesc);
+        generateUniqueNamesFile = config.get(Configuration.CATEGORY_GENERAL, "generateUniqueNamesFile", bspkrsCoreMod.instance.generateUniqueNamesFile, bspkrsCoreMod.instance.generateUniqueNamesFileDesc);
+        updateTimeoutMilliseconds = config.get(Configuration.CATEGORY_GENERAL, "updateTimeoutMilliseconds", bspkrsCoreMod.instance.updateTimeoutMilliseconds, bspkrsCoreMod.instance.updateTimeoutMillisecondsDesc);
         
         guiTitle = config.getConfigFile().getName();
     }
@@ -48,22 +50,25 @@ public class GuiBSConfig extends GuiScreenWrapper
         buttonList().clear();
         byte byte0 = -16;
         
-        int row1, row2, row3, row5;
+        int row1, row2, row3, row4, row6;
         row1 = height() / 4 + 24 + byte0;
         row2 = height() / 4 + 24 * 2 + byte0;
         row3 = height() / 4 + 24 * 3 + byte0;
-        row5 = height() / 4 + 24 * 5 + byte0;
+        row4 = height() / 4 + 24 * 4 + byte0;
+        row6 = height() / 4 + 24 * 6 + byte0;
         
         allowUpdateCheckButton = new GuiButton(-1, width() / 2 + 2, row1, 60, 20, String.valueOf(allowUpdateCheck.getBoolean(true)));
         allowDebugOutputButton = new GuiButton(-2, width() / 2 + 2, row2, 60, 20, String.valueOf(allowDebugOutput.getBoolean(true)));
-        updateTimeoutMillisecondsTextBox = new GuiTextFieldWrapper(field_146289_q, width() / 2 + 2, row3, 60, 20);
+        generateUniqueNamesFileButton = new GuiButton(-5, width() / 2 + 2, row3, 60, 20, String.valueOf(generateUniqueNamesFile.getBoolean(true)));
+        updateTimeoutMillisecondsTextBox = new GuiTextFieldWrapper(field_146289_q, width() / 2 + 2, row4, 60, 20);
         updateTimeoutMillisecondsTextBox.setText(String.valueOf(updateTimeoutMilliseconds.getInt()));
         updateTimeoutMillisecondsTextBox.setEnabled(allowUpdateCheck.getBoolean(true));
-        save = new GuiButton(-3, width() / 2 - 62, row5, 60, 20, StatCollector.translateToLocal("bspkrs.configgui.save"));
-        back = new GuiButton(-4, width() / 2 + 2, row5, 60, 20, StatCollector.translateToLocal("gui.cancel"));
+        save = new GuiButton(-3, width() / 2 - 62, row6, 60, 20, StatCollector.translateToLocal("bspkrs.configgui.save"));
+        back = new GuiButton(-4, width() / 2 + 2, row6, 60, 20, StatCollector.translateToLocal("gui.cancel"));
         
         buttonList().add(allowUpdateCheckButton);
         buttonList().add(allowDebugOutputButton);
+        buttonList().add(generateUniqueNamesFileButton);
         buttonList().add(save);
         buttonList().add(back);
     }
@@ -85,6 +90,11 @@ public class GuiBSConfig extends GuiScreenWrapper
             case -2:
                 allowDebugOutput.set(!allowDebugOutput.getBoolean(true));
                 allowDebugOutputButton.field_146126_j = String.valueOf(allowDebugOutput.getBoolean(true));
+                break;
+            
+            case -5:
+                generateUniqueNamesFile.set(!generateUniqueNamesFile.getBoolean(true));
+                generateUniqueNamesFileButton.field_146126_j = String.valueOf(generateUniqueNamesFile.getBoolean(true));
                 break;
             
             case -3:
@@ -110,7 +120,9 @@ public class GuiBSConfig extends GuiScreenWrapper
         
         save.field_146124_l = updateTimeoutMillisecondsTextBox.getText().trim().length() > 0 && Integer.valueOf(updateTimeoutMillisecondsTextBox.getText().trim()) > 0;
         
-        if (!updateTimeoutMillisecondsTextBox.getText().trim().isEmpty())
+        if (!updateTimeoutMillisecondsTextBox.getText().trim().isEmpty()
+                && Integer.valueOf(updateTimeoutMillisecondsTextBox.getText().trim()) >= 100
+                && Integer.valueOf(updateTimeoutMillisecondsTextBox.getText().trim()) <= 30000)
             updateTimeoutMilliseconds.set(Integer.valueOf(updateTimeoutMillisecondsTextBox.getText().trim()));
         else
             updateTimeoutMilliseconds.set(3000);
@@ -148,7 +160,8 @@ public class GuiBSConfig extends GuiScreenWrapper
         drawCenteredString(field_146289_q, guiTitle, width() / 2, height() / 4 - 16, 0xffffff);
         drawString(field_146289_q, StatCollector.translateToLocal("bspkrs.configgui.allowUpdateCheck"), width() / 2 - 3 - field_146289_q.getStringWidth(StatCollector.translateToLocal("bspkrs.configgui.allowUpdateCheck")), height() / 4 + 24 - 16 + 6, 0xffffff);
         drawString(field_146289_q, StatCollector.translateToLocal("bspkrs.configgui.allowDebugOutput"), width() / 2 - 3 - field_146289_q.getStringWidth(StatCollector.translateToLocal("bspkrs.configgui.allowDebugOutput")), height() / 4 + 24 * 2 - 16 + 6, 0xffffff);
-        drawString(field_146289_q, StatCollector.translateToLocal("bspkrs.configgui.updateTimeoutMilliseconds"), width() / 2 - 3 - field_146289_q.getStringWidth(StatCollector.translateToLocal("bspkrs.configgui.updateTimeoutMilliseconds")), height() / 4 + 24 * 3 - 16 + 6, 0xffffff);
+        drawString(field_146289_q, StatCollector.translateToLocal("bspkrs.configgui.generateUniqueNamesFile"), width() / 2 - 3 - field_146289_q.getStringWidth(StatCollector.translateToLocal("bspkrs.configgui.generateUniqueNamesFile")), height() / 4 + 24 * 3 - 16 + 6, 0xffffff);
+        drawString(field_146289_q, StatCollector.translateToLocal("bspkrs.configgui.updateTimeoutMilliseconds"), width() / 2 - 3 - field_146289_q.getStringWidth(StatCollector.translateToLocal("bspkrs.configgui.updateTimeoutMilliseconds")), height() / 4 + 24 * 4 - 16 + 6, 0xffffff);
         super.drawScreen(par1, par2, par3);
     }
 }

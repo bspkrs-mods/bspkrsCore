@@ -27,9 +27,16 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class bspkrsCoreMod
 {
     // config stuff
-    public boolean              allowUpdateCheck          = true;
-    public boolean              allowDebugOutput          = false;
-    public int                  updateTimeoutMilliseconds = 3000;
+    public final String         allowUpdateCheckDesc          = "Set to true to allow checking for updates for ALL of my mods, false to disable";
+    public boolean              allowUpdateCheck              = true;
+    public final String         allowDebugOutputDesc          = "";
+    public boolean              allowDebugOutput              = false;
+    public final String         updateTimeoutMillisecondsDesc = "The timeout in milliseconds for the version update check.";
+    public int                  updateTimeoutMilliseconds     = 3000;
+    public final String         generateUniqueNamesFileDesc   = "When true a file called UniqueNames.txt will be generated in the config folder for convenience. \n" +
+                                                                      "The names found in the file are the string representation of blocks and items in Minecraft.\n" +
+                                                                      "Mods such as Treecapitator and StartingInventory use them in their config files since IDs are gone.";
+    public boolean              generateUniqueNamesFile       = true;
     
     @Metadata(value = "bspkrsCore")
     public static ModMetadata   metadata;
@@ -41,8 +48,8 @@ public class bspkrsCoreMod
     public static CommonProxy   proxy;
     
     protected ModVersionChecker versionChecker;
-    private final String        versionURL                = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
-    private final String        mcfTopic                  = "http://www.minecraftforum.net/topic/1114612-";
+    private final String        versionURL                    = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
+    private final String        mcfTopic                      = "http://www.minecraftforum.net/topic/1114612-";
     
     public BSConfiguration      config;
     
@@ -73,11 +80,10 @@ public class bspkrsCoreMod
         String ctgyGen = BSConfiguration.CATEGORY_GENERAL;
         config.load();
         
-        allowUpdateCheck = config.getBoolean("allowUpdateCheck", ctgyGen, allowUpdateCheck,
-                "Set to true to allow checking for updates for ALL of my mods, false to disable");
-        allowDebugOutput = config.getBoolean("allowDebugOutput", ctgyGen, allowDebugOutput, "");
-        updateTimeoutMilliseconds = config.getInt("updateTimeoutMilliseconds", ctgyGen, updateTimeoutMilliseconds, 100, 30000,
-                "The timeout in milliseconds for the version update check.");
+        allowUpdateCheck = config.getBoolean("allowUpdateCheck", ctgyGen, allowUpdateCheck, allowUpdateCheckDesc);
+        allowDebugOutput = config.getBoolean("allowDebugOutput", ctgyGen, allowDebugOutput, allowDebugOutputDesc);
+        updateTimeoutMilliseconds = config.getInt("updateTimeoutMilliseconds", ctgyGen, updateTimeoutMilliseconds, 100, 30000, updateTimeoutMillisecondsDesc);
+        generateUniqueNamesFile = config.getBoolean("generateUniqueNamesFile", ctgyGen, generateUniqueNamesFile, generateUniqueNamesFileDesc);
         
         config.save();
     }
@@ -102,7 +108,8 @@ public class bspkrsCoreMod
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
-        UniqueNameListGenerator.instance().run();
+        if (generateUniqueNamesFile)
+            UniqueNameListGenerator.instance().run();
     }
     
     @EventHandler
