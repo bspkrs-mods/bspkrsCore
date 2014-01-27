@@ -14,15 +14,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class BSCClientTicker
 {
-    private boolean        allowUpdateCheck;
-    private Minecraft      mcClient;
-    private static boolean isRegistered = false;
+    public static boolean allowUpdateCheck = bspkrsCoreMod.instance.allowUpdateCheck;
+    private Minecraft     mcClient;
     
     public BSCClientTicker()
     {
-        allowUpdateCheck = bspkrsCoreMod.instance.allowUpdateCheck;
         mcClient = FMLClientHandler.instance().getClient();
-        isRegistered = true;
+        FMLCommonHandler.instance().bus().register(this);
+        
     }
     
     @SubscribeEvent
@@ -50,14 +49,7 @@ public class BSCClientTicker
             if (!keepTicking)
             {
                 FMLCommonHandler.instance().bus().unregister(this);
-                bspkrsCoreMod.instance.ticker = null;
-                isRegistered = false;
             }
         }
-    }
-    
-    public static boolean isRegistered()
-    {
-        return isRegistered;
     }
 }

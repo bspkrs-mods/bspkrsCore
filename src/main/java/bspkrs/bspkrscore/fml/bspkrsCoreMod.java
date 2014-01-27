@@ -22,7 +22,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "6.0(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true,
+@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "6.1(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true,
         guiFactory = "bspkrs.bspkrscore.fml.gui.ModGuiFactoryHandler")
 public class bspkrsCoreMod
 {
