@@ -6,3 +6,4 @@
 /run/
 .project
 .classpath
+build.properties.old
