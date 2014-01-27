@@ -6,7 +6,6 @@ import java.util.List;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatMessageComponent;
 import bspkrs.util.ModVersionChecker;
 
@@ -36,7 +35,7 @@ public class CommandBS extends CommandBase
     @Override
     public boolean canCommandSenderUseCommand(ICommandSender par1ICommandSender)
     {
-        return MinecraftServer.getServer().isSinglePlayer() || super.canCommandSenderUseCommand(par1ICommandSender);
+        return true;
     }
     
     @Override
@@ -69,7 +68,7 @@ public class CommandBS extends CommandBase
     {
         return args.length == 2 ? getListOfStringsMatchingLastWord(args, ModVersionChecker.getVersionCheckerMap().keySet().toArray(new String[] {})) : args.length == 1 ? version : null;
     }
-
+    
     @Override
     public int compareTo(Object object)
     {
