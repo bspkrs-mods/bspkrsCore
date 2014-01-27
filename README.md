@@ -8,7 +8,7 @@ This repo contains source files for FML/Forge.
  - [Player Downloads](http://bspk.rs/MC/bspkrsCore/index.html) - for Minecraft players to use
  - [Developer Downloads](http://bspk.rs/MC/bspkrsCore/deobf/index.html) - for developers to use in an IDE such as Eclipse
  - [Issue Tracking System](https://github.com/bspkrs/bspkrsCore/issues)
- - [Contributing](#contributing) - for those that want to help out
+ - [Contributing](#contributing) - for those that want to help out  
 ### Technical Info
  - [Setup Java](#setup-java)
  - [Setup Gradle](#setup-gradle)
