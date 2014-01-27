@@ -3,31 +3,19 @@ bspkrsCore
 bspkrs' bspkrsCore dependency mod for Minecraft.  Contains the set of shared classes used in all mods released by bspkrs.
 This repo contains source files for FML/Forge.
 
-### Links of Interest
+## Links of Interest
  - [Official Minecraft Forum Thread](http://www.minecraftforum.net/topic/1114612-)
- - [Player Downloads](http://bspk.rs/MC/bspkrsCore/index.html)
- - [Developer Downloads](http://bspk.rs/MC/bspkrsCore/deobf/index.html)
+ - [Player Downloads](http://bspk.rs/MC/bspkrsCore/index.html) - for Minecraft players to use
+ - [Developer Downloads](http://bspk.rs/MC/bspkrsCore/deobf/index.html) - for developers to use in an IDE such as Eclipse
  - [Issue Tracking System](https://github.com/bspkrs/bspkrsCore/issues)
- 
-* * *
-
-## Welcome to bspkrsCore!
-[Compiling bspkrsCore](#compile-bspkrsCore) - for those that want the latest unreleased features
-
-[Contributing](#contributing) - for those that want to help out
-
-### Compiling
-[Setup Java](#setup-java)
-
-[Setup Gradle](#setup-gradle)
-
-[Setup Git](#setup-git)
-
-[Setup bspkrsCore](#setup-bspkrsCore)
-
-[Compile bspkrsCore](#compile-bspkrsCore)
-
-[Updating Your Repository](#updating-your-repository)
+ - [Contributing](#contributing) - for those that want to help out
+### Technical Info
+ - [Setup Java](#setup-java)
+ - [Setup Gradle](#setup-gradle)
+ - [Setup Git](#setup-git)
+ - [Setup bspkrsCore](#setup-bspkrscore)
+ - [Compile bspkrsCore](#compile-bspkrscore)
+ - [Updating Your Repository](#updating-your-repository)
 
 #### Setup Java
 The Java JDK is used to compile bspkrsCore.
