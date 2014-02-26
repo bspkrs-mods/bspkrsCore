@@ -16,6 +16,6 @@ public class InventoryPlayerHelper
 {
     public static void clearInventory(InventoryPlayer inv, Item item, int damage)
     {
-        inv.func_146027_a(item, damage);
+        inv.clearInventory(item, damage);
     }
 }

@@ -16,11 +16,11 @@ public class TileEntityHelper
 {
     public static void readFromNBT(TileEntity te, NBTTagCompound ntc)
     {
-        te.func_145839_a(ntc);
+        te.readFromNBT(ntc);
     }
     
     public static void writeToNBT(TileEntity te, NBTTagCompound ntc)
     {
-        te.func_145841_b(ntc);
+        te.writeToNBT(ntc);
     }
 }

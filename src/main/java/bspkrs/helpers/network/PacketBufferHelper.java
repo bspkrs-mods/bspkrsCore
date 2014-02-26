@@ -18,11 +18,11 @@ public class PacketBufferHelper
 {
     public static void writeNBTTagCompound(PacketBuffer data, NBTTagCompound ntc) throws IOException
     {
-        data.func_150786_a(ntc);
+        data.writeNBTTagCompoundToBuffer(ntc);
     }
     
     public static NBTTagCompound readNBTTagCompound(PacketBuffer data) throws IOException
     {
-        return data.func_150793_b();
+        return data.readNBTTagCompoundFromBuffer();
     }
 }

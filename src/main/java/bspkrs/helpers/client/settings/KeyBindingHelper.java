@@ -15,6 +15,6 @@ public class KeyBindingHelper
 {
     public static int getKeyCode(KeyBinding kb)
     {
-        return kb.func_151463_i();
+        return kb.getKeyCode();
     }
 }

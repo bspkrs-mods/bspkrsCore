@@ -523,7 +523,7 @@ public final class CommonUtils
             distance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
         }
         Vec3 vector2 = vector1.addVector(pitchAdjustedSinYaw * distance, sinPitch * distance, pitchAdjustedCosYaw * distance);
-        return player.worldObj.clip(vector1, vector2);
+        return player.worldObj.rayTraceBlocks(vector1, vector2);
     }
     
     public static void spawnExplosionParticleAtEntity(Entity entity)

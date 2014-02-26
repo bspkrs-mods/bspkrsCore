@@ -16,11 +16,11 @@ public class NBTTagListHelper
 {
     public static NBTTagCompound getCompoundTagAt(NBTTagList ntl, int i)
     {
-        return ntl.func_150305_b(i);
+        return ntl.getCompoundTagAt(i);
     }
     
     public static String getStringTagAt(NBTTagList ntl, int i)
     {
-        return ntl.func_150307_f(i);
+        return ntl.getStringTagAt(i);
     }
 }

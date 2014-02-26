@@ -16,6 +16,6 @@ public class NBTTagCompoundHelper
 {
     public static NBTTagList getTagList(NBTTagCompound ntc, String name, Byte type)
     {
-        return ntc.func_150295_c(name, type);
+        return ntc.getTagList(name, type);
     }
 }

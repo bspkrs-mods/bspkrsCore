@@ -31,10 +31,10 @@ public class UniqueNameListGenerator
             ArrayList<String> blockList = new ArrayList();
             ArrayList<String> itemList = new ArrayList();
             
-            for (Object obj : GameData.blockRegistry.func_148742_b())
+            for (Object obj : GameData.blockRegistry.getKeys())
                 blockList.add((String) obj);
             
-            for (Object obj : GameData.itemRegistry.func_148742_b())
+            for (Object obj : GameData.itemRegistry.getKeys())
                 itemList.add((String) obj);
             
             Collections.sort(blockList);

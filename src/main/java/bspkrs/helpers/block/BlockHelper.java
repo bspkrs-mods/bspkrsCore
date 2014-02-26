@@ -18,12 +18,12 @@ public class BlockHelper
 {
     public static Material getBlockMaterial(Block block)
     {
-        return block.func_149688_o();
+        return block.getMaterial();
     }
     
     public static String getUniqueID(Block block)
     {
-        return GameData.blockRegistry.func_148750_c(block);
+        return GameData.blockRegistry.getNameForObject(block);
     }
     
     public static Block getBlock(String uniqueID)
@@ -33,11 +33,11 @@ public class BlockHelper
     
     public static int damageDropped(Block block, int metadata)
     {
-        return block.func_149692_a(metadata);
+        return block.damageDropped(metadata);
     }
     
     public static void dropBlockAsItem(Block block, World world, int x, int y, int z, int metadata, int fortuneLevel)
     {
-        block.func_149697_b(world, x, y, z, metadata, fortuneLevel);
+        block.dropBlockAsItem(world, x, y, z, metadata, fortuneLevel);
     }
 }

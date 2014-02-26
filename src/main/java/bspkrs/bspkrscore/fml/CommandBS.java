@@ -60,7 +60,7 @@ public class CommandBS extends CommandBase
         
         for (String s : message)
             //sender.sendChatToPlayer(new ChatComponentText(s));
-            sender.func_145747_a(new ChatComponentText(s));
+            sender.addChatMessage(new ChatComponentText(s));
     }
     
     @SuppressWarnings("rawtypes")

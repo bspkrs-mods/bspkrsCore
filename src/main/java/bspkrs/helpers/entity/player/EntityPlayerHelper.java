@@ -18,11 +18,11 @@ public class EntityPlayerHelper
 {
     public static void addChatMessage(EntityPlayer player, IChatComponent message)
     {
-        player.func_146105_b(message);
+        player.addChatMessage(message);
     }
     
     public static GameProfile getGameProfile(EntityPlayer player)
     {
-        return player.func_146103_bH();
+        return player.getGameProfile();
     }
 }

@@ -16,6 +16,6 @@ public class MinecraftHelper
 {
     public static void displayGuiScreen(Minecraft mc, GuiScreen screen)
     {
-        mc.func_147108_a(screen);
+        mc.displayGuiScreen(screen);
     }
 }

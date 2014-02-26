@@ -20,7 +20,7 @@ public class ItemHelper
 {
     public static String getUniqueID(Item item)
     {
-        return GameData.itemRegistry.func_148750_c(item);
+        return GameData.itemRegistry.getNameForObject(item);
     }
     
     public static Item getItem(String uniqueID)
@@ -30,6 +30,6 @@ public class ItemHelper
     
     public static boolean onBlockDestroyed(ItemStack itemStack, World world, Block block, int x, int y, int z, EntityLivingBase elb)
     {
-        return itemStack.getItem().func_150894_a(itemStack, world, block, x, y, z, elb);
+        return itemStack.getItem().onBlockDestroyed(itemStack, world, block, x, y, z, elb);
     }
 }
