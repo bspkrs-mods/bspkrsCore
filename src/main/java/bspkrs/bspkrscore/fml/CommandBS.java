@@ -73,6 +73,9 @@ public class CommandBS extends CommandBase
     @Override
     public int compareTo(Object object)
     {
+        if (object instanceof CommandBase)
+            return this.getCommandName().compareTo(((CommandBase) object).getCommandName());
+        
         return 0;
     }
 }

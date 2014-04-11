@@ -5,26 +5,25 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 
 import org.lwjgl.input.Keyboard;
 
 import bspkrs.bspkrscore.fml.bspkrsCoreMod;
 import bspkrs.helpers.client.MinecraftHelper;
-import bspkrs.util.BSConfiguration;
+import bspkrs.util.config.Configuration;
+import bspkrs.util.config.Property;
 
 public class GuiBSConfig extends GuiScreen
 {
-    String                        guiTitle;
-    private GuiScreen             parent;
-    private GuiButton             back, save, allowUpdateCheckButton, allowDebugOutputButton, generateUniqueNamesFileButton;
-    private GuiTextField          updateTimeoutMillisecondsTextBox;
-    private final BSConfiguration config;
-    private Property              allowUpdateCheck;
-    private Property              allowDebugOutput;
-    private Property              generateUniqueNamesFile;
-    private Property              updateTimeoutMilliseconds;
+    String                      guiTitle;
+    private GuiScreen           parent;
+    private GuiButton           back, save, allowUpdateCheckButton, allowDebugOutputButton, generateUniqueNamesFileButton;
+    private GuiTextField        updateTimeoutMillisecondsTextBox;
+    private final Configuration config;
+    private Property            allowUpdateCheck;
+    private Property            allowDebugOutput;
+    private Property            generateUniqueNamesFile;
+    private Property            updateTimeoutMilliseconds;
     
     public GuiBSConfig(GuiScreen parent)
     {

@@ -104,6 +104,21 @@ public class BSConfiguration extends Configuration
      */
     public String getString(String name, String category, String defaultValue, String comment)
     {
+        return getString(name, category, defaultValue, comment, new String[0]);
+    }
+    
+    /**
+     * Creates a string property.
+     * 
+     * @param name Name of the property.
+     * @param category Category of the property.
+     * @param defaultValue Default value of the property.
+     * @param comment A brief description what the property does.
+     * @param validValues A list of valid values that this property can be set to.
+     * @return The value of the new string property.
+     */
+    public String getString(String name, String category, String defaultValue, String comment, String[] validValues)
+    {
         Property prop = this.get(category, name, defaultValue);
         prop.comment = comment + " [default: " + defaultValue + "]";
         return prop.getString();
@@ -118,7 +133,21 @@ public class BSConfiguration extends Configuration
      * @param comment A brief description what the property does.
      * @return The value of the new string property.
      */
-    public String[] getStringList(String name, String category, String[] defaultValue, String comment)
+    public String[] getStringList(String name, String category, String[] defaultValues, String comment)
+    {
+        return getStringList(name, category, defaultValues, comment, new String[0]);
+    }
+    
+    /**
+     * Creates a string list property.
+     * 
+     * @param name Name of the property.
+     * @param category Category of the property.
+     * @param defaultValue Default value of the property.
+     * @param comment A brief description what the property does.
+     * @return The value of the new string property.
+     */
+    public String[] getStringList(String name, String category, String[] defaultValue, String comment, String[] validValues)
     {
         Property prop = this.get(category, name, defaultValue);
         prop.comment = comment + " [default: " + defaultValue + "]";

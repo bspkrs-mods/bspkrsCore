@@ -8,6 +8,7 @@ import bspkrs.util.CommonUtils;
 import bspkrs.util.Const;
 import bspkrs.util.ModVersionChecker;
 import bspkrs.util.UniqueNameListGenerator;
+import bspkrs.util.config.Configuration;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -51,7 +52,7 @@ public class bspkrsCoreMod
     private final String        versionURL                    = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
     private final String        mcfTopic                      = "http://www.minecraftforum.net/topic/1114612-";
     
-    public BSConfiguration      config;
+    public Configuration        config;
     
     @SideOnly(Side.CLIENT)
     protected BSCClientTicker   ticker;
@@ -70,7 +71,7 @@ public class bspkrsCoreMod
           //                file.delete();
         }
         
-        config = new BSConfiguration(file);
+        config = new Configuration(file);
         
         syncConfig();
     }
