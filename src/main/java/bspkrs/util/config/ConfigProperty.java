@@ -113,4 +113,10 @@ public class ConfigProperty implements IConfigProperty
     {
         return prop.getLanguageKey();
     }
+    
+    @Override
+    public String getDefault()
+    {
+        return prop.getDefault();
+    }
 }

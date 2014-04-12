@@ -56,6 +56,7 @@ public class GuiConfig extends GuiScreen
         {
             try
             {
+                this.propertyList.saveProperties();
                 this.saveAction.invoke(configObject);
                 this.afterSaveAction.invoke(afterSaveObject);
             }

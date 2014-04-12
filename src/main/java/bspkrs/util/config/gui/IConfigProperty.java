@@ -12,6 +12,8 @@ public interface IConfigProperty
     
     public boolean isDefault();
     
+    public String getDefault();
+    
     public void setToDefault();
     
     public boolean getBoolean();

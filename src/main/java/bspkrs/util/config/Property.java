@@ -193,6 +193,16 @@ public class Property
         this.values = this.defaultValues.clone();
     }
     
+    public String getDefault()
+    {
+        return defaultValue;
+    }
+    
+    public String[] getDefaults()
+    {
+        return defaultValues;
+    }
+    
     protected void setLanguageKey(String value)
     {
         this.langKey = value;
