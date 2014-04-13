@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.EnumChatFormatting;
 
 import org.lwjgl.input.Keyboard;
 
@@ -44,10 +45,19 @@ public class GuiPropertyList extends GuiListExtended
                 this.maxLabelTextWidth = l;
             }
             
-            if (prop.getType().equals(Boolean.class))
+            if (prop.getType().equals(boolean.class))
                 this.listEntries[i++] = new GuiPropertyList.BooleanProp(prop, null);
             else if (prop.getType().equals(int.class))
                 this.listEntries[i++] = new GuiPropertyList.IntegerProp(prop, null);
+            else if (prop.getType().equals(double.class))
+                this.listEntries[i++] = new GuiPropertyList.DoubleProp(prop, null);
+            else if (prop.getType().equals(EnumChatFormatting.class))
+            {
+                if (prop.getValidValues().length > 0)
+                    this.listEntries[i++] = new GuiPropertyList.ColorProp(prop, null);
+                else
+                    this.listEntries[i++] = new GuiPropertyList.StringProp(prop, null);
+            }
             else if (prop.getType().equals(String.class))
             {
                 if (prop.getValidValues().length > 0)
@@ -133,6 +143,10 @@ public class GuiPropertyList extends GuiListExtended
             this.btnValue.xPosition = x + 105;
             this.btnValue.yPosition = y;
             this.btnValue.displayString = String.valueOf(prop.getBoolean());
+            if (prop.getBoolean())
+                btnValue.packedFGColour = CommonUtils.getColorCode('2', true);
+            else
+                btnValue.packedFGColour = CommonUtils.getColorCode('4', true);
             this.btnValue.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
         }
         
@@ -191,11 +205,11 @@ public class GuiPropertyList extends GuiListExtended
     @SideOnly(Side.CLIENT)
     public class SelectStringProp implements IGuiConfigListEntry
     {
-        private final IConfigProperty prop;
-        private final String          propName;
-        private final GuiButton       btnValue;
-        private final GuiButton       btnDefault;
-        private int                   index;
+        protected final IConfigProperty prop;
+        private final String            propName;
+        protected final GuiButton       btnValue;
+        private final GuiButton         btnDefault;
+        private int                     index;
         
         private SelectStringProp(IConfigProperty prop)
         {
@@ -287,6 +301,21 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public void saveProperty()
         {}
+    }
+    
+    public class ColorProp extends SelectStringProp
+    {
+        ColorProp(IConfigProperty prop, Object obj)
+        {
+            super(prop, obj);
+        }
+        
+        @Override
+        public void drawEntry(int p_148279_1_, int x, int y, int top, int bottom, Tessellator tessellator, int mouseX, int mouseY, boolean p_148279_9_)
+        {
+            this.btnValue.packedFGColour = CommonUtils.getColorCode(this.prop.getString().charAt(0), true);
+            super.drawEntry(p_148279_1_, x, y, top, bottom, tessellator, mouseX, mouseY, p_148279_9_);
+        }
     }
     
     @SideOnly(Side.CLIENT)

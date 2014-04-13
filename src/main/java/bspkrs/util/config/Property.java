@@ -14,9 +14,10 @@ public class Property
         STRING,
         INTEGER,
         BOOLEAN,
-        DOUBLE;
+        DOUBLE,
+        COLOR;
         
-        private static Type[] values = { STRING, INTEGER, BOOLEAN, DOUBLE };
+        private static Type[] values = { STRING, INTEGER, BOOLEAN, DOUBLE, COLOR };
         
         public static Type tryParse(char id)
         {

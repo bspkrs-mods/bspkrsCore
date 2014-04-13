@@ -33,6 +33,14 @@ import bspkrs.helpers.world.WorldHelper;
 
 public final class CommonUtils
 {
+    private static int[] colorCodes = new int[] { 0, 170, 43520, 43690, 11141120, 11141290, 16755200, 11184810, 5592405, 5592575, 5635925, 5636095, 16733525, 16733695, 16777045, 16777215,
+                                    0, 42, 10752, 10794, 2752512, 2752554, 2763264, 2763306, 1381653, 1381695, 1392405, 1392447, 4134165, 4134207, 4144917, 4144959 };
+    
+    public static int getColorCode(char c, boolean isLighter)
+    {
+        return colorCodes[isLighter ? "0123456789abcdef".indexOf(c) : "0123456789abcdef".indexOf(c) + 16];
+    }
+    
     public static boolean isStringAllLettersOrDigits(CharSequence s)
     {
         for (int i = 0; i < s.length(); i++)
