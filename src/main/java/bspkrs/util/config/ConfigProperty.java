@@ -9,15 +9,15 @@ import bspkrs.util.config.gui.IConfigProperty;
 
 public class ConfigProperty implements IConfigProperty
 {
-    private Property prop;
-    private Type     type;
+    private Property      prop;
+    private Property.Type type;
     
     public ConfigProperty(Property prop)
     {
         this(prop, prop.getType());
     }
     
-    public ConfigProperty(Property prop, Type type)
+    public ConfigProperty(Property prop, Property.Type type)
     {
         this.prop = prop;
         this.type = type;
