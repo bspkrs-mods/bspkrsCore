@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.util.EnumChatFormatting;
-import bspkrs.util.config.Property.Type;
 import bspkrs.util.config.gui.IConfigProperty;
 
 public class ConfigProperty implements IConfigProperty
@@ -32,13 +31,13 @@ public class ConfigProperty implements IConfigProperty
     @Override
     public Class getType()
     {
-        if (type.equals(Type.BOOLEAN))
+        if (type.equals(Property.Type.BOOLEAN))
             return boolean.class;
-        else if (type.equals(Type.DOUBLE))
+        else if (type.equals(Property.Type.DOUBLE))
             return double.class;
-        else if (type.equals(Type.INTEGER))
+        else if (type.equals(Property.Type.INTEGER))
             return int.class;
-        else if (type.equals(Type.COLOR))
+        else if (type.equals(Property.Type.COLOR))
             return EnumChatFormatting.class;
         else
             return String.class;
