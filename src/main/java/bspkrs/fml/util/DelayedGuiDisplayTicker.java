@@ -5,8 +5,8 @@ import net.minecraft.client.gui.GuiScreen;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
 
 public class DelayedGuiDisplayTicker
 {
@@ -23,7 +23,7 @@ public class DelayedGuiDisplayTicker
     }
     
     @SubscribeEvent
-    public void onTick(ServerTickEvent event)
+    public void onTick(ClientTickEvent event)
     {
         if (event.phase.equals(Phase.START))
             return;

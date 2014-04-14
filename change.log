@@ -1,3 +1,5 @@
+6.2 - 13-Apr-2014
+- fixed client commands not opening GUIs
 6.1 - 13-Apr-2014
 - removed a lot of the helper stuff for 1.7.2
 - created a set of extensible classes for in-game config guis
