@@ -79,12 +79,25 @@ public class GuiConfig extends GuiScreen
      * Called when the mouse is clicked.
      */
     @Override
-    protected void mouseClicked(int x, int y, int par3)
+    protected void mouseClicked(int x, int y, int mouseEvent)
     {
-        if (par3 != 0 || !this.propertyList.func_148179_a(x, y, par3))
+        if (mouseEvent != 0 || !this.propertyList.func_148179_a(x, y, mouseEvent))
         {
-            this.propertyList.mouseClicked(x, y, par3);
-            super.mouseClicked(x, y, par3);
+            this.propertyList.mouseClicked(x, y, mouseEvent);
+            super.mouseClicked(x, y, mouseEvent);
+        }
+    }
+    
+    /**
+     * Called when the mouse is moved or a mouse button is released. Signature: (mouseX, mouseY, which) which==-1 is mouseMove, which==0 or
+     * which==1 is mouseUp
+     */
+    @Override
+    protected void mouseMovedOrUp(int x, int y, int mouseEvent)
+    {
+        if (mouseEvent != 0 || !this.propertyList.func_148181_b(x, y, mouseEvent))
+        {
+            super.mouseMovedOrUp(x, y, mouseEvent);
         }
     }
     
