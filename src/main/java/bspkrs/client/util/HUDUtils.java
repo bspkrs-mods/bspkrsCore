@@ -30,9 +30,17 @@ public final class HUDUtils
      */
     public static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int x, int y)
     {
-        if (itemStack != null)
+        renderItemOverlayIntoGUI(fontRenderer, itemStack, x, y, true, true);
+    }
+    
+    /**
+     * Renders the item's overlay information. Examples being stack count or damage on top of the item's image at the specified position.
+     */
+    public static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int x, int y, boolean showDamageBar, boolean showCount)
+    {
+        if (itemStack != null && (showDamageBar || showCount))
         {
-            if (itemStack.isItemDamaged())
+            if (itemStack.isItemDamaged() && showDamageBar)
             {
                 int var11 = (int) Math.round(13.0D - itemStack.getItemDamageForDisplay() * 13.0D / itemStack.getMaxDamage());
                 int var7 = (int) Math.round(255.0D - itemStack.getItemDamageForDisplay() * 255.0D / itemStack.getMaxDamage());
@@ -51,21 +59,24 @@ public final class HUDUtils
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             }
             
-            int count = 0;
-            
-            if (itemStack.getMaxStackSize() > 1)
-                count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, itemStack.getItem(), itemStack.getItemDamage());
-            else if (itemStack.getItem().equals(Items.bow))
-                count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, Items.arrow);
-            
-            if (count > 1)
+            if (showCount)
             {
-                String var6 = "" + count;
-                GL11.glDisable(GL11.GL_LIGHTING);
-                GL11.glDisable(GL11.GL_DEPTH_TEST);
-                fontRenderer.drawStringWithShadow(var6, x + 19 - 2 - fontRenderer.getStringWidth(var6), y + 6 + 3, 16777215);
-                GL11.glEnable(GL11.GL_LIGHTING);
-                GL11.glEnable(GL11.GL_DEPTH_TEST);
+                int count = 0;
+                
+                if (itemStack.getMaxStackSize() > 1)
+                    count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, itemStack.getItem(), itemStack.getItemDamage());
+                else if (itemStack.getItem().equals(Items.bow))
+                    count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, Items.arrow);
+                
+                if (count > 1)
+                {
+                    String var6 = "" + count;
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    GL11.glDisable(GL11.GL_DEPTH_TEST);
+                    fontRenderer.drawStringWithShadow(var6, x + 19 - 2 - fontRenderer.getStringWidth(var6), y + 6 + 3, 16777215);
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                    GL11.glEnable(GL11.GL_DEPTH_TEST);
+                }
             }
         }
     }
