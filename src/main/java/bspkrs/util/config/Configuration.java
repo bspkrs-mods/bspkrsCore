@@ -1076,6 +1076,8 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
         prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
+        prop.setMinValue(String.valueOf(minValue));
+        prop.setMaxValue(String.valueOf(maxValue));
         return prop.getInt(defaultValue) < minValue ? minValue : (prop.getInt(defaultValue) > maxValue ? maxValue : prop.getInt(defaultValue));
     }
     
@@ -1112,6 +1114,8 @@ public class Configuration
         Property prop = this.get(category, name, Float.toString(defaultValue), name);
         prop.setLanguageKey(langKey);
         prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
+        prop.setMinValue(String.valueOf(minValue));
+        prop.setMaxValue(String.valueOf(maxValue));
         try
         {
             return Float.parseFloat(prop.getString()) < minValue ? minValue : (Float.parseFloat(prop.getString()) > maxValue ? maxValue : Float.parseFloat(prop.getString()));

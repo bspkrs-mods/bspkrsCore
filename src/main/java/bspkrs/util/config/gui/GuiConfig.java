@@ -7,6 +7,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+
+import org.lwjgl.input.Keyboard;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -46,7 +49,10 @@ public class GuiConfig extends GuiScreen
         this.propertyList = new GuiPropertyList(this, this.mc);
         this.buttonList.add(new GuiButton(2000, this.width / 2 - 155, this.height - 29, 150, 20, I18n.format("gui.done", new Object[0])));
         this.buttonList.add(this.btnResetAll = new GuiButton(2001, this.width / 2 - 155 + 160, this.height - 29, 150, 20, I18n.format("controls.reset", new Object[0])));
-        this.title = configObject.toString().replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/").substring(0, mc.mcDataDir.getAbsolutePath().length() - 1), ".minecraft/");
+        if (mc.mcDataDir.getAbsolutePath().endsWith("."))
+            this.title = configObject.toString().replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/").substring(0, mc.mcDataDir.getAbsolutePath().length() - 1), "/.minecraft/");
+        else
+            this.title = configObject.toString().replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/"), "/.minecraft/");
     }
     
     @Override
@@ -68,10 +74,7 @@ public class GuiConfig extends GuiScreen
         }
         else if (button.id == 2001)
         {
-            for (int i = 0; i < properties.length; i++)
-            {
-                properties[i].setToDefault();
-            }
+            this.propertyList.setAllPropsDefault();
         }
     }
     
@@ -104,7 +107,10 @@ public class GuiConfig extends GuiScreen
     @Override
     protected void keyTyped(char eventChar, int eventKey)
     {
-        this.propertyList.keyTyped(eventChar, eventKey);
+        if (eventKey == Keyboard.KEY_ESCAPE)
+            this.mc.displayGuiScreen(parentScreen);
+        else
+            this.propertyList.keyTyped(eventChar, eventKey);
     }
     
     /**
@@ -116,16 +122,9 @@ public class GuiConfig extends GuiScreen
         this.drawDefaultBackground();
         this.propertyList.drawScreen(par1, par2, par3);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
-        this.btnResetAll.enabled = false;
-        
-        for (int i = 0; i < properties.length; i++)
-            if (!properties[i].isDefault())
-            {
-                this.btnResetAll.enabled = true;
-                break;
-            }
-        
+        this.btnResetAll.enabled = !this.propertyList.areAllPropsDefault();
         super.drawScreen(par1, par2, par3);
+        this.propertyList.drawScreenPost(par1, par2, par3);
     }
     
     public void drawToolTip(List stringList, int x, int y)

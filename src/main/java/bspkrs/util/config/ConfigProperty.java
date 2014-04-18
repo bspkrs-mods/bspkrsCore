@@ -1,9 +1,11 @@
 package bspkrs.util.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.minecraft.entity.EntityList;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.biome.BiomeGenBase;
 import bspkrs.util.config.gui.IConfigProperty;
 
 public class ConfigProperty implements IConfigProperty
@@ -39,16 +41,24 @@ public class ConfigProperty implements IConfigProperty
             return int.class;
         else if (type.equals(Property.Type.COLOR))
             return EnumChatFormatting.class;
+        else if (type.equals(Property.Type.BLOCK_LIST))
+            return Blocks.class;
+        else if (type.equals(Property.Type.ITEMSTACK_LIST))
+            return Items.class;
+        else if (type.equals(Property.Type.ENTITY_LIST))
+            return EntityList.class;
+        else if (type.equals(Property.Type.BIOME_LIST))
+            return BiomeGenBase.class;
+        else if (type.equals(Property.Type.DIMENSION_LIST))
+            return WorldProvider.class;
         else
             return String.class;
     }
     
     @Override
-    public List getToolTip()
+    public String getComment()
     {
-        List r = new ArrayList();
-        r.add(prop.comment);
-        return r;
+        return prop.comment;
     }
     
     @Override
@@ -127,5 +137,29 @@ public class ConfigProperty implements IConfigProperty
     public String getDefault()
     {
         return prop.getDefault();
+    }
+    
+    @Override
+    public int getMinIntValue()
+    {
+        return prop.getMinIntValue();
+    }
+    
+    @Override
+    public int getMaxIntValue()
+    {
+        return prop.getMaxIntValue();
+    }
+    
+    @Override
+    public double getMinDoubleValue()
+    {
+        return prop.getMinDoubleValue();
+    }
+    
+    @Override
+    public double getMaxDoubleValue()
+    {
+        return prop.getMaxDoubleValue();
     }
 }

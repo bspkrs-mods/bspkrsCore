@@ -15,9 +15,26 @@ public class Property
         INTEGER,
         BOOLEAN,
         DOUBLE,
-        COLOR;
+        COLOR,
+        ENTITY_LIST('M'),
+        BLOCK_LIST('T'),
+        ITEMSTACK_LIST('O'),
+        DIMENSION_LIST('W'),
+        BIOME_LIST('R');
         
-        private static Type[] values = { STRING, INTEGER, BOOLEAN, DOUBLE, COLOR };
+        private char id;
+        
+        private Type()
+        {
+            this.id = name().charAt(0);
+        }
+        
+        private Type(char id)
+        {
+            this.id = id;
+        }
+        
+        private static Type[] values = { STRING, INTEGER, BOOLEAN, DOUBLE, COLOR, ENTITY_LIST, BLOCK_LIST, ITEMSTACK_LIST, DIMENSION_LIST, BIOME_LIST };
         
         public static Type tryParse(char id)
         {
@@ -34,7 +51,7 @@ public class Property
         
         public char getID()
         {
-            return name().charAt(0);
+            return id;
         }
     }
     
@@ -46,6 +63,8 @@ public class Property
     private String[]      defaultValues;
     private String[]      validValues;
     private String        langKey;
+    private String        minValue;
+    private String        maxValue;
     
     private final boolean wasRead;
     private final boolean isList;
@@ -93,6 +112,8 @@ public class Property
         this.type = type;
         wasRead = read;
         isList = false;
+        this.minValue = String.valueOf(Integer.MIN_VALUE);
+        this.maxValue = String.valueOf(Integer.MAX_VALUE);
     }
     
     public Property(String name, String[] values, Type type)
@@ -116,6 +137,8 @@ public class Property
         this.validValues = validValues;
         wasRead = read;
         isList = true;
+        this.minValue = String.valueOf(Integer.MIN_VALUE);
+        this.maxValue = String.valueOf(Integer.MAX_VALUE);
     }
     
     public boolean isDefault()
@@ -222,6 +245,36 @@ public class Property
     protected void setDefaultValue(String[] values)
     {
         this.defaultValues = values;
+    }
+    
+    protected void setMinValue(String minValue)
+    {
+        this.minValue = minValue;
+    }
+    
+    protected void setMaxValue(String maxValue)
+    {
+        this.maxValue = maxValue;
+    }
+    
+    public int getMinIntValue()
+    {
+        return Integer.parseInt(minValue);
+    }
+    
+    public int getMaxIntValue()
+    {
+        return Integer.parseInt(maxValue);
+    }
+    
+    public double getMinDoubleValue()
+    {
+        return Double.parseDouble(minValue);
+    }
+    
+    public double getMaxDoubleValue()
+    {
+        return Double.parseDouble(maxValue);
     }
     
     /**

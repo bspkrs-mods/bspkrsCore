@@ -1,10 +1,15 @@
-commands.bs.usage=bs version <modid>
-commands.bs.disabled=Version checking is disabled in bspkrsCore.cfg. Set allowUpdateCheck=true to use this command.
-bspkrs.modversionchecker.uptodate=Mod %s is up to date.
+bspkrs.configgui.allowDebugOutput.tooltip=No tooltip defined. %1$s[default: %2$s]
+bspkrs.configgui.allowDebugOutput=Allow Debug Output
+bspkrs.configgui.allowUpdateCheck.tooltip=Set to true to allow checking for updates for ALL of my mods, false to disable. %1$s[default: %2$s]
+bspkrs.configgui.allowUpdateCheck=Allow Update Check
+bspkrs.configgui.generateUniqueNamesFile.tooltip=When true a file called UniqueNames.txt will be generated in the config folder for convenience. The names found in the file are the string representation of blocks and items in Minecraft. Mods such as Treecapitator and StartingInventory use them in their config files since IDs are gone. %1$s[default: %2$s]
+bspkrs.configgui.generateUniqueNamesFile=Generate UniqueNames.txt file
+bspkrs.configgui.showMainMenuMobs.tooltip=Set to true to show your logged-in player and a random mob on the main menu, false to disable. %1$s[default: %2$s]
+bspkrs.configgui.showMainMenuMobs=Show Mobs on Main Menu
+bspkrs.configgui.updateTimeoutMilliseconds.tooltip=The timeout in milliseconds for the version update check. %1$s[range: %3$s ~ %4$s, default: %2$s]
+bspkrs.configgui.updateTimeoutMilliseconds=Update Check Timeout (ms)
 bspkrs.modversionchecker.error=An error occurred when the version check was performed for mod %s.
 bspkrs.modversionchecker.invalidmodid=Invalid Mod ID specified for version check.
-bspkrs.configgui.save=Save
-bspkrs.configgui.allowUpdateCheck=Allow Update Check
-bspkrs.configgui.allowDebugOutput=Allow Debug Output
-bspkrs.configgui.generateUniqueNamesFile=Generate UniqueNames.txt file
-bspkrs.configgui.updateTimeoutMilliseconds=Update check timeout (ms)
+bspkrs.modversionchecker.uptodate=Mod %s is up to date.
+commands.bs.disabled=Version checking is disabled in bspkrsCore.cfg. Set allowUpdateCheck=true to use this command.
+commands.bs.usage=bs version <modid>

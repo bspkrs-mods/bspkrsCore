@@ -1,6 +1,7 @@
 package bspkrs.util.config.gui;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -8,7 +9,12 @@ import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityList;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.biome.BiomeGenBase;
 
 import org.lwjgl.input.Keyboard;
 
@@ -46,24 +52,49 @@ public class GuiPropertyList extends GuiListExtended
             }
             
             if (prop.getType().equals(boolean.class))
-                this.listEntries[i++] = new GuiPropertyList.BooleanProp(prop, null);
+                this.listEntries[i++] = new GuiPropertyList.BooleanPropEntry(prop);
             else if (prop.getType().equals(int.class))
-                this.listEntries[i++] = new GuiPropertyList.IntegerProp(prop, null);
+                this.listEntries[i++] = new GuiPropertyList.IntegerPropEntry(prop);
             else if (prop.getType().equals(double.class))
-                this.listEntries[i++] = new GuiPropertyList.DoubleProp(prop, null);
+                this.listEntries[i++] = new GuiPropertyList.DoublePropEntry(prop);
             else if (prop.getType().equals(EnumChatFormatting.class))
             {
                 if (prop.getValidValues().length > 0)
-                    this.listEntries[i++] = new GuiPropertyList.ColorProp(prop, null);
+                    this.listEntries[i++] = new GuiPropertyList.ColorPropEntry(prop);
                 else
-                    this.listEntries[i++] = new GuiPropertyList.StringProp(prop, null);
+                    this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+            }
+            else if (prop.getType().equals(Blocks.class))
+            {
+                // TODO:
+                this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+            }
+            else if (prop.getType().equals(Items.class))
+            {
+                // TODO:
+                this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+            }
+            else if (prop.getType().equals(EntityList.class))
+            {
+                // TODO:
+                this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+            }
+            else if (prop.getType().equals(BiomeGenBase.class))
+            {
+                // TODO:
+                this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+            }
+            else if (prop.getType().equals(WorldProvider.class))
+            {
+                // TODO:
+                this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
             }
             else if (prop.getType().equals(String.class))
             {
                 if (prop.getValidValues().length > 0)
-                    this.listEntries[i++] = new GuiPropertyList.SelectStringProp(prop, null);
+                    this.listEntries[i++] = new GuiPropertyList.SelectStringPropEntry(prop);
                 else
-                    this.listEntries[i++] = new GuiPropertyList.StringProp(prop, null);
+                    this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
             }
         }
     }
@@ -86,7 +117,7 @@ public class GuiPropertyList extends GuiListExtended
     @Override
     protected int getScrollBarX()
     {
-        return super.getScrollBarX() + 15;
+        return parentGuiConfig.width - 6;
     }
     
     /**
@@ -95,7 +126,7 @@ public class GuiPropertyList extends GuiListExtended
     @Override
     public int getListWidth()
     {
-        return super.getListWidth() + 32;
+        return parentGuiConfig.width;
     }
     
     protected void keyTyped(char eventChar, int eventKey)
@@ -116,108 +147,72 @@ public class GuiPropertyList extends GuiListExtended
             listEntries[i].saveProperty();
     }
     
-    @SideOnly(Side.CLIENT)
-    public class BooleanProp implements IGuiConfigListEntry
+    protected boolean areAllPropsDefault()
     {
-        private final IConfigProperty prop;
-        private final String          propName;
-        private final GuiButton       btnValue;
-        private final GuiButton       btnDefault;
-        
-        private BooleanProp(IConfigProperty prop)
-        {
-            this.prop = prop;
-            this.propName = I18n.format(prop.getLanguageKey(), new Object[0]);
-            this.btnValue = new GuiButton(0, 0, 0, 75, 18, I18n.format(String.valueOf(prop.getBoolean()), new Object[0]));
-            this.btnDefault = new GuiButton(0, 0, 0, 50, 18, I18n.format("controls.reset", new Object[0]));
-        }
-        
-        @Override
-        public void drawEntry(int p_148279_1_, int x, int y, int top, int bottom, Tessellator tessellator, int mouseX, int mouseY, boolean p_148279_9_)
-        {
-            GuiPropertyList.this.mc.fontRenderer.drawString(this.propName, x + 90 - GuiPropertyList.this.maxLabelTextWidth, y + bottom / 2 - GuiPropertyList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-            this.btnDefault.xPosition = x + 190;
-            this.btnDefault.yPosition = y;
-            this.btnDefault.enabled = !prop.isDefault();
-            this.btnDefault.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
-            this.btnValue.xPosition = x + 105;
-            this.btnValue.yPosition = y;
-            this.btnValue.displayString = String.valueOf(prop.getBoolean());
-            if (prop.getBoolean())
-                btnValue.packedFGColour = CommonUtils.getColorCode('2', true);
-            else
-                btnValue.packedFGColour = CommonUtils.getColorCode('4', true);
-            this.btnValue.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
-        }
-        
-        /**
-         * Returns true if the mouse has been pressed on this control.
-         */
-        @Override
-        public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
-        {
-            if (this.btnValue.mousePressed(GuiPropertyList.this.mc, x, y))
-            {
-                prop.set(!prop.getBoolean());
-                return true;
-            }
-            else if (this.btnDefault.mousePressed(GuiPropertyList.this.mc, x, y))
-            {
-                prop.setToDefault();
-                return true;
-            }
-            else
+        for (int i = 0; i < this.getSize(); i++)
+            if (!listEntries[i].isDefault())
                 return false;
-        }
         
-        /**
-         * Fired when the mouse button is released. Arguments: index, x, y, mouseEvent, relativeX, relativeY
-         */
-        @Override
-        public void mouseReleased(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
-        {
-            this.btnValue.mouseReleased(x, y);
-            this.btnDefault.mouseReleased(x, y);
-        }
-        
-        BooleanProp(IConfigProperty prop, Object obj)
-        {
-            this(prop);
-        }
-        
-        @Override
-        public void keyTyped(char eventChar, int eventKey)
-        {}
-        
-        @Override
-        public void updateCursorCounter()
-        {}
-        
-        @Override
-        public void mouseClicked(int x, int y, int mouseEvent)
-        {}
-        
-        @Override
-        public void saveProperty()
-        {}
+        return true;
     }
     
-    @SideOnly(Side.CLIENT)
-    public class SelectStringProp implements IGuiConfigListEntry
+    protected void setAllPropsDefault()
     {
-        protected final IConfigProperty prop;
-        private final String            propName;
-        protected final GuiButton       btnValue;
-        private final GuiButton         btnDefault;
-        private int                     index;
+        for (int i = 0; i < this.getSize(); i++)
+            listEntries[i].setToDefault();
+    }
+    
+    protected void drawScreenPost(int mouseX, int mouseY, float f)
+    {
+        for (int i = 0; i < this.getSize(); i++)
+            listEntries[i].drawToolTip(mouseX, mouseY);
+    }
+    
+    /**
+     * IGuiConfigList Inner Classes
+     */
+    
+    /**
+     * BooleanPropEntry
+     */
+    @SideOnly(Side.CLIENT)
+    public class BooleanPropEntry extends ButtonPropEntry
+    {
         
-        private SelectStringProp(IConfigProperty prop)
+        private BooleanPropEntry(IConfigProperty prop)
         {
-            this.prop = prop;
-            this.propName = I18n.format(prop.getLanguageKey(), new Object[0]);
-            this.btnValue = new GuiButton(0, 0, 0, 75, 18, I18n.format(prop.getString(), new Object[0]));
-            this.btnDefault = new GuiButton(0, 0, 0, 50, 18, I18n.format("controls.reset", new Object[0]));
-            
+            super(prop);
+        }
+        
+        @Override
+        public void updateValueButtonText()
+        {
+            String trans = I18n.format(String.valueOf(prop.getString()));
+            if (!trans.equals(prop.getString()))
+                this.btnValue.displayString = trans;
+            else
+                this.btnValue.displayString = this.prop.getString();
+            btnValue.packedFGColour = prop.getBoolean() ? CommonUtils.getColorCode('2', true) : CommonUtils.getColorCode('4', true);
+        }
+        
+        @Override
+        public void valueButtonPressed()
+        {
+            prop.set(!prop.getBoolean());
+        }
+    }
+    
+    /**
+     * SelectStringPropEntry
+     */
+    @SideOnly(Side.CLIENT)
+    public class SelectStringPropEntry extends ButtonPropEntry
+    {
+        private int index;
+        
+        private SelectStringPropEntry(IConfigProperty prop)
+        {
+            super(prop);
             resetIndex();
         }
         
@@ -231,17 +226,86 @@ public class GuiPropertyList extends GuiListExtended
                 }
         }
         
+        /**
+         * Returns true if the mouse has been pressed on this control.
+         */
         @Override
-        public void drawEntry(int p_148279_1_, int x, int y, int top, int bottom, Tessellator tessellator, int mouseX, int mouseY, boolean p_148279_9_)
+        public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
         {
-            GuiPropertyList.this.mc.fontRenderer.drawString(this.propName, x + 90 - GuiPropertyList.this.maxLabelTextWidth, y + bottom / 2 - GuiPropertyList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-            this.btnDefault.xPosition = x + 190;
-            this.btnDefault.yPosition = y;
-            this.btnDefault.enabled = !this.prop.isDefault();
-            this.btnDefault.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
-            this.btnValue.xPosition = x + 105;
+            if (super.mousePressed(index, x, y, mouseEvent, relativeX, relativeY))
+            {
+                resetIndex();
+                return true;
+            }
+            
+            return false;
+        }
+        
+        @Override
+        public void updateValueButtonText()
+        {
+            String trans = I18n.format(String.valueOf(prop.getString()));
+            if (!trans.equals(prop.getString()))
+                this.btnValue.displayString = trans;
+            else
+                this.btnValue.displayString = this.prop.getString();
+        }
+        
+        @Override
+        public void valueButtonPressed()
+        {
+            if (++this.index >= prop.getValidValues().length)
+                this.index = 0;
+            
+            prop.set(prop.getValidValues()[this.index]);
+        }
+    }
+    
+    /**
+     * ColorPropEntry
+     */
+    @SideOnly(Side.CLIENT)
+    public class ColorPropEntry extends SelectStringPropEntry
+    {
+        ColorPropEntry(IConfigProperty prop)
+        {
+            super(prop);
+        }
+        
+        @Override
+        public void drawEntry(int p_148279_1_, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean p_148279_9_)
+        {
+            this.btnValue.packedFGColour = CommonUtils.getColorCode(this.prop.getString().charAt(0), true);
+            super.drawEntry(p_148279_1_, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, p_148279_9_);
+        }
+    }
+    
+    /**
+     * ColorPropEntry
+     */
+    @SideOnly(Side.CLIENT)
+    public abstract class ButtonPropEntry extends GuiConfigListEntry
+    {
+        protected final GuiButton btnValue;
+        
+        private ButtonPropEntry(IConfigProperty prop)
+        {
+            super(prop);
+            int listWidth = GuiPropertyList.this.getListWidth();
+            this.btnValue = new GuiButton(0, 0, 0, listWidth - 6 - 50 - (listWidth / 2), 18, I18n.format(prop.getString(), new Object[0]));
+        }
+        
+        public abstract void updateValueButtonText();
+        
+        public abstract void valueButtonPressed();
+        
+        @Override
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        {
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
+            this.btnValue.xPosition = listWidth / 2;
             this.btnValue.yPosition = y;
-            this.btnValue.displayString = this.prop.getString();
+            updateValueButtonText();
             this.btnValue.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
         }
         
@@ -253,22 +317,11 @@ public class GuiPropertyList extends GuiListExtended
         {
             if (this.btnValue.mousePressed(GuiPropertyList.this.mc, x, y))
             {
-                if (++this.index >= prop.getValidValues().length)
-                    this.index = 0;
-                
-                prop.set(prop.getValidValues()[this.index]);
-                
-                btnValue.displayString = prop.getString();
-                return true;
-            }
-            else if (this.btnDefault.mousePressed(GuiPropertyList.this.mc, x, y))
-            {
-                prop.setToDefault();
-                resetIndex();
+                valueButtonPressed();
                 return true;
             }
             else
-                return false;
+                return super.mousePressed(index, x, y, mouseEvent, relativeX, relativeY);
         }
         
         /**
@@ -277,13 +330,8 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public void mouseReleased(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
         {
+            super.mouseReleased(index, x, y, mouseEvent, relativeX, relativeY);
             this.btnValue.mouseReleased(x, y);
-            this.btnDefault.mouseReleased(x, y);
-        }
-        
-        SelectStringProp(IConfigProperty prop, Object obj)
-        {
-            this(prop);
         }
         
         @Override
@@ -303,213 +351,15 @@ public class GuiPropertyList extends GuiListExtended
         {}
     }
     
-    public class ColorProp extends SelectStringProp
-    {
-        ColorProp(IConfigProperty prop, Object obj)
-        {
-            super(prop, obj);
-        }
-        
-        @Override
-        public void drawEntry(int p_148279_1_, int x, int y, int top, int bottom, Tessellator tessellator, int mouseX, int mouseY, boolean p_148279_9_)
-        {
-            this.btnValue.packedFGColour = CommonUtils.getColorCode(this.prop.getString().charAt(0), true);
-            super.drawEntry(p_148279_1_, x, y, top, bottom, tessellator, mouseX, mouseY, p_148279_9_);
-        }
-    }
-    
+    /**
+     * IntegerPropEntry
+     */
     @SideOnly(Side.CLIENT)
-    public class StringProp implements IGuiConfigListEntry
+    public class IntegerPropEntry extends StringPropEntry
     {
-        private final IConfigProperty prop;
-        private final String          propName;
-        private final GuiTextField    textFieldValue;
-        private final GuiButton       btnDefault;
-        
-        private StringProp(IConfigProperty prop)
+        private IntegerPropEntry(IConfigProperty prop)
         {
-            this.prop = prop;
-            this.propName = I18n.format(prop.getLanguageKey(), new Object[0]);
-            this.textFieldValue = new GuiTextField(GuiPropertyList.this.mc.fontRenderer, 0, 0, 75, 18);
-            this.textFieldValue.setMaxStringLength(1000);
-            this.textFieldValue.setText(prop.getString());
-            this.btnDefault = new GuiButton(0, 0, 0, 50, 18, I18n.format("controls.reset", new Object[0]));
-        }
-        
-        @Override
-        public void drawEntry(int p_148279_1_, int x, int y, int top, int bottom, Tessellator tessellator, int mouseX, int mouseY, boolean p_148279_9_)
-        {
-            GuiPropertyList.this.mc.fontRenderer.drawString(this.propName, x + 90 - GuiPropertyList.this.maxLabelTextWidth, y + bottom / 2 - GuiPropertyList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-            this.btnDefault.xPosition = x + 190;
-            this.btnDefault.yPosition = y;
-            this.btnDefault.enabled = !this.prop.isDefault();
-            this.btnDefault.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
-            try
-            {
-                Field xPos;
-                Field yPos;
-                if (CommonUtils.isObfuscatedEnv())
-                {
-                    xPos = GuiTextField.class.getDeclaredField("field_146209_f");
-                    yPos = GuiTextField.class.getDeclaredField("field_146210_g");
-                }
-                else
-                {
-                    xPos = GuiTextField.class.getDeclaredField("xPosition");
-                    yPos = GuiTextField.class.getDeclaredField("yPosition");
-                }
-                xPos.setAccessible(true);
-                xPos.setInt(this.textFieldValue, x + 105);
-                yPos.setAccessible(true);
-                yPos.setInt(this.textFieldValue, y);
-            }
-            catch (Throwable e)
-            {
-                e.printStackTrace();
-            }
-            this.textFieldValue.drawTextBox();
-        }
-        
-        /**
-         * Returns true if the mouse has been pressed on this control.
-         */
-        @Override
-        public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
-        {
-            if (this.btnDefault.mousePressed(GuiPropertyList.this.mc, x, y))
-            {
-                prop.setToDefault();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        
-        /**
-         * Fired when the mouse button is released. Arguments: index, x, y, mouseEvent, relativeX, relativeY
-         */
-        @Override
-        public void mouseReleased(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
-        {
-            this.btnDefault.mouseReleased(x, y);
-        }
-        
-        StringProp(IConfigProperty prop, Object obj)
-        {
-            this(prop);
-        }
-        
-        @Override
-        public void keyTyped(char eventChar, int eventKey)
-        {
-            String before = this.textFieldValue.getText();
-            this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
-        }
-        
-        @Override
-        public void updateCursorCounter()
-        {
-            this.textFieldValue.updateCursorCounter();
-        }
-        
-        @Override
-        public void mouseClicked(int x, int y, int mouseEvent)
-        {
-            this.textFieldValue.mouseClicked(x, y, mouseEvent);
-        }
-        
-        @Override
-        public void saveProperty()
-        {
-            if (this.textFieldValue.getText().trim().length() > 0)
-                this.prop.set(this.textFieldValue.getText().trim());
-            else
-                this.prop.setToDefault();
-        }
-    }
-    
-    @SideOnly(Side.CLIENT)
-    public class IntegerProp implements IGuiConfigListEntry
-    {
-        private final IConfigProperty prop;
-        private final String          propName;
-        private final GuiTextField    textFieldValue;
-        private final GuiButton       btnDefault;
-        
-        private IntegerProp(IConfigProperty prop)
-        {
-            this.prop = prop;
-            this.propName = I18n.format(prop.getLanguageKey(), new Object[0]);
-            this.textFieldValue = new GuiTextField(GuiPropertyList.this.mc.fontRenderer, 0, 0, 75, 18);
-            this.textFieldValue.setText(prop.getString());
-            this.btnDefault = new GuiButton(0, 0, 0, 50, 18, I18n.format("controls.reset", new Object[0]));
-        }
-        
-        @Override
-        public void drawEntry(int p_148279_1_, int x, int y, int top, int bottom, Tessellator tessellator, int mouseX, int mouseY, boolean p_148279_9_)
-        {
-            GuiPropertyList.this.mc.fontRenderer.drawString(this.propName, x + 90 - GuiPropertyList.this.maxLabelTextWidth, y + bottom / 2 - GuiPropertyList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-            this.btnDefault.xPosition = x + 190;
-            this.btnDefault.yPosition = y;
-            this.btnDefault.enabled = !this.prop.getDefault().equals(this.textFieldValue.getText());
-            this.btnDefault.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
-            try
-            {
-                Field xPos;
-                Field yPos;
-                if (CommonUtils.isObfuscatedEnv())
-                {
-                    xPos = GuiTextField.class.getDeclaredField("field_146209_f");
-                    yPos = GuiTextField.class.getDeclaredField("field_146210_g");
-                }
-                else
-                {
-                    xPos = GuiTextField.class.getDeclaredField("xPosition");
-                    yPos = GuiTextField.class.getDeclaredField("yPosition");
-                }
-                xPos.setAccessible(true);
-                xPos.setInt(this.textFieldValue, x + 105);
-                yPos.setAccessible(true);
-                yPos.setInt(this.textFieldValue, y);
-            }
-            catch (Throwable e)
-            {
-                e.printStackTrace();
-            }
-            this.textFieldValue.drawTextBox();
-        }
-        
-        /**
-         * Returns true if the mouse has been pressed on this control.
-         */
-        @Override
-        public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
-        {
-            if (this.btnDefault.mousePressed(GuiPropertyList.this.mc, x, y))
-            {
-                this.textFieldValue.setText(prop.getDefault());
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        
-        /**
-         * Fired when the mouse button is released. Arguments: index, x, y, mouseEvent, relativeX, relativeY
-         */
-        @Override
-        public void mouseReleased(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
-        {
-            this.btnDefault.mouseReleased(x, y);
-        }
-        
-        IntegerProp(IConfigProperty prop, Object obj)
-        {
-            this(prop);
+            super(prop);
         }
         
         @Override
@@ -517,21 +367,15 @@ public class GuiPropertyList extends GuiListExtended
         {
             String validChars = "0123456789";
             String before = this.textFieldValue.getText();
-            if (validChars.contains(String.valueOf(eventChar)) || (before.isEmpty() && eventChar == '-') || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE
+            if (validChars.contains(String.valueOf(eventChar))
+                    || (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
+                    || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE
                     || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
                 this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
-        }
-        
-        @Override
-        public void updateCursorCounter()
-        {
-            this.textFieldValue.updateCursorCounter();
-        }
-        
-        @Override
-        public void mouseClicked(int x, int y, int mouseEvent)
-        {
-            this.textFieldValue.mouseClicked(x, y, mouseEvent);
+            
+            long value = Long.parseLong(textFieldValue.getText());
+            if (value < prop.getMinIntValue() || value > prop.getMaxIntValue())
+                this.textFieldValue.setText(before);
         }
         
         @Override
@@ -549,86 +393,15 @@ public class GuiPropertyList extends GuiListExtended
         }
     }
     
+    /**
+     * DoublePropEntry
+     */
     @SideOnly(Side.CLIENT)
-    public class DoubleProp implements IGuiConfigListEntry
+    public class DoublePropEntry extends StringPropEntry
     {
-        private final IConfigProperty prop;
-        private final String          propName;
-        private final GuiTextField    textFieldValue;
-        private final GuiButton       btnDefault;
-        
-        private DoubleProp(IConfigProperty prop)
+        private DoublePropEntry(IConfigProperty prop)
         {
-            this.prop = prop;
-            this.propName = I18n.format(prop.getLanguageKey(), new Object[0]);
-            this.textFieldValue = new GuiTextField(GuiPropertyList.this.mc.fontRenderer, 0, 0, 75, 18);
-            this.textFieldValue.setText(prop.getString());
-            this.btnDefault = new GuiButton(0, 0, 0, 50, 18, I18n.format("controls.reset", new Object[0]));
-        }
-        
-        @Override
-        public void drawEntry(int p_148279_1_, int x, int y, int top, int bottom, Tessellator tessellator, int mouseX, int mouseY, boolean p_148279_9_)
-        {
-            GuiPropertyList.this.mc.fontRenderer.drawString(this.propName, x + 90 - GuiPropertyList.this.maxLabelTextWidth, y + bottom / 2 - GuiPropertyList.this.mc.fontRenderer.FONT_HEIGHT / 2, 16777215);
-            this.btnDefault.xPosition = x + 190;
-            this.btnDefault.yPosition = y;
-            this.btnDefault.enabled = !this.prop.getDefault().equals(this.textFieldValue.getText());
-            this.btnDefault.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
-            try
-            {
-                Field xPos;
-                Field yPos;
-                if (CommonUtils.isObfuscatedEnv())
-                {
-                    xPos = GuiTextField.class.getDeclaredField("field_146209_f");
-                    yPos = GuiTextField.class.getDeclaredField("field_146210_g");
-                }
-                else
-                {
-                    xPos = GuiTextField.class.getDeclaredField("xPosition");
-                    yPos = GuiTextField.class.getDeclaredField("yPosition");
-                }
-                xPos.setAccessible(true);
-                xPos.setInt(this.textFieldValue, x + 105);
-                yPos.setAccessible(true);
-                yPos.setInt(this.textFieldValue, y);
-            }
-            catch (Throwable e)
-            {
-                e.printStackTrace();
-            }
-            this.textFieldValue.drawTextBox();
-        }
-        
-        /**
-         * Returns true if the mouse has been pressed on this control.
-         */
-        @Override
-        public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
-        {
-            if (this.btnDefault.mousePressed(GuiPropertyList.this.mc, x, y))
-            {
-                this.textFieldValue.setText(this.prop.getDefault());
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        
-        /**
-         * Fired when the mouse button is released. Arguments: index, x, y, mouseEvent, relativeX, relativeY
-         */
-        @Override
-        public void mouseReleased(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
-        {
-            this.btnDefault.mouseReleased(x, y);
-        }
-        
-        DoubleProp(IConfigProperty prop, Object obj)
-        {
-            this(prop);
+            super(prop);
         }
         
         @Override
@@ -636,22 +409,16 @@ public class GuiPropertyList extends GuiListExtended
         {
             String validChars = "0123456789";
             String before = this.textFieldValue.getText();
-            if (validChars.contains(String.valueOf(eventChar)) || (before.isEmpty() && eventChar == '-') || (!before.contains(".") && eventChar == '.')
+            if (validChars.contains(String.valueOf(eventChar)) ||
+                    (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
+                    || (!before.contains(".") && eventChar == '.')
                     || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
                     || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
                 this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
-        }
-        
-        @Override
-        public void updateCursorCounter()
-        {
-            this.textFieldValue.updateCursorCounter();
-        }
-        
-        @Override
-        public void mouseClicked(int x, int y, int mouseEvent)
-        {
-            this.textFieldValue.mouseClicked(x, y, mouseEvent);
+            
+            double value = Double.parseDouble(textFieldValue.getText());
+            if (value < prop.getMinDoubleValue() || value > prop.getMaxDoubleValue())
+                this.textFieldValue.setText(before);
         }
         
         @Override
@@ -669,6 +436,212 @@ public class GuiPropertyList extends GuiListExtended
         }
     }
     
+    /**
+     * StringPropEntry
+     */
+    @SideOnly(Side.CLIENT)
+    public class StringPropEntry extends GuiConfigListEntry
+    {
+        protected final GuiTextField textFieldValue;
+        
+        private StringPropEntry(IConfigProperty prop)
+        {
+            super(prop);
+            int listWidth = GuiPropertyList.this.getListWidth();
+            this.textFieldValue = new GuiTextField(GuiPropertyList.this.mc.fontRenderer, 0, 0, listWidth - 6 - 50 - (listWidth / 2) - 4, 18);
+            this.textFieldValue.setMaxStringLength(10000);
+            this.textFieldValue.setText(prop.getString());
+        }
+        
+        @Override
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        {
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
+            try
+            {
+                Field xPos;
+                Field yPos;
+                if (CommonUtils.isObfuscatedEnv())
+                {
+                    xPos = GuiTextField.class.getDeclaredField("field_146209_f");
+                    yPos = GuiTextField.class.getDeclaredField("field_146210_g");
+                }
+                else
+                {
+                    xPos = GuiTextField.class.getDeclaredField("xPosition");
+                    yPos = GuiTextField.class.getDeclaredField("yPosition");
+                }
+                xPos.setAccessible(true);
+                xPos.setInt(this.textFieldValue, listWidth / 2 + 2);
+                yPos.setAccessible(true);
+                yPos.setInt(this.textFieldValue, y);
+            }
+            catch (Throwable e)
+            {
+                e.printStackTrace();
+            }
+            this.textFieldValue.drawTextBox();
+        }
+        
+        @Override
+        public void keyTyped(char eventChar, int eventKey)
+        {
+            this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
+        }
+        
+        @Override
+        public void updateCursorCounter()
+        {
+            this.textFieldValue.updateCursorCounter();
+        }
+        
+        @Override
+        public void mouseClicked(int x, int y, int mouseEvent)
+        {
+            this.textFieldValue.mouseClicked(x, y, mouseEvent);
+        }
+        
+        @Override
+        public boolean isDefault()
+        {
+            return this.prop.getDefault().equals(this.textFieldValue.getText());
+        }
+        
+        @Override
+        public void setToDefault()
+        {
+            this.textFieldValue.setText(this.prop.getDefault());;
+        }
+        
+        @Override
+        public void saveProperty()
+        {
+            if (this.textFieldValue.getText().trim().length() > 0)
+                this.prop.set(this.textFieldValue.getText().trim());
+            else
+                this.prop.setToDefault();
+        }
+    }
+    
+    /**
+     * GuiConfigListEntry
+     */
+    @SideOnly(Side.CLIENT)
+    public abstract class GuiConfigListEntry implements IGuiConfigListEntry
+    {
+        protected final IConfigProperty prop;
+        protected final String          propName;
+        protected final GuiButton       btnDefault;
+        private long                    hoverStart = -1;
+        private List                    toolTip;
+        private int                     x, y, listWidth, slotHeight;
+        
+        public GuiConfigListEntry(IConfigProperty prop)
+        {
+            this.prop = prop;
+            this.propName = I18n.format(prop.getLanguageKey(), new Object[0]);
+            this.btnDefault = new GuiButton(0, 0, 0, 40, 18, I18n.format("controls.reset", new Object[0]));
+            
+            String comment;
+            
+            if (prop.getType().equals(int.class))
+                comment = I18n.format(prop.getLanguageKey() + ".tooltip",
+                        "\n" + EnumChatFormatting.AQUA, prop.getDefault(), prop.getMinIntValue(), prop.getMaxIntValue());
+            else
+                comment = I18n.format(prop.getLanguageKey() + ".tooltip",
+                        "\n" + EnumChatFormatting.AQUA, prop.getDefault(), prop.getMinDoubleValue(), prop.getMaxDoubleValue());
+            
+            if (!comment.equals(prop.getLanguageKey() + ".tooltip"))
+                toolTip = GuiPropertyList.this.mc.fontRenderer.listFormattedStringToWidth(
+                        EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + comment, 300);
+            else if (!prop.getComment().trim().isEmpty())
+                toolTip = GuiPropertyList.this.mc.fontRenderer.listFormattedStringToWidth(
+                        EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + prop.getComment(), 300);
+            else
+                toolTip = GuiPropertyList.this.mc.fontRenderer.listFormattedStringToWidth(
+                        EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.RED + "No tooltip defined.", 300);
+        }
+        
+        @Override
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        {
+            GuiPropertyList.this.mc.fontRenderer.drawString(
+                    this.propName,
+                    listWidth / 2 - GuiPropertyList.this.maxLabelTextWidth - 8,
+                    y + slotHeight / 2 - GuiPropertyList.this.mc.fontRenderer.FONT_HEIGHT / 2,
+                    16777215);
+            this.btnDefault.xPosition = listWidth - 6 - 45;
+            this.btnDefault.yPosition = y;
+            this.btnDefault.enabled = !isDefault();
+            this.btnDefault.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
+            
+            this.x = x;
+            this.y = y;
+            this.listWidth = listWidth;
+            this.slotHeight = slotHeight;
+        }
+        
+        @Override
+        public void drawToolTip(int mouseX, int mouseY)
+        {
+            if (toolTip != null)
+            {
+                int bottom = y + slotHeight;
+                int right = listWidth / 2;
+                if (hoverStart == -1 && mouseY >= y && mouseY <= bottom && mouseX >= x && mouseX <= right)
+                    hoverStart = System.currentTimeMillis();
+                else if (mouseY < y || mouseY > bottom || mouseX < x || mouseX > right)
+                    hoverStart = -1;
+                
+                if (hoverStart != -1 && System.currentTimeMillis() - hoverStart >= 800)
+                    GuiPropertyList.this.parentGuiConfig.drawToolTip(toolTip, mouseX, mouseY);
+            }
+        }
+        
+        @Override
+        public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
+        {
+            if (this.btnDefault.mousePressed(GuiPropertyList.this.mc, x, y))
+            {
+                setToDefault();
+                return true;
+            }
+            return false;
+        }
+        
+        @Override
+        public void mouseReleased(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
+        {
+            this.btnDefault.mouseReleased(x, y);
+        }
+        
+        @Override
+        public boolean isDefault()
+        {
+            return prop.isDefault();
+        }
+        
+        @Override
+        public void setToDefault()
+        {
+            this.prop.setToDefault();
+        }
+        
+        @Override
+        public abstract void keyTyped(char eventChar, int eventKey);
+        
+        @Override
+        public abstract void updateCursorCounter();
+        
+        @Override
+        public abstract void mouseClicked(int x, int y, int mouseEvent);
+        
+        @Override
+        public abstract void saveProperty();
+        
+    }
+    
+    @SideOnly(Side.CLIENT)
     public interface IGuiConfigListEntry extends GuiListExtended.IGuiListEntry
     {
         public void keyTyped(char eventChar, int eventKey);
@@ -677,6 +650,12 @@ public class GuiPropertyList extends GuiListExtended
         
         public void mouseClicked(int x, int y, int mouseEvent);
         
+        public boolean isDefault();
+        
+        public void setToDefault();
+        
         public void saveProperty();
+        
+        public void drawToolTip(int mouseX, int mouseY);
     }
 }

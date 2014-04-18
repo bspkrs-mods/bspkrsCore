@@ -1,6 +1,5 @@
 package bspkrs.util.config.gui;
 
-import java.util.List;
 
 public interface IConfigProperty
 {
@@ -8,7 +7,7 @@ public interface IConfigProperty
     
     public Class getType();
     
-    public List getToolTip();
+    public String getComment();
     
     public boolean isDefault();
     
@@ -35,4 +34,13 @@ public interface IConfigProperty
     public String[] getValidValues();
     
     public String getLanguageKey();
+    
+    public int getMinIntValue();
+    
+    public int getMaxIntValue();
+    
+    public double getMinDoubleValue();
+    
+    public double getMaxDoubleValue();
+    
 }
