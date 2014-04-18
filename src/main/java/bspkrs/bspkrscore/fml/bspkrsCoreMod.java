@@ -23,21 +23,21 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "6.3(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true,
+@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "6.4(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true,
         guiFactory = "bspkrs.bspkrscore.fml.gui.ModGuiFactoryHandler")
 public class bspkrsCoreMod
 {
     // config stuff
-    public final String         allowUpdateCheckDesc          = "Set to true to allow checking for updates for ALL of my mods, false to disable";
-    public boolean              allowUpdateCheck              = true;
-    public final String         allowDebugOutputDesc          = "";
-    public boolean              allowDebugOutput              = false;
-    public final String         updateTimeoutMillisecondsDesc = "The timeout in milliseconds for the version update check.";
-    public int                  updateTimeoutMilliseconds     = 3000;
-    public final String         generateUniqueNamesFileDesc   = "When true a file called UniqueNames.txt will be generated in the config folder for convenience. \n" +
-                                                                      "The names found in the file are the string representation of blocks and items in Minecraft.\n" +
-                                                                      "Mods such as Treecapitator and StartingInventory use them in their config files since IDs are gone.";
-    public boolean              generateUniqueNamesFile       = true;
+    private final boolean       allowUpdateCheckDefault          = true;
+    public boolean              allowUpdateCheck                 = allowUpdateCheckDefault;
+    private final boolean       allowDebugOutputDefault          = false;
+    public boolean              allowDebugOutput                 = allowDebugOutputDefault;
+    private final int           updateTimeoutMillisecondsDefault = 3000;
+    public int                  updateTimeoutMilliseconds        = updateTimeoutMillisecondsDefault;
+    private final boolean       generateUniqueNamesFileDefault   = true;
+    public boolean              generateUniqueNamesFile          = generateUniqueNamesFileDefault;
+    private final boolean       showMainMenuMobsDefault          = true;
+    public boolean              showMainMenuMobs                 = showMainMenuMobsDefault;
     
     @Metadata(value = "bspkrsCore")
     public static ModMetadata   metadata;
@@ -49,10 +49,10 @@ public class bspkrsCoreMod
     public static CommonProxy   proxy;
     
     protected ModVersionChecker versionChecker;
-    private final String        versionURL                    = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
-    private final String        mcfTopic                      = "http://www.minecraftforum.net/topic/1114612-";
+    private final String        versionURL                       = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
+    private final String        mcfTopic                         = "http://www.minecraftforum.net/topic/1114612-";
     
-    public Configuration        config;
+    private Configuration       config;
     
     @SideOnly(Side.CLIENT)
     protected BSCClientTicker   ticker;
@@ -81,12 +81,21 @@ public class bspkrsCoreMod
         String ctgyGen = BSConfiguration.CATEGORY_GENERAL;
         config.load();
         
-        allowUpdateCheck = config.getBoolean("allowUpdateCheck", ctgyGen, allowUpdateCheck, allowUpdateCheckDesc);
-        allowDebugOutput = config.getBoolean("allowDebugOutput", ctgyGen, allowDebugOutput, allowDebugOutputDesc);
-        updateTimeoutMilliseconds = config.getInt("updateTimeoutMilliseconds", ctgyGen, updateTimeoutMilliseconds, 100, 30000, updateTimeoutMillisecondsDesc);
-        generateUniqueNamesFile = config.getBoolean("generateUniqueNamesFile", ctgyGen, generateUniqueNamesFile, generateUniqueNamesFileDesc);
+        config.addCustomCategoryComment(ctgyGen, "ATTENTION: Editing this file manually is no longer necessary. \n" +
+                "On the Mods list screen select the entry for bspkrsCore, then click the Config button to modify these settings.");
+        
+        allowUpdateCheck = config.getBoolean(ConfigElement.ALLOW_UPDATE_CHECK.key(), ctgyGen, allowUpdateCheckDefault, ConfigElement.ALLOW_UPDATE_CHECK.desc(), ConfigElement.ALLOW_UPDATE_CHECK.languageKey());
+        allowDebugOutput = config.getBoolean(ConfigElement.ALLOW_DEBUG_OUTPUT.key(), ctgyGen, allowDebugOutput, ConfigElement.ALLOW_DEBUG_OUTPUT.desc(), ConfigElement.ALLOW_DEBUG_OUTPUT.languageKey());
+        updateTimeoutMilliseconds = config.getInt(ConfigElement.UPDATE_TIMEOUT_MILLISECONDS.key(), ctgyGen, updateTimeoutMillisecondsDefault, 100, 30000, ConfigElement.UPDATE_TIMEOUT_MILLISECONDS.desc(), ConfigElement.UPDATE_TIMEOUT_MILLISECONDS.languageKey());
+        generateUniqueNamesFile = config.getBoolean(ConfigElement.GENERATE_UNIQUE_NAMES_FILE.key(), ctgyGen, generateUniqueNamesFileDefault, ConfigElement.GENERATE_UNIQUE_NAMES_FILE.desc(), ConfigElement.GENERATE_UNIQUE_NAMES_FILE.languageKey());
+        showMainMenuMobs = config.getBoolean(ConfigElement.SHOW_MAIN_MENU_MOBS.key(), ctgyGen, showMainMenuMobsDefault, ConfigElement.SHOW_MAIN_MENU_MOBS.desc(), ConfigElement.SHOW_MAIN_MENU_MOBS.languageKey());
         
         config.save();
+    }
+    
+    public Configuration getConfig()
+    {
+        return config;
     }
     
     @EventHandler
@@ -111,6 +120,8 @@ public class bspkrsCoreMod
     {
         if (generateUniqueNamesFile)
             UniqueNameListGenerator.instance().run();
+        
+        proxy.registerMainMenuTickHandler();
     }
     
     @EventHandler

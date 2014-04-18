@@ -1,3 +1,12 @@
+6.4 - 18-Apr-2014
+- added support for config tooltips
+- added code to actually limit numeric fields to their intended bounds
+- fixed ESC key not showing previous screen
+- added classes to allow for rendering entities without a real world running
+- added Main Menu gimmick
+6.3 - 15-Apr-2014
+- fixed config scrollbar not working after changing settings
+- changed the way item overlays work to allow more precision
 6.2 - 13-Apr-2014
 - fixed client commands not opening GUIs
 6.1 - 13-Apr-2014
