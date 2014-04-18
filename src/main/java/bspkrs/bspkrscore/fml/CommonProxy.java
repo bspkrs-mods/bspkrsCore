@@ -2,6 +2,12 @@ package bspkrs.bspkrscore.fml;
 
 public class CommonProxy
 {
-    protected void registerTickHandler()
+    protected void registerGameTickHandler()
+    {}
+    
+    protected void registerMainMenuTickHandler()
+    {}
+    
+    protected void unRegisterMainMenuTickHandler()
     {}
 }
