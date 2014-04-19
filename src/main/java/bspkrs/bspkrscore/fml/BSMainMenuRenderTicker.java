@@ -60,8 +60,6 @@ public class BSMainMenuRenderTicker
     static
     {
         entityBlacklist = new ArrayList();
-        entityBlacklist.add("Mob");
-        entityBlacklist.add("Monster");
         entityBlacklist.add("EnderDragon");
         entityBlacklist.add("Squid");
         entityBlacklist.add("Ghast");
@@ -90,7 +88,7 @@ public class BSMainMenuRenderTicker
         fallBackPlayerNames = new String[] {
             "bspkrs", "lorddusk", "Arkember", "TTFTCUTS", "WayofFlowingTime", "Grumm", "Sacheverell", "Quetzz", "Pahimar", "ZeldoKavira",
             "sfPlayer1", "jadedcat", "RWTema", "Scottwears", "neptunepink", "Aureylian", "direwolf20", "Krystal_Raven", "notch", "Dinnerbone",
-            "Adubbz", "AlgorithmX2"
+            "Adubbz", "AlgorithmX2", "Cloudhunter"
         };
         
         playerItems = new ItemStack[] {

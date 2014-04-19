@@ -30,7 +30,6 @@ public class EntityUtils
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        //GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glTranslatef(posX, posY, 50.0F);
         GL11.glScalef((-scale), scale, scale);
         GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
