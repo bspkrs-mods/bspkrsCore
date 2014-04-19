@@ -1545,7 +1545,7 @@ public class FakeWorld extends World
         }
         
         @Override
-        public void checkSessionLock() throws MinecraftException
+        public void checkSessionLock()
         {}
         
         @Override
