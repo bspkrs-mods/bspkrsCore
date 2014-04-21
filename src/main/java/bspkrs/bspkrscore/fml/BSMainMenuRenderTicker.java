@@ -68,6 +68,14 @@ public class BSMainMenuRenderTicker
         entityBlacklist.add("Bat");
         entityBlacklist.add("CaveSpider");
         entityBlacklist.add("Giant");
+        // Millenaire entities
+        entityBlacklist.add("MillBlaze");
+        entityBlacklist.add("MillGhast");
+        entityBlacklist.add("MillWitherSkeleton");
+        entityBlacklist.add("ml_GenericAsimmFemale");
+        entityBlacklist.add("ml_GenericSimmFemale");
+        entityBlacklist.add("ml_GenericVillager");
+        
         entityBlacklist.add("BiomesOPlenty.Phantom");
         entityBlacklist.add("Forestry.butterflyGE");
         entityBlacklist.add("TConstruct.Crystal");
@@ -151,9 +159,15 @@ public class BSMainMenuRenderTicker
         else if (world != null && (savedScreen == null || !savedScreen.equals(mcClient.currentScreen)))
         {
             if (bspkrsCoreMod.instance.allowDebugOutput)
+            {
                 randMob = getNextEntity(world);
+                EntityUtils.resetErroredOut(false);
+            }
             else
+            {
                 randMob = EntityUtils.getRandomLivingEntity(world, entityBlacklist, 4, fallBackPlayerNames);
+                EntityUtils.resetErroredOut(false);
+            }
             setRandomMobItem(player);
             setRandomMobItem(randMob);
             savedScreen = mcClient.currentScreen;
@@ -168,9 +182,15 @@ public class BSMainMenuRenderTicker
             player = new EntityOtherPlayerMP(world, new GameProfile("", mcClient.getSession().getUsername()));
             setRandomMobItem(player);
             if (bspkrsCoreMod.instance.allowDebugOutput)
+            {
                 randMob = getNextEntity(world);
+                EntityUtils.resetErroredOut(false);
+            }
             else
+            {
                 randMob = EntityUtils.getRandomLivingEntity(world, entityBlacklist, 4, fallBackPlayerNames);
+                EntityUtils.resetErroredOut(false);
+            }
             setRandomMobItem(randMob);
             RenderManager.instance.cacheActiveRenderInfo(world, mcClient.renderEngine, mcClient.fontRenderer, player, player, mcClient.gameSettings, 0.0F);
             savedScreen = mcClient.currentScreen;
@@ -206,24 +226,31 @@ public class BSMainMenuRenderTicker
     
     private static void setRandomMobItem(EntityLivingBase ent)
     {
-        if (ent instanceof EntityOtherPlayerMP)
-            ent.setCurrentItemOrArmor(0, playerItems[random.nextInt(playerItems.length)]);
-        else if (ent instanceof EntityZombie)
-            ent.setCurrentItemOrArmor(0, zombieItems[random.nextInt(zombieItems.length)]);
-        else if (ent instanceof EntitySkeleton)
+        try
         {
-            if (random.nextBoolean())
+            if (ent instanceof EntityOtherPlayerMP)
+                ent.setCurrentItemOrArmor(0, playerItems[random.nextInt(playerItems.length)]);
+            else if (ent instanceof EntityZombie)
+                ent.setCurrentItemOrArmor(0, zombieItems[random.nextInt(zombieItems.length)]);
+            else if (ent instanceof EntitySkeleton)
             {
-                ((EntitySkeleton) ent).setSkeletonType(1);
-                ent.setCurrentItemOrArmor(0, new ItemStack(Items.golden_sword));
+                if (random.nextBoolean())
+                {
+                    ((EntitySkeleton) ent).setSkeletonType(1);
+                    ent.setCurrentItemOrArmor(0, new ItemStack(Items.golden_sword));
+                }
+                else
+                    ent.setCurrentItemOrArmor(0, skelItems[random.nextInt(skelItems.length)]);
             }
-            else
-                ent.setCurrentItemOrArmor(0, skelItems[random.nextInt(skelItems.length)]);
+            else if (ent instanceof EntityPigZombie)
+                ent.setCurrentItemOrArmor(0, new ItemStack(Items.golden_sword));
+            else if (ent instanceof EntityEnderman)
+                ((EntityEnderman) ent).func_146081_a(Blocks.grass);
         }
-        else if (ent instanceof EntityPigZombie)
-            ent.setCurrentItemOrArmor(0, new ItemStack(Items.golden_sword));
-        else if (ent instanceof EntityEnderman)
-            ((EntityEnderman) ent).func_146081_a(Blocks.grass);
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+        }
     }
     
     public void register()

@@ -1,3 +1,5 @@
+6.5 - 21-Apr-2014
+- made main menu gimmick code more crash-safe
 6.4 - 18-Apr-2014
 - added support for config tooltips
 - added code to actually limit numeric fields to their intended bounds
