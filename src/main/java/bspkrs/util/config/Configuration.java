@@ -700,6 +700,13 @@ public class Configuration
         getCategory(category).setComment(comment);
     }
     
+    public void addCustomCategoryLanguageKey(String category, String langKey)
+    {
+        if (!caseSensitiveCustomCategories)
+            category = category.toLowerCase(Locale.ENGLISH);
+        getCategory(category).setLanguageKey(langKey);
+    }
+    
     private void setChild(String name, Configuration child)
     {
         if (!children.containsKey(name))

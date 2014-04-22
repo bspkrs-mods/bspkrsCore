@@ -24,20 +24,27 @@ public class GuiConfig extends GuiScreen
     protected IConfigProperty[] properties;
     private GuiPropertyList     propertyList;
     private GuiButton           btnResetAll;
-    private Method              saveAction;
-    private Object              configObject;
-    private Method              afterSaveAction;
-    private Object              afterSaveObject;
+    protected Method            saveAction;
+    protected Object            configObject;
+    protected Method            afterSaveAction;
+    protected Object            afterSaveObject;
+    protected String            titleSuffix;
     
-    public GuiConfig(GuiScreen par1GuiScreen, IConfigProperty[] properties, Method saveAction, Object configObject, Method afterSaveAction, Object afterSaveObject)
+    public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, Method saveAction, Object configObject, Method afterSaveAction, Object afterSaveObject)
     {
-        this.parentScreen = par1GuiScreen;
+        this(parentScreen, properties, saveAction, configObject, afterSaveAction, afterSaveObject, null);
+    }
+    
+    public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, Method saveAction, Object configObject, Method afterSaveAction, Object afterSaveObject, String titleSuffix)
+    {
+        this.parentScreen = parentScreen;
         this.properties = properties;
         this.saveAction = saveAction;
         this.configObject = configObject;
         this.afterSaveAction = afterSaveAction;
         this.afterSaveObject = afterSaveObject;
         this.propertyList = new GuiPropertyList(this, Minecraft.getMinecraft());
+        this.titleSuffix = titleSuffix;
     }
     
     /**
@@ -63,8 +70,10 @@ public class GuiConfig extends GuiScreen
             try
             {
                 this.propertyList.saveProperties();
-                this.saveAction.invoke(configObject);
-                this.afterSaveAction.invoke(afterSaveObject);
+                if (saveAction != null)
+                    this.saveAction.invoke(configObject);
+                if (afterSaveAction != null)
+                    this.afterSaveAction.invoke(afterSaveObject);
             }
             catch (Throwable e)
             {
@@ -122,6 +131,9 @@ public class GuiConfig extends GuiScreen
         this.drawDefaultBackground();
         this.propertyList.drawScreen(par1, par2, par3);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
+        if (this.titleSuffix != null)
+            this.drawCenteredString(this.fontRendererObj, this.titleSuffix, this.width / 2, 18, 16777215);
+        
         this.btnResetAll.enabled = !this.propertyList.areAllPropsDefault();
         super.drawScreen(par1, par2, par3);
         this.propertyList.drawScreenPost(par1, par2, par3);

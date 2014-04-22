@@ -114,6 +114,8 @@ public class Property
         isList = false;
         this.minValue = String.valueOf(Integer.MIN_VALUE);
         this.maxValue = String.valueOf(Integer.MAX_VALUE);
+        this.langKey = langKey;
+        this.comment = "";
     }
     
     public Property(String name, String[] values, Type type)
@@ -123,10 +125,20 @@ public class Property
     
     Property(String name, String[] values, Type type, boolean read)
     {
-        this(name, values, type, read, new String[0]);
+        this(name, values, type, read, new String[0], name);
     }
     
-    Property(String name, String[] values, Type type, boolean read, String[] validValues)
+    public Property(String name, String[] values, Type type, String langKey)
+    {
+        this(name, values, type, false, langKey);
+    }
+    
+    Property(String name, String[] values, Type type, boolean read, String langKey)
+    {
+        this(name, values, type, read, new String[0], langKey);
+    }
+    
+    Property(String name, String[] values, Type type, boolean read, String[] validValues, String langKey)
     {
         setName(name);
         this.type = type;
@@ -139,6 +151,8 @@ public class Property
         isList = true;
         this.minValue = String.valueOf(Integer.MIN_VALUE);
         this.maxValue = String.valueOf(Integer.MAX_VALUE);
+        this.langKey = langKey;
+        this.comment = "";
     }
     
     public boolean isDefault()
@@ -227,7 +241,7 @@ public class Property
         return defaultValues;
     }
     
-    protected void setLanguageKey(String value)
+    public void setLanguageKey(String value)
     {
         this.langKey = value;
     }

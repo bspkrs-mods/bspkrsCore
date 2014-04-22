@@ -3,7 +3,11 @@ package bspkrs.util.config.gui;
 
 public interface IConfigProperty
 {
+    public boolean isProperty();
+    
     public String getName();
+    
+    public String getQualifiedName();
     
     public Class getType();
     
@@ -42,5 +46,7 @@ public interface IConfigProperty
     public double getMinDoubleValue();
     
     public double getMaxDoubleValue();
+    
+    public IConfigProperty[] getConfigProperties();
     
 }

@@ -19,6 +19,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import org.lwjgl.input.Keyboard;
 
 import bspkrs.util.CommonUtils;
+import bspkrs.util.config.ConfigCategory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -32,7 +33,7 @@ public class GuiPropertyList extends GuiListExtended
     
     public GuiPropertyList(GuiConfig parent, Minecraft mc)
     {
-        super(mc, parent.width, parent.height, 23, parent.height - 32, 20);
+        super(mc, parent.width, parent.height, parent.titleSuffix != null ? 33 : 23, parent.height - 32, 20);
         this.parentGuiConfig = parent;
         this.setShowSelectionBox(false);
         this.mc = mc;
@@ -44,11 +45,14 @@ public class GuiPropertyList extends GuiListExtended
         {
             IConfigProperty prop = parent.properties[k];
             
-            int l = mc.fontRenderer.getStringWidth(I18n.format(prop.getLanguageKey(), new Object[0]));
-            
-            if (l > this.maxLabelTextWidth)
+            if (prop.isProperty())
             {
-                this.maxLabelTextWidth = l;
+                int l = mc.fontRenderer.getStringWidth(I18n.format(prop.getLanguageKey(), new Object[0]));
+                
+                if (l > this.maxLabelTextWidth)
+                {
+                    this.maxLabelTextWidth = l;
+                }
             }
             
             if (prop.getType().equals(boolean.class))
@@ -96,6 +100,8 @@ public class GuiPropertyList extends GuiListExtended
                 else
                     this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
             }
+            else if (prop.getType().equals(ConfigCategory.class))
+                this.listEntries[i++] = new GuiConfigCategoryListEntry(prop);
         }
     }
     
@@ -554,7 +560,7 @@ public class GuiPropertyList extends GuiListExtended
             if (!comment.equals(prop.getLanguageKey() + ".tooltip"))
                 toolTip = GuiPropertyList.this.mc.fontRenderer.listFormattedStringToWidth(
                         EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + comment, 300);
-            else if (!prop.getComment().trim().isEmpty())
+            else if (prop.getComment() != null && !prop.getComment().trim().isEmpty())
                 toolTip = GuiPropertyList.this.mc.fontRenderer.listFormattedStringToWidth(
                         EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + prop.getComment(), 300);
             else
@@ -638,6 +644,120 @@ public class GuiPropertyList extends GuiListExtended
         
         @Override
         public abstract void saveProperty();
+        
+    }
+    
+    /**
+     * GuiConfigListEntry
+     */
+    @SideOnly(Side.CLIENT)
+    public class GuiConfigCategoryListEntry implements IGuiConfigListEntry
+    {
+        protected final IConfigProperty prop;
+        protected final String          propName;
+        protected final GuiButton       btnSelectCategory;
+        private long                    hoverStart = -1;
+        private List                    toolTip;
+        private int                     x, y, listWidth, slotHeight;
+        
+        public GuiConfigCategoryListEntry(IConfigProperty prop)
+        {
+            this.prop = prop;
+            
+            if (I18n.format(prop.getLanguageKey()).equals(prop.getLanguageKey()))
+                this.propName = I18n.format(prop.getName());
+            else
+                this.propName = I18n.format(prop.getLanguageKey());
+            
+            this.btnSelectCategory = new GuiButton(0, 0, 0, 200, 18, I18n.format(propName, new Object[0]));
+            
+            String comment = I18n.format(prop.getLanguageKey() + ".tooltip");
+            
+            if (!comment.equals(prop.getLanguageKey() + ".tooltip"))
+                toolTip = GuiPropertyList.this.mc.fontRenderer.listFormattedStringToWidth(
+                        EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + comment, 300);
+            else if (prop.getComment() != null && !prop.getComment().trim().isEmpty())
+                toolTip = GuiPropertyList.this.mc.fontRenderer.listFormattedStringToWidth(
+                        EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + prop.getComment(), 300);
+            else
+                toolTip = GuiPropertyList.this.mc.fontRenderer.listFormattedStringToWidth(
+                        EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.RED + "No tooltip defined.", 300);
+        }
+        
+        @Override
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
+        {
+            this.btnSelectCategory.xPosition = listWidth / 2 - 100;
+            this.btnSelectCategory.yPosition = y;
+            this.btnSelectCategory.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
+            
+            this.x = listWidth / 2 - 100;
+            this.y = y;
+            this.listWidth = listWidth;
+            this.slotHeight = slotHeight;
+        }
+        
+        @Override
+        public void drawToolTip(int mouseX, int mouseY)
+        {
+            if (toolTip != null)
+            {
+                int bottom = y + slotHeight;
+                int right = listWidth / 2 + 100;
+                if (hoverStart == -1 && mouseY >= y && mouseY <= bottom && mouseX >= x && mouseX <= right)
+                    hoverStart = System.currentTimeMillis();
+                else if (mouseY < y || mouseY > bottom || mouseX < x || mouseX > right)
+                    hoverStart = -1;
+                
+                if (hoverStart != -1 && System.currentTimeMillis() - hoverStart >= 800)
+                    GuiPropertyList.this.parentGuiConfig.drawToolTip(toolTip, mouseX, mouseY);
+            }
+        }
+        
+        @Override
+        public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
+        {
+            if (this.btnSelectCategory.mousePressed(GuiPropertyList.this.mc, x, y))
+            {
+                GuiConfig subCatGui = new GuiConfig(GuiPropertyList.this.parentGuiConfig, prop.getConfigProperties(),
+                        null, GuiPropertyList.this.parentGuiConfig.configObject, null, null, prop.getQualifiedName());
+                Minecraft.getMinecraft().displayGuiScreen(subCatGui);
+                return true;
+            }
+            return false;
+        }
+        
+        @Override
+        public void mouseReleased(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
+        {
+            this.btnSelectCategory.mouseReleased(x, y);
+        }
+        
+        @Override
+        public boolean isDefault()
+        {
+            return prop.isDefault();
+        }
+        
+        @Override
+        public void setToDefault()
+        {}
+        
+        @Override
+        public void keyTyped(char eventChar, int eventKey)
+        {}
+        
+        @Override
+        public void updateCursorCounter()
+        {}
+        
+        @Override
+        public void mouseClicked(int x, int y, int mouseEvent)
+        {}
+        
+        @Override
+        public void saveProperty()
+        {}
         
     }
     

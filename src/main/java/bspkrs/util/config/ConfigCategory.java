@@ -24,7 +24,8 @@ import com.google.common.collect.ImmutableSet;
 public class ConfigCategory implements Map<String, Property>
 {
     private String                    name;
-    private String                    comment;
+    private String                    comment    = "";
+    private String                    languagekey;
     private ArrayList<ConfigCategory> children   = new ArrayList<ConfigCategory>();
     private Map<String, Property>     properties = new TreeMap<String, Property>();
     public final ConfigCategory       parent;
@@ -87,9 +88,27 @@ public class ConfigCategory implements Map<String, Property>
         return ImmutableMap.copyOf(properties);
     }
     
+    public void setLanguageKey(String languagekey)
+    {
+        this.languagekey = languagekey;
+    }
+    
+    public String getLanguagekey()
+    {
+        if (this.languagekey != null)
+            return this.languagekey;
+        else
+            return getQualifiedName();
+    }
+    
     public void setComment(String comment)
     {
         this.comment = comment;
+    }
+    
+    public String getComment()
+    {
+        return this.comment;
     }
     
     public boolean containsKey(String key)
@@ -123,7 +142,7 @@ public class ConfigCategory implements Map<String, Property>
         String pad1 = getIndent(indent + 1);
         String pad2 = getIndent(indent + 2);
         
-        if (comment != null)
+        if (comment != null && !comment.isEmpty())
         {
             write(out, pad0, COMMENT_SEPARATOR);
             write(out, pad0, "# ", name);
@@ -151,7 +170,7 @@ public class ConfigCategory implements Map<String, Property>
         {
             Property prop = props[x];
             
-            if (prop.comment != null)
+            if (prop.comment != null && !prop.comment.isEmpty())
             {
                 if (x != 0)
                 {
