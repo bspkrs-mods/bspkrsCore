@@ -875,7 +875,7 @@ public class Configuration
         {
             if (getCategory(oldCategory).containsKey(propName))
             {
-                getCategory(newCategory).put(propName, getCategory(oldCategory).get(propName));
+                getCategory(newCategory).put(propName, getCategory(oldCategory).remove(propName));
                 return true;
             }
         }
