@@ -3,6 +3,7 @@ package bspkrs.client.util;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -157,7 +158,8 @@ public class EntityUtils
     public static EntityLivingBase getRandomLivingEntity(World world, List blacklist, int numberOfAttempts, String[] fallBackPlayerNames)
     {
         Random random = new Random();
-        Set entities = EntityList.stringToClassMapping.keySet();
+        // Get a COPY dumbass!
+        Set entities = new TreeSet(EntityList.stringToClassMapping.keySet());
         
         if (blacklist != null)
             entities.removeAll(blacklist);

@@ -1,5 +1,6 @@
-6.6 - ???
+6.6 - 22-Apr-2014
 - changes to support multi-category config file GUIs
+- fixed a SERIOUS issue with Main Menu code that would remove certain mobs from the EntityList
 6.5 - 21-Apr-2014
 - made main menu gimmick code more crash-safe
 6.4 - 18-Apr-2014

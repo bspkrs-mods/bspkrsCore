@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
@@ -115,7 +116,8 @@ public class BSMainMenuRenderTicker
             new ItemStack(Items.bow), new ItemStack(Items.bow), new ItemStack(Items.bow)
         };
         
-        entities = EntityList.stringToClassMapping.keySet();
+        // Get a COPY dumbass!
+        entities = new TreeSet(EntityList.stringToClassMapping.keySet());
         entities.removeAll(entityBlacklist);
         entStrings = entities.toArray(new Object[] {});
         id = -1;
@@ -268,6 +270,9 @@ public class BSMainMenuRenderTicker
         {
             FMLCommonHandler.instance().bus().unregister(this);
             isRegistered = false;
+            randMob = null;
+            player = null;
+            world = null;
         }
     }
     
