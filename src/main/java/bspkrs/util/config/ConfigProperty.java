@@ -2,12 +2,7 @@ package bspkrs.util.config;
 
 import java.util.Iterator;
 
-import net.minecraft.entity.EntityList;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.biome.BiomeGenBase;
+import bspkrs.util.config.gui.ConfigGuiType;
 import bspkrs.util.config.gui.IConfigProperty;
 
 public class ConfigProperty implements IConfigProperty
@@ -78,33 +73,33 @@ public class ConfigProperty implements IConfigProperty
     }
     
     @Override
-    public Class getType()
+    public ConfigGuiType getType()
     {
         if (isProperty)
         {
             if (type.equals(Property.Type.BOOLEAN))
-                return boolean.class;
+                return ConfigGuiType.BOOLEAN;
             else if (type.equals(Property.Type.DOUBLE))
-                return double.class;
+                return ConfigGuiType.DOUBLE;
             else if (type.equals(Property.Type.INTEGER))
-                return int.class;
+                return ConfigGuiType.INTEGER;
             else if (type.equals(Property.Type.COLOR))
-                return EnumChatFormatting.class;
+                return ConfigGuiType.COLOR;
             else if (type.equals(Property.Type.BLOCK_LIST))
-                return Blocks.class;
+                return ConfigGuiType.BLOCK_LIST;
             else if (type.equals(Property.Type.ITEMSTACK_LIST))
-                return Items.class;
+                return ConfigGuiType.ITEMSTACK_LIST;
             else if (type.equals(Property.Type.ENTITY_LIST))
-                return EntityList.class;
+                return ConfigGuiType.ENTITY_LIST;
             else if (type.equals(Property.Type.BIOME_LIST))
-                return BiomeGenBase.class;
+                return ConfigGuiType.BIOME_LIST;
             else if (type.equals(Property.Type.DIMENSION_LIST))
-                return WorldProvider.class;
+                return ConfigGuiType.DIMENSION_LIST;
             else
-                return String.class;
+                return ConfigGuiType.STRING;
         }
         else
-            return ConfigCategory.class;
+            return ConfigGuiType.CONFIG_CATEGORY;
     }
     
     @Override

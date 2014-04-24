@@ -1,6 +1,5 @@
 package bspkrs.util.config.gui;
 
-
 public interface IConfigProperty
 {
     public boolean isProperty();
@@ -9,7 +8,7 @@ public interface IConfigProperty
     
     public String getQualifiedName();
     
-    public Class getType();
+    public ConfigGuiType getType();
     
     public String getComment();
     
