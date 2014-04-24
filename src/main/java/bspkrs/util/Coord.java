@@ -175,6 +175,11 @@ public class Coord
         return WorldHelper.isAirBlock(world, x, y, z);
     }
     
+    public boolean chunkExists(World world)
+    {
+        return world.checkChunksExist(x, y, z, x, y, z);
+    }
+    
     public boolean isBlockNormalCube(World world)
     {
         return WorldHelper.isBlockNormalCube(world, x, y, z, false);
@@ -212,12 +217,17 @@ public class Coord
     
     public static boolean moveBlock(World world, Coord src, Coord tgt, boolean allowBlockReplacement)
     {
+        return moveBlock(world, src, tgt, allowBlockReplacement, BlockNotifyType.ALL);
+    }
+    
+    public static boolean moveBlock(World world, Coord src, Coord tgt, boolean allowBlockReplacement, int notifyFlag)
+    {
         if (!world.isRemote && !src.isAirBlock(world) && (tgt.isAirBlock(world) || allowBlockReplacement))
         {
             Block blockID = src.getBlock(world);
             int metadata = src.getBlockMetadata(world);
             
-            WorldHelper.setBlock(world, tgt.x, tgt.y, tgt.z, blockID, metadata, BlockNotifyType.ALL);
+            WorldHelper.setBlock(world, tgt.x, tgt.y, tgt.z, blockID, metadata, notifyFlag);
             
             TileEntity te = WorldHelper.getBlockTileEntity(world, src.x, src.y, src.z);
             if (te != null)
@@ -234,7 +244,7 @@ public class Coord
                     TileEntityHelper.readFromNBT(te, nbt);
             }
             
-            WorldHelper.setBlockToAir(world, src.x, src.y, src.z);
+            world.setBlockToAir(src.x, src.y, src.z);
             return true;
         }
         return false;
