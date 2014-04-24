@@ -415,7 +415,7 @@ public class GuiPropertyList extends GuiListExtended
                     || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
                 this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
             
-            if (!textFieldValue.getText().trim().isEmpty())
+            if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
             {
                 long value = Long.parseLong(textFieldValue.getText().trim());
                 if (value < prop.getMinIntValue() || value > prop.getMaxIntValue())
@@ -469,7 +469,7 @@ public class GuiPropertyList extends GuiListExtended
                     || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
                 this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
             
-            if (!textFieldValue.getText().trim().isEmpty())
+            if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
             {
                 double value = Double.parseDouble(textFieldValue.getText().trim());
                 if (value < prop.getMinDoubleValue() || value > prop.getMaxDoubleValue())
