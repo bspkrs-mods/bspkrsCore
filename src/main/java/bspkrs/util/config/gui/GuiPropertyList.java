@@ -9,17 +9,11 @@ import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.EntityList;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.biome.BiomeGenBase;
 
 import org.lwjgl.input.Keyboard;
 
 import bspkrs.util.CommonUtils;
-import bspkrs.util.config.ConfigCategory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -30,6 +24,11 @@ public class GuiPropertyList extends GuiListExtended
     private final Minecraft             mc;
     private final IGuiConfigListEntry[] listEntries;
     private int                         maxLabelTextWidth = 0;
+    private final int                   labelX;
+    private final int                   controlX;
+    private final int                   controlWidth;
+    private final int                   resetX;
+    private final int                   scrollBarX;
     
     public GuiPropertyList(GuiConfig parent, Minecraft mc)
     {
@@ -41,68 +40,77 @@ public class GuiPropertyList extends GuiListExtended
         int i = 0;
         String s = null;
         
-        for (int k = 0; k < parent.properties.length; ++k)
+        for (IConfigProperty prop : parent.properties)
         {
-            IConfigProperty prop = parent.properties[k];
-            
-            if (prop.isProperty())
+            if (prop != null)
             {
-                int l = mc.fontRenderer.getStringWidth(I18n.format(prop.getLanguageKey(), new Object[0]));
-                
-                if (l > this.maxLabelTextWidth)
+                if (prop.isProperty()) // as opposed to being a child category entry
                 {
-                    this.maxLabelTextWidth = l;
+                    int l = mc.fontRenderer.getStringWidth(I18n.format(prop.getLanguageKey(), new Object[0]));
+                    
+                    if (l > this.maxLabelTextWidth)
+                    {
+                        this.maxLabelTextWidth = l;
+                    }
                 }
-            }
-            
-            if (prop.getType().equals(boolean.class))
-                this.listEntries[i++] = new GuiPropertyList.BooleanPropEntry(prop);
-            else if (prop.getType().equals(int.class))
-                this.listEntries[i++] = new GuiPropertyList.IntegerPropEntry(prop);
-            else if (prop.getType().equals(double.class))
-                this.listEntries[i++] = new GuiPropertyList.DoublePropEntry(prop);
-            else if (prop.getType().equals(EnumChatFormatting.class))
-            {
-                if (prop.getValidValues().length > 0)
-                    this.listEntries[i++] = new GuiPropertyList.ColorPropEntry(prop);
-                else
+                
+                if (prop.getType().equals(ConfigGuiType.BOOLEAN))
+                    this.listEntries[i++] = new GuiPropertyList.BooleanPropEntry(prop);
+                else if (prop.getType().equals(ConfigGuiType.INTEGER))
+                    this.listEntries[i++] = new GuiPropertyList.IntegerPropEntry(prop);
+                else if (prop.getType().equals(ConfigGuiType.DOUBLE))
+                    this.listEntries[i++] = new GuiPropertyList.DoublePropEntry(prop);
+                else if (prop.getType().equals(ConfigGuiType.COLOR))
+                {
+                    if (prop.getValidValues().length > 0)
+                        this.listEntries[i++] = new GuiPropertyList.ColorPropEntry(prop);
+                    else
+                        this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+                }
+                else if (prop.getType().equals(ConfigGuiType.BLOCK_LIST))
+                {
+                    // TODO:
                     this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-            }
-            else if (prop.getType().equals(Blocks.class))
-            {
-                // TODO:
-                this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-            }
-            else if (prop.getType().equals(Items.class))
-            {
-                // TODO:
-                this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-            }
-            else if (prop.getType().equals(EntityList.class))
-            {
-                // TODO:
-                this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-            }
-            else if (prop.getType().equals(BiomeGenBase.class))
-            {
-                // TODO:
-                this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-            }
-            else if (prop.getType().equals(WorldProvider.class))
-            {
-                // TODO:
-                this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-            }
-            else if (prop.getType().equals(String.class))
-            {
-                if (prop.getValidValues().length > 0)
-                    this.listEntries[i++] = new GuiPropertyList.SelectStringPropEntry(prop);
-                else
+                }
+                else if (prop.getType().equals(ConfigGuiType.ITEMSTACK_LIST))
+                {
+                    // TODO:
                     this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+                }
+                else if (prop.getType().equals(ConfigGuiType.ENTITY_LIST))
+                {
+                    // TODO:
+                    this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+                }
+                else if (prop.getType().equals(ConfigGuiType.BIOME_LIST))
+                {
+                    // TODO:
+                    this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+                }
+                else if (prop.getType().equals(ConfigGuiType.DIMENSION_LIST))
+                {
+                    // TODO:
+                    this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+                }
+                else if (prop.getType().equals(ConfigGuiType.STRING))
+                {
+                    if (prop.getValidValues().length > 0)
+                        this.listEntries[i++] = new GuiPropertyList.SelectStringPropEntry(prop);
+                    else
+                        this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+                }
+                else if (prop.getType().equals(ConfigGuiType.CONFIG_CATEGORY))
+                    this.listEntries[i++] = new GuiConfigCategoryListEntry(prop);
             }
-            else if (prop.getType().equals(ConfigCategory.class))
-                this.listEntries[i++] = new GuiConfigCategoryListEntry(prop);
         }
+        
+        int viewWidth = this.maxLabelTextWidth + 8 + (width / 2);
+        labelX = (this.width / 2) - (viewWidth / 2);
+        controlX = labelX + maxLabelTextWidth + 8;
+        resetX = (this.width / 2) + (viewWidth / 2) - 45;
+        controlWidth = resetX - controlX - 5;
+        scrollBarX = resetX + 45;
+        
     }
     
     @Override
@@ -123,7 +131,7 @@ public class GuiPropertyList extends GuiListExtended
     @Override
     protected int getScrollBarX()
     {
-        return parentGuiConfig.width - 6;
+        return scrollBarX;
     }
     
     /**
@@ -284,6 +292,16 @@ public class GuiPropertyList extends GuiListExtended
             this.btnValue.packedFGColour = CommonUtils.getColorCode(this.prop.getString().charAt(0), true);
             super.drawEntry(p_148279_1_, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, p_148279_9_);
         }
+        
+        @Override
+        public void updateValueButtonText()
+        {
+            String trans = I18n.format(String.valueOf(prop.getString()));
+            if (!trans.equals(prop.getString()))
+                this.btnValue.displayString = trans + " - Sample Text";
+            else
+                this.btnValue.displayString = this.prop.getString() + " - Sample Text";
+        }
     }
     
     /**
@@ -298,7 +316,7 @@ public class GuiPropertyList extends GuiListExtended
         {
             super(prop);
             int listWidth = GuiPropertyList.this.getListWidth();
-            this.btnValue = new GuiButton(0, 0, 0, listWidth - 6 - 50 - (listWidth / 2), 18, I18n.format(prop.getString(), new Object[0]));
+            this.btnValue = new GuiButton(0, 0, 0, 160, 18, I18n.format(prop.getString(), new Object[0]));
         }
         
         public abstract void updateValueButtonText();
@@ -309,7 +327,25 @@ public class GuiPropertyList extends GuiListExtended
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
         {
             super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
-            this.btnValue.xPosition = listWidth / 2;
+            try
+            {
+                Field buttonWidth;
+                if (CommonUtils.isObfuscatedEnv())
+                {
+                    buttonWidth = GuiButton.class.getDeclaredField("field_146120_f");
+                }
+                else
+                {
+                    buttonWidth = GuiButton.class.getDeclaredField("width");
+                }
+                buttonWidth.setAccessible(true);
+                buttonWidth.setInt(this.btnValue, GuiPropertyList.this.controlWidth);
+            }
+            catch (Throwable e)
+            {
+                e.printStackTrace();
+            }
+            this.btnValue.xPosition = GuiPropertyList.this.controlX;
             this.btnValue.yPosition = y;
             updateValueButtonText();
             this.btnValue.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
@@ -379,12 +415,16 @@ public class GuiPropertyList extends GuiListExtended
                     || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
                 this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
             
-            if (!textFieldValue.getText().isEmpty())
+            if (!textFieldValue.getText().trim().isEmpty())
             {
-                long value = Long.parseLong(textFieldValue.getText());
+                long value = Long.parseLong(textFieldValue.getText().trim());
                 if (value < prop.getMinIntValue() || value > prop.getMaxIntValue())
-                    this.textFieldValue.setText(before);
+                    this.isValidValue = false;
+                else
+                    this.isValidValue = true;
             }
+            else
+                this.isValidValue = false;
         }
         
         @Override
@@ -392,7 +432,11 @@ public class GuiPropertyList extends GuiListExtended
         {
             try
             {
-                this.prop.set(Integer.parseInt(this.textFieldValue.getText().trim()));
+                int value = Integer.parseInt(textFieldValue.getText().trim());
+                if (value >= prop.getMinIntValue() && value <= prop.getMaxIntValue())
+                    this.prop.set(value);
+                else
+                    this.prop.setToDefault();
             }
             catch (Throwable e)
             {
@@ -425,12 +469,16 @@ public class GuiPropertyList extends GuiListExtended
                     || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
                 this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
             
-            if (!textFieldValue.getText().isEmpty())
+            if (!textFieldValue.getText().trim().isEmpty())
             {
-                double value = Double.parseDouble(textFieldValue.getText());
+                double value = Double.parseDouble(textFieldValue.getText().trim());
                 if (value < prop.getMinDoubleValue() || value > prop.getMaxDoubleValue())
-                    this.textFieldValue.setText(before);
+                    this.isValidValue = false;
+                else
+                    this.isValidValue = true;
             }
+            else
+                this.isValidValue = false;
         }
         
         @Override
@@ -438,7 +486,12 @@ public class GuiPropertyList extends GuiListExtended
         {
             try
             {
-                this.prop.set(Double.parseDouble(this.textFieldValue.getText().trim()));
+                double value = Double.parseDouble(textFieldValue.getText().trim());
+                if (value >= prop.getMinDoubleValue() && value <= prop.getMaxDoubleValue())
+                    this.prop.set(value);
+                else
+                    this.prop.setToDefault();
+                
             }
             catch (Throwable e)
             {
@@ -460,7 +513,7 @@ public class GuiPropertyList extends GuiListExtended
         {
             super(prop);
             int listWidth = GuiPropertyList.this.getListWidth();
-            this.textFieldValue = new GuiTextField(GuiPropertyList.this.mc.fontRenderer, 0, 0, listWidth - 6 - 50 - (listWidth / 2) - 4, 18);
+            this.textFieldValue = new GuiTextField(GuiPropertyList.this.mc.fontRenderer, 0, 0, 160 - 4, 18);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(prop.getString());
         }
@@ -473,20 +526,25 @@ public class GuiPropertyList extends GuiListExtended
             {
                 Field xPos;
                 Field yPos;
+                Field controlWidth;
                 if (CommonUtils.isObfuscatedEnv())
                 {
                     xPos = GuiTextField.class.getDeclaredField("field_146209_f");
                     yPos = GuiTextField.class.getDeclaredField("field_146210_g");
+                    controlWidth = GuiTextField.class.getDeclaredField("field_146218_h");
                 }
                 else
                 {
                     xPos = GuiTextField.class.getDeclaredField("xPosition");
                     yPos = GuiTextField.class.getDeclaredField("yPosition");
+                    controlWidth = GuiTextField.class.getDeclaredField("width");
                 }
                 xPos.setAccessible(true);
-                xPos.setInt(this.textFieldValue, listWidth / 2 + 2);
+                xPos.setInt(this.textFieldValue, GuiPropertyList.this.controlX + 2);
                 yPos.setAccessible(true);
                 yPos.setInt(this.textFieldValue, y);
+                controlWidth.setAccessible(true);
+                controlWidth.setInt(this.textFieldValue, GuiPropertyList.this.controlWidth - 4);
             }
             catch (Throwable e)
             {
@@ -544,9 +602,10 @@ public class GuiPropertyList extends GuiListExtended
         protected final IConfigProperty prop;
         protected final String          propName;
         protected final GuiButton       btnDefault;
-        private long                    hoverStart = -1;
+        private long                    hoverStart   = -1;
         private List                    toolTip;
         private int                     x, y, listWidth, slotHeight;
+        protected boolean               isValidValue = true;
         
         public GuiConfigListEntry(IConfigProperty prop)
         {
@@ -578,11 +637,11 @@ public class GuiPropertyList extends GuiListExtended
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
         {
             GuiPropertyList.this.mc.fontRenderer.drawString(
-                    this.propName,
-                    listWidth / 2 - GuiPropertyList.this.maxLabelTextWidth - 8,
+                    isValidValue ? this.propName : EnumChatFormatting.RED + this.propName,
+                    GuiPropertyList.this.labelX,
                     y + slotHeight / 2 - GuiPropertyList.this.mc.fontRenderer.FONT_HEIGHT / 2,
                     16777215);
-            this.btnDefault.xPosition = listWidth - 6 - 45;
+            this.btnDefault.xPosition = GuiPropertyList.this.resetX;
             this.btnDefault.yPosition = y;
             this.btnDefault.enabled = !isDefault();
             this.btnDefault.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
@@ -599,8 +658,9 @@ public class GuiPropertyList extends GuiListExtended
             if (toolTip != null)
             {
                 int bottom = y + slotHeight;
-                int right = listWidth / 2;
-                if (hoverStart == -1 && mouseY >= y && mouseY <= bottom && mouseX >= x && mouseX <= right)
+                int right = GuiPropertyList.this.controlX - 8;
+                if (hoverStart == -1 && mouseY >= y && mouseY <= bottom && mouseX >= x && mouseX <= right
+                        && mouseY < GuiPropertyList.this.bottom && mouseY > GuiPropertyList.this.top)
                     hoverStart = System.currentTimeMillis();
                 else if (mouseY < y || mouseY > bottom || mouseX < x || mouseX > right)
                     hoverStart = -1;
@@ -710,7 +770,8 @@ public class GuiPropertyList extends GuiListExtended
             {
                 int bottom = y + slotHeight;
                 int right = listWidth / 2 + 100;
-                if (hoverStart == -1 && mouseY >= y && mouseY <= bottom && mouseX >= x && mouseX <= right)
+                if (hoverStart == -1 && mouseY >= y && mouseY <= bottom && mouseX >= x && mouseX <= right
+                        && mouseY < GuiPropertyList.this.bottom && mouseY > GuiPropertyList.this.top)
                     hoverStart = System.currentTimeMillis();
                 else if (mouseY < y || mouseY > bottom || mouseX < x || mouseX > right)
                     hoverStart = -1;
