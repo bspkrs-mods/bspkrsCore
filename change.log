@@ -1,3 +1,11 @@
+6.7 - 24-Apr-2014
+- Coord changes needed for FloatingRuins optimizations
+- switched from class references to an enum
+- better int/double handling code
+- added detection of invalid numeric values
+- added better dynamic resizing code for config GUIs
+- prevent tooltips from showing when the mouse is over the header or footer
+- fixed crash when trying to enter negative numbers
 6.6 - 22-Apr-2014
 - changes to support multi-category config file GUIs
 - fixed a SERIOUS issue with Main Menu code that would remove certain mobs from the EntityList
