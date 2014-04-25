@@ -1,6 +1,7 @@
 package bspkrs.util.config;
 
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import bspkrs.util.config.gui.ConfigGuiType;
 import bspkrs.util.config.gui.IConfigProperty;
@@ -252,5 +253,11 @@ public class ConfigProperty implements IConfigProperty
             return prop.getMaxDoubleValue();
         else
             return 0.0F;
+    }
+    
+    @Override
+    public Pattern getValidStringPattern()
+    {
+        return prop.getValidStringPattern();
     }
 }

@@ -2,6 +2,7 @@ package bspkrs.util.config.gui;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -417,11 +418,18 @@ public class GuiPropertyList extends GuiListExtended
             
             if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
             {
-                long value = Long.parseLong(textFieldValue.getText().trim());
-                if (value < prop.getMinIntValue() || value > prop.getMaxIntValue())
+                try
+                {
+                    long value = Long.parseLong(textFieldValue.getText().trim());
+                    if (value < prop.getMinIntValue() || value > prop.getMaxIntValue())
+                        this.isValidValue = false;
+                    else
+                        this.isValidValue = true;
+                }
+                catch (Throwable e)
+                {
                     this.isValidValue = false;
-                else
-                    this.isValidValue = true;
+                }
             }
             else
                 this.isValidValue = false;
@@ -471,11 +479,18 @@ public class GuiPropertyList extends GuiListExtended
             
             if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
             {
-                double value = Double.parseDouble(textFieldValue.getText().trim());
-                if (value < prop.getMinDoubleValue() || value > prop.getMaxDoubleValue())
+                try
+                {
+                    double value = Double.parseDouble(textFieldValue.getText().trim());
+                    if (value < prop.getMinDoubleValue() || value > prop.getMaxDoubleValue())
+                        this.isValidValue = false;
+                    else
+                        this.isValidValue = true;
+                }
+                catch (Throwable e)
+                {
                     this.isValidValue = false;
-                else
-                    this.isValidValue = true;
+                }
             }
             else
                 this.isValidValue = false;
@@ -513,7 +528,7 @@ public class GuiPropertyList extends GuiListExtended
         {
             super(prop);
             int listWidth = GuiPropertyList.this.getListWidth();
-            this.textFieldValue = new GuiTextField(GuiPropertyList.this.mc.fontRenderer, 0, 0, 160 - 4, 18);
+            this.textFieldValue = new GuiTextField(GuiPropertyList.this.mc.fontRenderer, 0, 0, 200 - 4, 16);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(prop.getString());
         }
@@ -540,11 +555,11 @@ public class GuiPropertyList extends GuiListExtended
                     controlWidth = GuiTextField.class.getDeclaredField("width");
                 }
                 xPos.setAccessible(true);
-                xPos.setInt(this.textFieldValue, GuiPropertyList.this.controlX + 2);
+                xPos.setInt(this.textFieldValue, GuiPropertyList.this.controlX + 1);
                 yPos.setAccessible(true);
-                yPos.setInt(this.textFieldValue, y);
+                yPos.setInt(this.textFieldValue, y + 1);
                 controlWidth.setAccessible(true);
-                controlWidth.setInt(this.textFieldValue, GuiPropertyList.this.controlWidth - 4);
+                controlWidth.setInt(this.textFieldValue, GuiPropertyList.this.controlWidth - 3);
             }
             catch (Throwable e)
             {
@@ -557,6 +572,16 @@ public class GuiPropertyList extends GuiListExtended
         public void keyTyped(char eventChar, int eventKey)
         {
             this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
+            
+            if (prop.getValidStringPattern() != null)
+            {
+                String s = this.textFieldValue.getText();
+                Pattern p = prop.getValidStringPattern();
+                if (p.matcher(s).matches())
+                    isValidValue = true;
+                else
+                    isValidValue = false;
+            }
         }
         
         @Override
@@ -580,7 +605,8 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public void setToDefault()
         {
-            this.textFieldValue.setText(this.prop.getDefault());;
+            this.textFieldValue.setText(this.prop.getDefault());
+            keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
         }
         
         @Override
@@ -662,7 +688,8 @@ public class GuiPropertyList extends GuiListExtended
                 if (hoverStart == -1 && mouseY >= y && mouseY <= bottom && mouseX >= x && mouseX <= right
                         && mouseY < GuiPropertyList.this.bottom && mouseY > GuiPropertyList.this.top)
                     hoverStart = System.currentTimeMillis();
-                else if (mouseY < y || mouseY > bottom || mouseX < x || mouseX > right)
+                else if (mouseY < y || mouseY > bottom || mouseX < x || mouseX > right
+                        || mouseY >= GuiPropertyList.this.bottom || mouseY <= GuiPropertyList.this.top)
                     hoverStart = -1;
                 
                 if (hoverStart != -1 && System.currentTimeMillis() - hoverStart >= 800)
@@ -757,7 +784,7 @@ public class GuiPropertyList extends GuiListExtended
             this.btnSelectCategory.yPosition = y;
             this.btnSelectCategory.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
             
-            this.x = listWidth / 2 - 100;
+            this.x = listWidth / 2 - 150;
             this.y = y;
             this.listWidth = listWidth;
             this.slotHeight = slotHeight;
@@ -769,7 +796,7 @@ public class GuiPropertyList extends GuiListExtended
             if (toolTip != null)
             {
                 int bottom = y + slotHeight;
-                int right = listWidth / 2 + 100;
+                int right = listWidth / 2 + 150;
                 if (hoverStart == -1 && mouseY >= y && mouseY <= bottom && mouseX >= x && mouseX <= right
                         && mouseY < GuiPropertyList.this.bottom && mouseY > GuiPropertyList.this.top)
                     hoverStart = System.currentTimeMillis();

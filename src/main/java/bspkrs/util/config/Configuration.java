@@ -102,6 +102,11 @@ public class Configuration
         return file.getAbsolutePath();
     }
     
+    /******************************************************************************************************************
+     * 
+     * INTEGER gets
+     * 
+     *****************************************************************************************************************/
     public Property get(String category, String key, int defaultValue)
     {
         return get(category, key, defaultValue, null);
@@ -109,7 +114,7 @@ public class Configuration
     
     public Property get(String category, String key, int defaultValue, String comment)
     {
-        Property prop = get(category, key, Integer.toString(defaultValue), comment, INTEGER, new String[0]);
+        Property prop = get(category, key, Integer.toString(defaultValue), comment, INTEGER, new String[0], null);
         prop.setDefaultValue(Integer.toString(defaultValue));
         
         if (!prop.isIntValue())
@@ -117,70 +122,6 @@ public class Configuration
             prop.set(defaultValue);
         }
         return prop;
-    }
-    
-    public Property get(String category, String key, boolean defaultValue)
-    {
-        return get(category, key, defaultValue, null);
-    }
-    
-    public Property get(String category, String key, boolean defaultValue, String comment)
-    {
-        Property prop = get(category, key, Boolean.toString(defaultValue), comment, BOOLEAN, new String[0]);
-        prop.setDefaultValue(Boolean.toString(defaultValue));
-        
-        if (!prop.isBooleanValue())
-        {
-            prop.set(defaultValue);
-        }
-        return prop;
-    }
-    
-    public Property get(String category, String key, double defaultValue)
-    {
-        return get(category, key, defaultValue, null);
-    }
-    
-    public Property get(String category, String key, double defaultValue, String comment)
-    {
-        Property prop = get(category, key, Double.toString(defaultValue), comment, DOUBLE, new String[0]);
-        prop.setDefaultValue(Double.toString(defaultValue));
-        
-        if (!prop.isDoubleValue())
-        {
-            prop.set(defaultValue);
-        }
-        return prop;
-    }
-    
-    public Property get(String category, String key, String defaultValue)
-    {
-        return get(category, key, defaultValue, (String) null);
-    }
-    
-    public Property get(String category, String key, String defaultValue, String comment)
-    {
-        return get(category, key, defaultValue, comment, STRING, new String[0]);
-    }
-    
-    public Property get(String category, String key, String defaultValue, String[] validValues)
-    {
-        return get(category, key, defaultValue, (String) null, validValues);
-    }
-    
-    public Property get(String category, String key, String defaultValue, String comment, String[] validValues)
-    {
-        return get(category, key, defaultValue, comment, STRING, validValues);
-    }
-    
-    public Property get(String category, String key, String[] defaultValue)
-    {
-        return get(category, key, defaultValue, null);
-    }
-    
-    public Property get(String category, String key, String[] defaultValue, String comment)
-    {
-        return get(category, key, defaultValue, comment, STRING);
     }
     
     public Property get(String category, String key, int[] defaultValue)
@@ -207,27 +148,25 @@ public class Configuration
         return prop;
     }
     
-    public Property get(String category, String key, double[] defaultValue)
+    /******************************************************************************************************************
+     * 
+     * BOOLEAN gets
+     * 
+     *****************************************************************************************************************/
+    public Property get(String category, String key, boolean defaultValue)
     {
         return get(category, key, defaultValue, null);
     }
     
-    public Property get(String category, String key, double[] defaultValue, String comment)
+    public Property get(String category, String key, boolean defaultValue, String comment)
     {
-        String[] values = new String[defaultValue.length];
-        for (int i = 0; i < defaultValue.length; i++)
+        Property prop = get(category, key, Boolean.toString(defaultValue), comment, BOOLEAN, new String[0], null);
+        prop.setDefaultValue(Boolean.toString(defaultValue));
+        
+        if (!prop.isBooleanValue())
         {
-            values[i] = Double.toString(defaultValue[i]);
+            prop.set(defaultValue);
         }
-        
-        Property prop = get(category, key, values, comment, DOUBLE);
-        prop.setDefaultValue(values);
-        
-        if (!prop.isDoubleList())
-        {
-            prop.set(values);
-        }
-        
         return prop;
     }
     
@@ -255,7 +194,118 @@ public class Configuration
         return prop;
     }
     
+    /******************************************************************************************************************
+     * 
+     * DOUBLE gets
+     * 
+     *****************************************************************************************************************/
+    public Property get(String category, String key, double defaultValue)
+    {
+        return get(category, key, defaultValue, null);
+    }
+    
+    public Property get(String category, String key, double defaultValue, String comment)
+    {
+        Property prop = get(category, key, Double.toString(defaultValue), comment, DOUBLE, new String[0], null);
+        prop.setDefaultValue(Double.toString(defaultValue));
+        
+        if (!prop.isDoubleValue())
+        {
+            prop.set(defaultValue);
+        }
+        return prop;
+    }
+    
+    public Property get(String category, String key, double[] defaultValue)
+    {
+        return get(category, key, defaultValue, null);
+    }
+    
+    public Property get(String category, String key, double[] defaultValue, String comment)
+    {
+        String[] values = new String[defaultValue.length];
+        for (int i = 0; i < defaultValue.length; i++)
+        {
+            values[i] = Double.toString(defaultValue[i]);
+        }
+        
+        Property prop = get(category, key, values, comment, DOUBLE);
+        prop.setDefaultValue(values);
+        
+        if (!prop.isDoubleList())
+        {
+            prop.set(values);
+        }
+        
+        return prop;
+    }
+    
+    /******************************************************************************************************************
+     * 
+     * STRING gets
+     * 
+     *****************************************************************************************************************/
+    public Property get(String category, String key, String defaultValue)
+    {
+        return get(category, key, defaultValue, (String) null);
+    }
+    
+    public Property get(String category, String key, String defaultValue, String comment)
+    {
+        return get(category, key, defaultValue, comment, STRING, new String[0], null);
+    }
+    
+    public Property get(String category, String key, String defaultValue, Pattern pattern)
+    {
+        return get(category, key, defaultValue, (String) null, pattern);
+    }
+    
+    public Property get(String category, String key, String defaultValue, String comment, Pattern pattern)
+    {
+        return get(category, key, defaultValue, comment, STRING, new String[0], pattern);
+    }
+    
+    public Property get(String category, String key, String defaultValue, String[] validValues)
+    {
+        return get(category, key, defaultValue, (String) null, validValues);
+    }
+    
+    public Property get(String category, String key, String defaultValue, String comment, String[] validValues)
+    {
+        return get(category, key, defaultValue, comment, STRING, validValues, null);
+    }
+    
+    public Property get(String category, String key, String[] defaultValue)
+    {
+        return get(category, key, defaultValue, null);
+    }
+    
+    public Property get(String category, String key, String[] defaultValue, String comment)
+    {
+        return get(category, key, defaultValue, comment, STRING);
+    }
+    
+    /******************************************************************************************************************
+     * 
+     * GENERIC gets
+     * 
+     *****************************************************************************************************************/
+    public Property get(String category, String key, String defaultValue, String comment, Property.Type type)
+    {
+        return get(category, key, defaultValue, comment, type, new String[0], null);
+    }
+    
+    public Property get(String category, String key, String defaultValue, String comment, Property.Type type, Pattern pattern)
+    {
+        return get(category, key, defaultValue, comment, type, new String[0], pattern);
+    }
+    
     public Property get(String category, String key, String defaultValue, String comment, Property.Type type, String[] validValues)
+    {
+        return get(category, key, defaultValue, comment, type, validValues, null);
+    }
+    
+    public Property get(String category, String key, String defaultValue, String comment, Property.Type type, String[] validValues, Pattern pattern)
     {
         if (!caseSensitiveCustomCategories)
         {
@@ -276,6 +326,7 @@ public class Configuration
             
             prop.setValidValues(validValues);
             prop.setDefaultValue(defaultValue);
+            prop.setValidStringPattern(pattern);
             prop.comment = comment;
             return prop;
         }
@@ -286,6 +337,7 @@ public class Configuration
             cat.put(key, prop);
             prop.setValidValues(validValues);
             prop.setDefaultValue(defaultValue);
+            prop.setValidStringPattern(pattern);
             prop.comment = comment;
             return prop;
         }
@@ -333,6 +385,11 @@ public class Configuration
         }
     }
     
+    /******************************************************************************************************************
+     * 
+     * Other methods
+     * 
+     *****************************************************************************************************************/
     public boolean hasCategory(String category)
     {
         return categories.get(category) != null;
@@ -920,7 +977,7 @@ public class Configuration
      */
     public String getString(String name, String category, String defaultValue, String comment)
     {
-        return getString(name, category, defaultValue, comment, new String[0], name);
+        return getString(name, category, defaultValue, comment, name, null);
     }
     
     /**
@@ -935,7 +992,40 @@ public class Configuration
      */
     public String getString(String name, String category, String defaultValue, String comment, String langKey)
     {
-        return getString(name, category, defaultValue, comment, new String[0], langKey);
+        return getString(name, category, defaultValue, comment, langKey, null);
+    }
+    
+    /**
+     * Creates a string property.
+     * 
+     * @param name Name of the property.
+     * @param category Category of the property.
+     * @param defaultValue Default value of the property.
+     * @param comment A brief description what the property does.
+     * @return The value of the new string property.
+     */
+    public String getString(String name, String category, String defaultValue, String comment, Pattern pattern)
+    {
+        return getString(name, category, defaultValue, comment, name, pattern);
+    }
+    
+    /**
+     * Creates a string property.
+     * 
+     * @param name Name of the property.
+     * @param category Category of the property.
+     * @param defaultValue Default value of the property.
+     * @param comment A brief description what the property does.
+     * @param langKey A language key used for localization of GUIs
+     * @return The value of the new string property.
+     */
+    public String getString(String name, String category, String defaultValue, String comment, String langKey, Pattern pattern)
+    {
+        Property prop = this.get(category, name, defaultValue);
+        prop.setLanguageKey(langKey);
+        prop.setValidStringPattern(pattern);
+        prop.comment = comment + " [default: " + defaultValue + "]";
+        return prop.getString();
     }
     
     /**

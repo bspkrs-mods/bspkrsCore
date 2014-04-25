@@ -6,6 +6,7 @@
 package bspkrs.util.config;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class Property
 {
@@ -65,6 +66,8 @@ public class Property
     private String        langKey;
     private String        minValue;
     private String        maxValue;
+    
+    private Pattern       stringPattern;
     
     private final boolean wasRead;
     private final boolean isList;
@@ -239,6 +242,16 @@ public class Property
     public String[] getDefaults()
     {
         return defaultValues;
+    }
+    
+    public void setValidStringPattern(Pattern pattern)
+    {
+        this.stringPattern = pattern;
+    }
+    
+    public Pattern getValidStringPattern()
+    {
+        return this.stringPattern;
     }
     
     public void setLanguageKey(String value)

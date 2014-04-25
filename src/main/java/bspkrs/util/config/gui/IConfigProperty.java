@@ -1,5 +1,7 @@
 package bspkrs.util.config.gui;
 
+import java.util.regex.Pattern;
+
 public interface IConfigProperty
 {
     public boolean isProperty();
@@ -47,5 +49,7 @@ public interface IConfigProperty
     public double getMaxDoubleValue();
     
     public IConfigProperty[] getConfigProperties();
+    
+    public Pattern getValidStringPattern();
     
 }
