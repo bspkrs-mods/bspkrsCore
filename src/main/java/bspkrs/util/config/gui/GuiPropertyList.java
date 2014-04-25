@@ -2,7 +2,6 @@ package bspkrs.util.config.gui;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -575,9 +574,7 @@ public class GuiPropertyList extends GuiListExtended
             
             if (prop.getValidStringPattern() != null)
             {
-                String s = this.textFieldValue.getText();
-                Pattern p = prop.getValidStringPattern();
-                if (p.matcher(s).matches())
+                if (prop.getValidStringPattern().matcher(this.textFieldValue.getText().trim()).matches())
                     isValidValue = true;
                 else
                     isValidValue = false;
@@ -599,7 +596,7 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public boolean isDefault()
         {
-            return this.prop.getDefault().equals(this.textFieldValue.getText());
+            return this.prop.getDefault().trim().equals(this.textFieldValue.getText().trim());
         }
         
         @Override
