@@ -6,6 +6,7 @@
 package bspkrs.util.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class Property
@@ -71,8 +72,10 @@ public class Property
     
     private final boolean wasRead;
     private final boolean isList;
+    private boolean       isListLengthFixed = false;
+    private int           maxListLength     = -1;
     private final Type    type;
-    private boolean       changed = false;
+    private boolean       changed           = false;
     
     public Property(String name, String value, Type type)
     {
@@ -115,6 +118,8 @@ public class Property
         this.type = type;
         wasRead = read;
         isList = false;
+        this.isListLengthFixed = false;
+        this.maxListLength = -1;
         this.minValue = String.valueOf(Integer.MIN_VALUE);
         this.maxValue = String.valueOf(Integer.MAX_VALUE);
         this.langKey = langKey;
@@ -152,6 +157,8 @@ public class Property
         this.validValues = validValues;
         wasRead = read;
         isList = true;
+        this.isListLengthFixed = false;
+        this.maxListLength = -1;
         this.minValue = String.valueOf(Integer.MIN_VALUE);
         this.maxValue = String.valueOf(Integer.MAX_VALUE);
         this.langKey = langKey;
@@ -231,7 +238,7 @@ public class Property
     public void setToDefault()
     {
         this.value = this.defaultValue;
-        this.values = this.defaultValues.clone();
+        this.values = Arrays.copyOf(this.defaultValues, this.defaultValues.length);
     }
     
     public String getDefault()
@@ -241,7 +248,34 @@ public class Property
     
     public String[] getDefaults()
     {
-        return defaultValues;
+        return Arrays.copyOf(this.defaultValues, this.defaultValues.length);
+    }
+    
+    public void setMaxListLength(int max)
+    {
+        this.maxListLength = max;
+        if (values != null && values.length != maxListLength)
+            if (this.isListLengthFixed || values.length > maxListLength)
+                values = Arrays.copyOf(values, maxListLength);
+        
+        if (defaultValues != null && defaultValues.length != maxListLength)
+            if (this.isListLengthFixed || defaultValues.length > maxListLength)
+                defaultValues = Arrays.copyOf(defaultValues, maxListLength);
+    }
+    
+    public int getMaxListLength()
+    {
+        return this.maxListLength;
+    }
+    
+    public void setIsListLengthFixed(boolean bol)
+    {
+        this.isListLengthFixed = bol;
+    }
+    
+    public boolean isListLengthFixed()
+    {
+        return this.isListLengthFixed;
     }
     
     public void setValidStringPattern(Pattern pattern)
@@ -269,7 +303,7 @@ public class Property
         this.defaultValue = value;
     }
     
-    protected void setDefaultValue(String[] values)
+    protected void setDefaultValues(String[] values)
     {
         this.defaultValues = values;
     }

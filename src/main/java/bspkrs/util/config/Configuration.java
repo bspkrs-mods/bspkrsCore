@@ -109,13 +109,25 @@ public class Configuration
      *****************************************************************************************************************/
     public Property get(String category, String key, int defaultValue)
     {
-        return get(category, key, defaultValue, null);
+        return get(category, key, defaultValue, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+    
+    public Property get(String category, String key, int defaultValue, int minValue, int maxValue)
+    {
+        return get(category, key, defaultValue, (String) null, minValue, maxValue);
     }
     
     public Property get(String category, String key, int defaultValue, String comment)
     {
+        return get(category, key, defaultValue, comment, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+    
+    public Property get(String category, String key, int defaultValue, String comment, int minValue, int maxValue)
+    {
         Property prop = get(category, key, Integer.toString(defaultValue), comment, INTEGER, new String[0], null);
         prop.setDefaultValue(Integer.toString(defaultValue));
+        prop.setMinValue(Integer.toString(minValue));
+        prop.setMaxValue(Integer.toString(maxValue));
         
         if (!prop.isIntValue())
         {
@@ -124,21 +136,90 @@ public class Configuration
         return prop;
     }
     
-    public Property get(String category, String key, int[] defaultValue)
+    public Property get(String category, String key, int[] defaultValues)
     {
-        return get(category, key, defaultValue, null);
+        return get(category, key, defaultValues, (String) null);
     }
     
-    public Property get(String category, String key, int[] defaultValue, String comment)
+    public Property get(String category, String key, int[] defaultValues, boolean isListLengthFixed)
     {
-        String[] values = new String[defaultValue.length];
-        for (int i = 0; i < defaultValue.length; i++)
+        return get(category, key, defaultValues, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, int maxListLength)
+    {
+        return get(category, key, defaultValues, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, boolean isListLengthFixed, int maxListLength)
+    {
+        return get(category, key, defaultValues, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE, isListLengthFixed, maxListLength);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, String comment)
+    {
+        return get(category, key, defaultValues, comment, Integer.MIN_VALUE, Integer.MAX_VALUE, false, -1);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, String comment, boolean isListLengthFixed)
+    {
+        return get(category, key, defaultValues, comment, Integer.MIN_VALUE, Integer.MAX_VALUE, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, String comment, int maxListLength)
+    {
+        return get(category, key, defaultValues, comment, Integer.MIN_VALUE, Integer.MAX_VALUE, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, int minValue, int maxValue)
+    {
+        return get(category, key, defaultValues, (String) null, minValue, maxValue);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, int minValue, int maxValue, boolean isListLengthFixed)
+    {
+        return get(category, key, defaultValues, (String) null, minValue, maxValue, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, int minValue, int maxValue, int maxListLength)
+    {
+        return get(category, key, defaultValues, (String) null, minValue, maxValue, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, int minValue, int maxValue, boolean isListLengthFixed, int maxListLength)
+    {
+        return get(category, key, defaultValues, (String) null, minValue, maxValue, isListLengthFixed, maxListLength);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, String comment, int minValue, int maxValue)
+    {
+        return get(category, key, defaultValues, comment, minValue, maxValue, false, -1);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, String comment, int minValue, int maxValue, boolean isListLengthFixed)
+    {
+        return get(category, key, defaultValues, comment, minValue, maxValue, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, String comment, int minValue, int maxValue, int maxListLength)
+    {
+        return get(category, key, defaultValues, comment, minValue, maxValue, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, int[] defaultValues, String comment, int minValue, int maxValue, boolean isListLengthFixed, int maxListLength)
+    {
+        String[] values = new String[defaultValues.length];
+        for (int i = 0; i < defaultValues.length; i++)
         {
-            values[i] = Integer.toString(defaultValue[i]);
+            values[i] = Integer.toString(defaultValues[i]);
         }
         
         Property prop = get(category, key, values, comment, INTEGER);
-        prop.setDefaultValue(values);
+        prop.setDefaultValues(values);
+        prop.setMinValue(Integer.toString(minValue));
+        prop.setMaxValue(Integer.toString(maxValue));
+        prop.setIsListLengthFixed(isListLengthFixed);
+        prop.setMaxListLength(maxListLength);
         
         if (!prop.isIntList())
         {
@@ -155,7 +236,7 @@ public class Configuration
      *****************************************************************************************************************/
     public Property get(String category, String key, boolean defaultValue)
     {
-        return get(category, key, defaultValue, null);
+        return get(category, key, defaultValue, (String) null);
     }
     
     public Property get(String category, String key, boolean defaultValue, String comment)
@@ -170,21 +251,53 @@ public class Configuration
         return prop;
     }
     
-    public Property get(String category, String key, boolean[] defaultValue)
+    public Property get(String category, String key, boolean[] defaultValues)
     {
-        return get(category, key, defaultValue, null);
+        return get(category, key, defaultValues, (String) null);
     }
     
-    public Property get(String category, String key, boolean[] defaultValue, String comment)
+    public Property get(String category, String key, boolean[] defaultValues, boolean isListLengthFixed)
     {
-        String[] values = new String[defaultValue.length];
-        for (int i = 0; i < defaultValue.length; i++)
+        return get(category, key, defaultValues, (String) null, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, boolean[] defaultValues, int maxListLength)
+    {
+        return get(category, key, defaultValues, (String) null, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, boolean[] defaultValues, boolean isListLengthFixed, int maxListLength)
+    {
+        return get(category, key, defaultValues, (String) null, isListLengthFixed, maxListLength);
+    }
+    
+    public Property get(String category, String key, boolean[] defaultValues, String comment)
+    {
+        return get(category, key, defaultValues, comment, false, -1);
+    }
+    
+    public Property get(String category, String key, boolean[] defaultValues, String comment, boolean isListLengthFixed)
+    {
+        return get(category, key, defaultValues, comment, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, boolean[] defaultValues, String comment, int maxListLength)
+    {
+        return get(category, key, defaultValues, comment, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, boolean[] defaultValues, String comment, boolean isListLengthFixed, int maxListLength)
+    {
+        String[] values = new String[defaultValues.length];
+        for (int i = 0; i < defaultValues.length; i++)
         {
-            values[i] = Boolean.toString(defaultValue[i]);
+            values[i] = Boolean.toString(defaultValues[i]);
         }
         
         Property prop = get(category, key, values, comment, BOOLEAN);
-        prop.setDefaultValue(values);
+        prop.setDefaultValues(values);
+        prop.setIsListLengthFixed(isListLengthFixed);
+        prop.setMaxListLength(maxListLength);
         
         if (!prop.isBooleanList())
         {
@@ -201,13 +314,25 @@ public class Configuration
      *****************************************************************************************************************/
     public Property get(String category, String key, double defaultValue)
     {
-        return get(category, key, defaultValue, null);
+        return get(category, key, defaultValue, (String) null);
+    }
+    
+    public Property get(String category, String key, double defaultValue, double minValue, double maxValue)
+    {
+        return get(category, key, defaultValue, (String) null, minValue, maxValue);
     }
     
     public Property get(String category, String key, double defaultValue, String comment)
     {
-        Property prop = get(category, key, Double.toString(defaultValue), comment, DOUBLE, new String[0], null);
+        return get(category, key, defaultValue, comment, Double.MIN_VALUE, Double.MAX_VALUE);
+    }
+    
+    public Property get(String category, String key, double defaultValue, String comment, double minValue, double maxValue)
+    {
+        Property prop = get(category, key, Double.toString(defaultValue), comment, DOUBLE);
         prop.setDefaultValue(Double.toString(defaultValue));
+        prop.setMinValue(Double.toString(minValue));
+        prop.setMaxValue(Double.toString(maxValue));
         
         if (!prop.isDoubleValue())
         {
@@ -216,21 +341,90 @@ public class Configuration
         return prop;
     }
     
-    public Property get(String category, String key, double[] defaultValue)
+    public Property get(String category, String key, double[] defaultValues)
     {
-        return get(category, key, defaultValue, null);
+        return get(category, key, defaultValues, null);
     }
     
-    public Property get(String category, String key, double[] defaultValue, String comment)
+    public Property get(String category, String key, double[] defaultValues, boolean isListLengthFixed)
     {
-        String[] values = new String[defaultValue.length];
-        for (int i = 0; i < defaultValue.length; i++)
+        return get(category, key, defaultValues, null, Double.MIN_VALUE, Double.MAX_VALUE, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, int maxListLength)
+    {
+        return get(category, key, defaultValues, null, Double.MIN_VALUE, Double.MAX_VALUE, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, boolean isListLengthFixed, int maxListLength)
+    {
+        return get(category, key, defaultValues, null, Double.MIN_VALUE, Double.MAX_VALUE, isListLengthFixed, maxListLength);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, String comment)
+    {
+        return get(category, key, defaultValues, comment, Double.MIN_VALUE, Double.MAX_VALUE, false, -1);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, String comment, boolean isListLengthFixed)
+    {
+        return get(category, key, defaultValues, comment, Double.MIN_VALUE, Double.MAX_VALUE, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, String comment, int maxListLength)
+    {
+        return get(category, key, defaultValues, comment, Double.MIN_VALUE, Double.MAX_VALUE, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, double minValue, double maxValue)
+    {
+        return get(category, key, defaultValues, null, minValue, maxValue);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, double minValue, double maxValue, boolean isListLengthFixed)
+    {
+        return get(category, key, defaultValues, null, minValue, maxValue, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, double minValue, double maxValue, int maxListLength)
+    {
+        return get(category, key, defaultValues, null, minValue, maxValue, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, double minValue, double maxValue, boolean isListLengthFixed, int maxListLength)
+    {
+        return get(category, key, defaultValues, null, minValue, maxValue, isListLengthFixed, maxListLength);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, String comment, double minValue, double maxValue)
+    {
+        return get(category, key, defaultValues, comment, minValue, maxValue, false, -1);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, String comment, double minValue, double maxValue, boolean isListLengthFixed)
+    {
+        return get(category, key, defaultValues, comment, minValue, maxValue, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, String comment, double minValue, double maxValue, int maxListLength)
+    {
+        return get(category, key, defaultValues, comment, minValue, maxValue, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, double[] defaultValues, String comment, double minValue, double maxValue, boolean isListLengthFixed, int maxListLength)
+    {
+        String[] values = new String[defaultValues.length];
+        for (int i = 0; i < defaultValues.length; i++)
         {
-            values[i] = Double.toString(defaultValue[i]);
+            values[i] = Double.toString(defaultValues[i]);
         }
         
         Property prop = get(category, key, values, comment, DOUBLE);
-        prop.setDefaultValue(values);
+        prop.setDefaultValues(values);
+        prop.setMinValue(Double.toString(minValue));
+        prop.setMaxValue(Double.toString(maxValue));
+        prop.setIsListLengthFixed(isListLengthFixed);
+        prop.setMaxListLength(maxListLength);
         
         if (!prop.isDoubleList())
         {
@@ -252,7 +446,7 @@ public class Configuration
     
     public Property get(String category, String key, String defaultValue, String comment)
     {
-        return get(category, key, defaultValue, comment, STRING, new String[0], null);
+        return get(category, key, defaultValue, comment, STRING, new String[0], (Pattern) null);
     }
     
     public Property get(String category, String key, String defaultValue, Pattern pattern)
@@ -272,17 +466,90 @@ public class Configuration
     
     public Property get(String category, String key, String defaultValue, String comment, String[] validValues)
     {
-        return get(category, key, defaultValue, comment, STRING, validValues, null);
+        return get(category, key, defaultValue, comment, STRING, validValues, (Pattern) null);
     }
     
-    public Property get(String category, String key, String[] defaultValue)
+    public Property get(String category, String key, String[] defaultValues)
     {
-        return get(category, key, defaultValue, null);
+        return get(category, key, defaultValues, (String) null, (Pattern) null);
     }
     
-    public Property get(String category, String key, String[] defaultValue, String comment)
+    public Property get(String category, String key, String[] defaultValues, Pattern pattern)
     {
-        return get(category, key, defaultValue, comment, STRING);
+        return get(category, key, defaultValues, (String) null, pattern);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, boolean isListLengthFixed)
+    {
+        return get(category, key, defaultValues, (String) null, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, boolean isListLengthFixed, Pattern pattern)
+    {
+        return get(category, key, defaultValues, (String) null, isListLengthFixed, -1, pattern);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, int maxListLength)
+    {
+        return get(category, key, defaultValues, (String) null, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, int maxListLength, Pattern pattern)
+    {
+        return get(category, key, defaultValues, (String) null, false, maxListLength, pattern);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, boolean isListLengthFixed, int maxListLength)
+    {
+        return get(category, key, defaultValues, (String) null, isListLengthFixed, maxListLength);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, boolean isListLengthFixed, int maxListLength, Pattern pattern)
+    {
+        return get(category, key, defaultValues, (String) null, isListLengthFixed, maxListLength, pattern);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, String comment)
+    {
+        return get(category, key, defaultValues, comment, false, -1);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, String comment, Pattern pattern)
+    {
+        return get(category, key, defaultValues, comment, false, -1, pattern);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, String comment, boolean isListLengthFixed)
+    {
+        return get(category, key, defaultValues, comment, isListLengthFixed, -1);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, String comment, boolean isListLengthFixed, Pattern pattern)
+    {
+        return get(category, key, defaultValues, comment, isListLengthFixed, -1, pattern);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, String comment, int maxListLength)
+    {
+        return get(category, key, defaultValues, comment, false, maxListLength);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, String comment, int maxListLength, Pattern pattern)
+    {
+        return get(category, key, defaultValues, comment, false, maxListLength, pattern);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, String comment, boolean isListLengthFixed, int maxListLength)
+    {
+        return get(category, key, defaultValues, comment, isListLengthFixed, maxListLength, null);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, String comment, boolean isListLengthFixed, int maxListLength, Pattern pattern)
+    {
+        Property prop = get(category, key, defaultValues, comment, STRING, pattern);
+        prop.setIsListLengthFixed(isListLengthFixed);
+        prop.setMaxListLength(maxListLength);
+        return prop;
     }
     
     /******************************************************************************************************************
@@ -347,7 +614,12 @@ public class Configuration
         }
     }
     
-    public Property get(String category, String key, String[] defaultValue, String comment, Property.Type type)
+    public Property get(String category, String key, String[] defaultValues, String comment, Property.Type type)
+    {
+        return get(category, key, defaultValues, comment, type, null);
+    }
+    
+    public Property get(String category, String key, String[] defaultValues, String comment, Property.Type type, Pattern pattern)
     {
         if (!caseSensitiveCustomCategories)
         {
@@ -366,15 +638,17 @@ public class Configuration
                 cat.put(key, prop);
             }
             
-            prop.setDefaultValue(defaultValue);
+            prop.setDefaultValues(defaultValues);
+            prop.setValidStringPattern(pattern);
             prop.comment = comment;
             
             return prop;
         }
-        else if (defaultValue != null)
+        else if (defaultValues != null)
         {
-            Property prop = new Property(key, defaultValue, type);
-            prop.setDefaultValue(defaultValue);
+            Property prop = new Property(key, defaultValues, type);
+            prop.setDefaultValues(defaultValues);
+            prop.setValidStringPattern(pattern);
             prop.comment = comment;
             cat.put(key, prop);
             return prop;

@@ -46,7 +46,7 @@ public class ConfigProperty implements IConfigProperty
                 props[index++] = new ConfigProperty(pI.next());
             return props;
         }
-        return new IConfigProperty[] {};
+        return null;
     }
     
     @Override
@@ -110,6 +110,24 @@ public class ConfigProperty implements IConfigProperty
             return prop.isList();
         else
             return false;
+    }
+    
+    @Override
+    public boolean isListLengthFixed()
+    {
+        if (isProperty)
+            return prop.isListLengthFixed();
+        else
+            return false;
+    }
+    
+    @Override
+    public int getMaxListLength()
+    {
+        if (isProperty)
+            return prop.getMaxListLength();
+        else
+            return -1;
     }
     
     @Override
@@ -331,6 +349,9 @@ public class ConfigProperty implements IConfigProperty
     @Override
     public Pattern getValidStringPattern()
     {
-        return prop.getValidStringPattern();
+        if (isProperty)
+            return prop.getValidStringPattern();
+        else
+            return null;
     }
 }
