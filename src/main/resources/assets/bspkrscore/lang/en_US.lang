@@ -4,6 +4,7 @@ bspkrs.configgui.allowUpdateCheck.tooltip=Set to true to allow checking for upda
 bspkrs.configgui.allowUpdateCheck=Allow Update Check
 bspkrs.configgui.generateUniqueNamesFile.tooltip=When true a file called UniqueNames.txt will be generated in the config folder for convenience. The names found in the file are the string representation of blocks and items in Minecraft. Mods such as Treecapitator and StartingInventory use them in their config files since IDs are gone. %1$s[default: %2$s]
 bspkrs.configgui.generateUniqueNamesFile=Generate UniqueNames.txt file
+bspkrs.configgui.sampletext=Sample Text
 bspkrs.configgui.showMainMenuMobs.tooltip=Set to true to show your logged-in player and a random mob on the main menu, false to disable. %1$s[default: %2$s]
 bspkrs.configgui.showMainMenuMobs=Show Mobs on Main Menu
 bspkrs.configgui.updateTimeoutMilliseconds.tooltip=The timeout in milliseconds for the version update check. %1$s[range: %3$s ~ %4$s, default: %2$s]

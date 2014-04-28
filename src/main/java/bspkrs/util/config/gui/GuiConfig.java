@@ -20,7 +20,8 @@ public class GuiConfig extends GuiScreen
      * A reference to the screen object that created this. Used for navigating between screens.
      */
     private GuiScreen           parentScreen;
-    protected String            title = "Controls";
+    protected String            title = "Config GUI";
+    protected String            titleLine2;
     protected IConfigProperty[] properties;
     private GuiPropertyList     propertyList;
     private GuiButton           btnResetAll;
@@ -28,14 +29,13 @@ public class GuiConfig extends GuiScreen
     protected Object            configObject;
     protected Method            afterSaveAction;
     protected Object            afterSaveObject;
-    protected String            titleSuffix;
     
     public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, Method saveAction, Object configObject, Method afterSaveAction, Object afterSaveObject)
     {
         this(parentScreen, properties, saveAction, configObject, afterSaveAction, afterSaveObject, null);
     }
     
-    public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, Method saveAction, Object configObject, Method afterSaveAction, Object afterSaveObject, String titleSuffix)
+    public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, Method saveAction, Object configObject, Method afterSaveAction, Object afterSaveObject, String titleLine2)
     {
         this.parentScreen = parentScreen;
         this.properties = properties;
@@ -44,7 +44,7 @@ public class GuiConfig extends GuiScreen
         this.afterSaveAction = afterSaveAction;
         this.afterSaveObject = afterSaveObject;
         this.propertyList = new GuiPropertyList(this, Minecraft.getMinecraft());
-        this.titleSuffix = titleSuffix;
+        this.titleLine2 = titleLine2;
     }
     
     /**
@@ -131,8 +131,8 @@ public class GuiConfig extends GuiScreen
         this.drawDefaultBackground();
         this.propertyList.drawScreen(par1, par2, par3);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
-        if (this.titleSuffix != null)
-            this.drawCenteredString(this.fontRendererObj, this.titleSuffix, this.width / 2, 18, 16777215);
+        if (this.titleLine2 != null)
+            this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
         
         this.btnResetAll.enabled = !this.propertyList.areAllPropsDefault();
         super.drawScreen(par1, par2, par3);

@@ -32,7 +32,7 @@ public class GuiPropertyList extends GuiListExtended
     
     public GuiPropertyList(GuiConfig parent, Minecraft mc)
     {
-        super(mc, parent.width, parent.height, parent.titleSuffix != null ? 33 : 23, parent.height - 32, 20);
+        super(mc, parent.width, parent.height, parent.titleLine2 != null ? 33 : 23, parent.height - 32, 20);
         this.parentGuiConfig = parent;
         this.setShowSelectionBox(false);
         this.mc = mc;
@@ -183,7 +183,7 @@ public class GuiPropertyList extends GuiListExtended
     }
     
     /**
-     * IGuiConfigList Inner Classes
+     * IGuiListEntry Inner Classes
      */
     
     /**
@@ -298,9 +298,9 @@ public class GuiPropertyList extends GuiListExtended
         {
             String trans = I18n.format(String.valueOf(prop.getString()));
             if (!trans.equals(prop.getString()))
-                this.btnValue.displayString = trans + " - Sample Text";
+                this.btnValue.displayString = trans + " - " + I18n.format("bspkrs.configgui.sampletext");
             else
-                this.btnValue.displayString = this.prop.getString() + " - Sample Text";
+                this.btnValue.displayString = this.prop.getString() + " - " + I18n.format("bspkrs.configgui.sampletext");
         }
     }
     
@@ -526,7 +526,6 @@ public class GuiPropertyList extends GuiListExtended
         private StringPropEntry(IConfigProperty prop)
         {
             super(prop);
-            int listWidth = GuiPropertyList.this.getListWidth();
             this.textFieldValue = new GuiTextField(GuiPropertyList.this.mc.fontRenderer, 0, 0, 200 - 4, 16);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(prop.getString());
