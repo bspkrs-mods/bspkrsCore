@@ -697,4 +697,28 @@ public class Property
     {
         set(Double.toString(value));
     }
+    
+    public void set(boolean[] values)
+    {
+        this.values = new String[values.length];
+        for (int i = 0; i < values.length; i++)
+            this.values[i] = String.valueOf(values[i]);
+        changed = true;
+    }
+    
+    public void set(int[] values)
+    {
+        this.values = new String[values.length];
+        for (int i = 0; i < values.length; i++)
+            this.values[i] = String.valueOf(values[i]);
+        changed = true;
+    }
+    
+    public void set(double[] values)
+    {
+        this.values = new String[values.length];
+        for (int i = 0; i < values.length; i++)
+            this.values[i] = String.valueOf(values[i]);
+        changed = true;
+    }
 }

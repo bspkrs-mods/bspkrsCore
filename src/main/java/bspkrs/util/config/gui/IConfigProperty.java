@@ -12,6 +12,8 @@ public interface IConfigProperty
     
     public ConfigGuiType getType();
     
+    public boolean isList();
+    
     public String getComment();
     
     public boolean isDefault();
@@ -28,6 +30,14 @@ public interface IConfigProperty
     
     public double getDouble();
     
+    public boolean[] getBooleanList();
+    
+    public int[] getIntList();
+    
+    public String[] getStringList();
+    
+    public double[] getDoubleList();
+    
     public void set(boolean bol);
     
     public void set(int i);
@@ -35,6 +45,14 @@ public interface IConfigProperty
     public void set(String s);
     
     public void set(double d);
+    
+    public void set(boolean[] bol);
+    
+    public void set(int[] i);
+    
+    public void set(String[] s);
+    
+    public void set(double[] d);
     
     public String[] getValidValues();
     

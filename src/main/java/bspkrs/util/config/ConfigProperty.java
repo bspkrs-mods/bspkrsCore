@@ -104,6 +104,15 @@ public class ConfigProperty implements IConfigProperty
     }
     
     @Override
+    public boolean isList()
+    {
+        if (isProperty)
+            return prop.isList();
+        else
+            return false;
+    }
+    
+    @Override
     public String getComment()
     {
         if (isProperty)
@@ -165,6 +174,42 @@ public class ConfigProperty implements IConfigProperty
     }
     
     @Override
+    public boolean[] getBooleanList()
+    {
+        if (isProperty)
+            return prop.getBooleanList();
+        else
+            return new boolean[0];
+    }
+    
+    @Override
+    public int[] getIntList()
+    {
+        if (isProperty)
+            return prop.getIntList();
+        else
+            return new int[0];
+    }
+    
+    @Override
+    public String[] getStringList()
+    {
+        if (isProperty)
+            return prop.getStringList();
+        else
+            return new String[0];
+    }
+    
+    @Override
+    public double[] getDoubleList()
+    {
+        if (isProperty)
+            return prop.getDoubleList();
+        else
+            return new double[0];
+    }
+    
+    @Override
     public void set(boolean bol)
     {
         if (isProperty)
@@ -187,6 +232,34 @@ public class ConfigProperty implements IConfigProperty
     
     @Override
     public void set(double d)
+    {
+        if (isProperty)
+            prop.set(d);
+    }
+    
+    @Override
+    public void set(boolean[] bol)
+    {
+        if (isProperty)
+            prop.set(bol);
+    }
+    
+    @Override
+    public void set(int[] i)
+    {
+        if (isProperty)
+            prop.set(i);
+    }
+    
+    @Override
+    public void set(String[] s)
+    {
+        if (isProperty)
+            prop.set(s);
+    }
+    
+    @Override
+    public void set(double[] d)
     {
         if (isProperty)
             prop.set(d);
