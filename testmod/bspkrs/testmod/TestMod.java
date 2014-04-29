@@ -12,7 +12,8 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = "TestMod", name = "TestMod", version = "2.0", dependencies = "required-after:bspkrsCore")
+@Mod(modid = "TestMod", name = "TestMod", version = "2.0", dependencies = "required-after:bspkrsCore",
+        guiFactory = "bspkrs.testmod.ModGuiFactoryHandler")
 public class TestMod
 {
     @Metadata(value = "TestMod")
@@ -32,6 +33,8 @@ public class TestMod
     public void preInit(FMLPreInitializationEvent event)
     {
         metadata = event.getModMetadata();
+        
+        TestModSimpleConfig.initConfig(event.getSuggestedConfigurationFile());
     }
     
     @EventHandler
