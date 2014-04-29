@@ -1,5 +1,7 @@
 package bspkrs.util.config.gui;
 
+import java.util.List;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -9,7 +11,7 @@ import org.lwjgl.input.Keyboard;
 public class GuiEditList extends GuiScreen
 {
     protected GuiScreen        parentScreen;
-    protected IConfigProperty prop;
+    protected IConfigProperty  prop;
     private GuiEditListEntries guiScrollList;
     private GuiButton          btnResetAll;
     private String             title;
@@ -104,5 +106,10 @@ public class GuiEditList extends GuiScreen
         this.btnResetAll.enabled = this.guiScrollList.isDirty();
         super.drawScreen(par1, par2, par3);
         this.guiScrollList.drawScreenPost(par1, par2, par3);
+    }
+    
+    public void drawToolTip(List stringList, int x, int y)
+    {
+        this.drawHoveringText(stringList, x, y, fontRendererObj);
     }
 }

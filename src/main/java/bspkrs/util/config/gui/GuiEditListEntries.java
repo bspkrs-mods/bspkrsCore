@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.I18n;
 
 public class GuiEditListEntries extends GuiListExtended
 {
@@ -103,15 +104,23 @@ public class GuiEditListEntries extends GuiListExtended
     public class EditListStringEntry implements IGuiEditListEntry
     {
         protected final GuiButton    btnAddNewEntryAbove;
+        private final HoverChecker   addNewEntryAboveHoverChecker;
         protected final GuiButton    btnRemoveEntry;
+        private final HoverChecker   removeEntryHoverChecker;
         protected final GuiTextField textFieldValue;
-        private List                 toolTip;
+        private List                 addNewToolTip, removeToolTip;
         private int                  x, y, listWidth, slotHeight;
         
         public EditListStringEntry(String value)
         {
             this.btnAddNewEntryAbove = new GuiButton(0, 0, 0, 18, 18, "+");
             this.btnRemoveEntry = new GuiButton(0, 0, 0, 18, 18, "X");
+            this.addNewEntryAboveHoverChecker = new HoverChecker(this.btnAddNewEntryAbove, 800);
+            this.removeEntryHoverChecker = new HoverChecker(this.btnRemoveEntry, 800);
+            this.addNewToolTip = new ArrayList();
+            this.removeToolTip = new ArrayList();
+            addNewToolTip.add(I18n.format("bspkrs.configgui.tooltip.addNewEntryAbove"));
+            removeToolTip.add(I18n.format("bspkrs.configgui.tooltip.removeEntry"));
             this.textFieldValue = new GuiTextField(GuiEditListEntries.this.mc.fontRenderer, 0, 0, 200 - 4, 16);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(value);
@@ -136,8 +145,12 @@ public class GuiEditListEntries extends GuiListExtended
         
         @Override
         public void drawToolTip(int mouseX, int mouseY)
-        {   
-            
+        {
+            boolean canHover = mouseY < GuiEditListEntries.this.bottom && mouseY > GuiEditListEntries.this.top;
+            if (this.addNewEntryAboveHoverChecker.checkHover(mouseX, mouseY, canHover))
+                GuiEditListEntries.this.parentGuiEditList.drawToolTip(this.addNewToolTip, mouseX, mouseY);
+            if (this.removeEntryHoverChecker.checkHover(mouseX, mouseY, canHover))
+                GuiEditListEntries.this.parentGuiEditList.drawToolTip(this.removeToolTip, mouseX, mouseY);
         }
         
         @Override

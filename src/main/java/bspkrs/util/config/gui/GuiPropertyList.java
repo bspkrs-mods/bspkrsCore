@@ -1,6 +1,5 @@
 package bspkrs.util.config.gui;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -14,6 +13,7 @@ import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.input.Keyboard;
 
 import bspkrs.util.CommonUtils;
+import bspkrs.util.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -329,17 +329,7 @@ public class GuiPropertyList extends GuiListExtended
             super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
             try
             {
-                Field buttonWidth;
-                if (CommonUtils.isObfuscatedEnv())
-                {
-                    buttonWidth = GuiButton.class.getDeclaredField("field_146120_f");
-                }
-                else
-                {
-                    buttonWidth = GuiButton.class.getDeclaredField("width");
-                }
-                buttonWidth.setAccessible(true);
-                buttonWidth.setInt(this.btnValue, GuiPropertyList.this.controlWidth);
+                ReflectionHelper.setIntValue(GuiButton.class, "field_146120_f", "width", this.btnValue, GuiPropertyList.this.controlWidth);
             }
             catch (Throwable e)
             {
@@ -537,27 +527,12 @@ public class GuiPropertyList extends GuiListExtended
             super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
             try
             {
-                Field xPos;
-                Field yPos;
-                Field controlWidth;
-                if (CommonUtils.isObfuscatedEnv())
-                {
-                    xPos = GuiTextField.class.getDeclaredField("field_146209_f");
-                    yPos = GuiTextField.class.getDeclaredField("field_146210_g");
-                    controlWidth = GuiTextField.class.getDeclaredField("field_146218_h");
-                }
-                else
-                {
-                    xPos = GuiTextField.class.getDeclaredField("xPosition");
-                    yPos = GuiTextField.class.getDeclaredField("yPosition");
-                    controlWidth = GuiTextField.class.getDeclaredField("width");
-                }
-                xPos.setAccessible(true);
-                xPos.setInt(this.textFieldValue, GuiPropertyList.this.controlX + 1);
-                yPos.setAccessible(true);
-                yPos.setInt(this.textFieldValue, y + 1);
-                controlWidth.setAccessible(true);
-                controlWidth.setInt(this.textFieldValue, GuiPropertyList.this.controlWidth - 3);
+                if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146209_f", "xPosition", this.textFieldValue, -1) != GuiPropertyList.this.controlX + 1)
+                    ReflectionHelper.setIntValue(GuiTextField.class, "field_146209_f", "xPosition", this.textFieldValue, GuiPropertyList.this.controlX + 1);
+                if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146210_g", "yPosition", this.textFieldValue, -1) != y + 1)
+                    ReflectionHelper.setIntValue(GuiTextField.class, "field_146210_g", "yPosition", this.textFieldValue, y + 1);
+                if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146218_h", "width", this.textFieldValue, -1) != GuiPropertyList.this.controlWidth - 3)
+                    ReflectionHelper.setIntValue(GuiTextField.class, "field_146218_h", "width", this.textFieldValue, GuiPropertyList.this.controlWidth - 3);
             }
             catch (Throwable e)
             {
@@ -626,8 +601,8 @@ public class GuiPropertyList extends GuiListExtended
         protected final GuiButton       btnDefault;
         private long                    hoverStart   = -1;
         private List                    toolTip;
-        private int                     x, y, listWidth, slotHeight;
         protected boolean               isValidValue = true;
+        private HoverChecker            tooltipHoverChecker;
         
         public GuiConfigListEntry(IConfigProperty prop)
         {
@@ -668,27 +643,19 @@ public class GuiPropertyList extends GuiListExtended
             this.btnDefault.enabled = !isDefault();
             this.btnDefault.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
             
-            this.x = x;
-            this.y = y;
-            this.listWidth = listWidth;
-            this.slotHeight = slotHeight;
+            if (this.tooltipHoverChecker == null)
+                this.tooltipHoverChecker = new HoverChecker(y, y + slotHeight, x, GuiPropertyList.this.controlX - 8, 800);
+            else
+                this.tooltipHoverChecker.updateBounds(y, y + slotHeight, x, GuiPropertyList.this.controlX - 8);
         }
         
         @Override
         public void drawToolTip(int mouseX, int mouseY)
         {
-            if (toolTip != null)
+            if (toolTip != null && this.tooltipHoverChecker != null)
             {
-                int bottom = y + slotHeight;
-                int right = GuiPropertyList.this.controlX - 8;
-                if (hoverStart == -1 && mouseY >= y && mouseY <= bottom && mouseX >= x && mouseX <= right
-                        && mouseY < GuiPropertyList.this.bottom && mouseY > GuiPropertyList.this.top)
-                    hoverStart = System.currentTimeMillis();
-                else if (mouseY < y || mouseY > bottom || mouseX < x || mouseX > right
-                        || mouseY >= GuiPropertyList.this.bottom || mouseY <= GuiPropertyList.this.top)
-                    hoverStart = -1;
-                
-                if (hoverStart != -1 && System.currentTimeMillis() - hoverStart >= 800)
+                boolean canHover = mouseY < GuiPropertyList.this.bottom && mouseY > GuiPropertyList.this.top;
+                if (this.tooltipHoverChecker.checkHover(mouseX, mouseY, canHover))
                     GuiPropertyList.this.parentGuiConfig.drawToolTip(toolTip, mouseX, mouseY);
             }
         }
@@ -747,7 +714,7 @@ public class GuiPropertyList extends GuiListExtended
         protected final GuiButton       btnSelectCategory;
         private long                    hoverStart = -1;
         private List                    toolTip;
-        private int                     x, y, listWidth, slotHeight;
+        private HoverChecker            tooltipHoverChecker;
         
         public GuiConfigCategoryListEntry(IConfigProperty prop)
         {
@@ -758,7 +725,7 @@ public class GuiPropertyList extends GuiListExtended
             else
                 this.propName = I18n.format(prop.getLanguageKey());
             
-            this.btnSelectCategory = new GuiButton(0, 0, 0, 200, 18, I18n.format(propName, new Object[0]));
+            this.btnSelectCategory = new GuiButton(0, 0, 0, 300, 18, I18n.format(propName, new Object[0]));
             
             String comment = I18n.format(prop.getLanguageKey() + ".tooltip");
             
@@ -776,30 +743,23 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
         {
-            this.btnSelectCategory.xPosition = listWidth / 2 - 100;
+            this.btnSelectCategory.xPosition = listWidth / 2 - 150;
             this.btnSelectCategory.yPosition = y;
             this.btnSelectCategory.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
             
-            this.x = listWidth / 2 - 150;
-            this.y = y;
-            this.listWidth = listWidth;
-            this.slotHeight = slotHeight;
+            if (this.tooltipHoverChecker == null)
+                this.tooltipHoverChecker = new HoverChecker(y, y + slotHeight, listWidth / 2 - 150, listWidth / 2 + 150, 800);
+            else
+                this.tooltipHoverChecker.updateBounds(y, y + slotHeight, listWidth / 2 - 150, listWidth / 2 + 150);
         }
         
         @Override
         public void drawToolTip(int mouseX, int mouseY)
         {
-            if (toolTip != null)
+            if (toolTip != null && this.tooltipHoverChecker != null)
             {
-                int bottom = y + slotHeight;
-                int right = listWidth / 2 + 150;
-                if (hoverStart == -1 && mouseY >= y && mouseY <= bottom && mouseX >= x && mouseX <= right
-                        && mouseY < GuiPropertyList.this.bottom && mouseY > GuiPropertyList.this.top)
-                    hoverStart = System.currentTimeMillis();
-                else if (mouseY < y || mouseY > bottom || mouseX < x || mouseX > right)
-                    hoverStart = -1;
-                
-                if (hoverStart != -1 && System.currentTimeMillis() - hoverStart >= 800)
+                boolean canHover = mouseY < GuiPropertyList.this.bottom && mouseY > GuiPropertyList.this.top;
+                if (this.tooltipHoverChecker.checkHover(mouseX, mouseY, canHover))
                     GuiPropertyList.this.parentGuiConfig.drawToolTip(toolTip, mouseX, mouseY);
             }
         }
