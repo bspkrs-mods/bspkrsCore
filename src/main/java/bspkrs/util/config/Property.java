@@ -254,13 +254,16 @@ public class Property
     public void setMaxListLength(int max)
     {
         this.maxListLength = max;
-        if (values != null && values.length != maxListLength)
-            if (this.isListLengthFixed || values.length > maxListLength)
-                values = Arrays.copyOf(values, maxListLength);
-        
-        if (defaultValues != null && defaultValues.length != maxListLength)
-            if (this.isListLengthFixed || defaultValues.length > maxListLength)
-                defaultValues = Arrays.copyOf(defaultValues, maxListLength);
+        if (this.maxListLength != -1)
+        {
+            if (values != null && values.length != maxListLength)
+                if (this.isListLengthFixed || values.length > maxListLength)
+                    values = Arrays.copyOf(values, maxListLength);
+            
+            if (defaultValues != null && defaultValues.length != maxListLength)
+                if (this.isListLengthFixed || defaultValues.length > maxListLength)
+                    defaultValues = Arrays.copyOf(defaultValues, maxListLength);
+        }
     }
     
     public int getMaxListLength()
