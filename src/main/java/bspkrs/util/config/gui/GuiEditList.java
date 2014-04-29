@@ -13,7 +13,7 @@ public class GuiEditList extends GuiScreen
     protected GuiScreen        parentScreen;
     protected IConfigProperty  prop;
     private GuiEditListEntries guiScrollList;
-    private GuiButton          btnResetAll;
+    private GuiButton          btnResetAll, btnDone;
     private String             title;
     protected String           titleLine2;
     
@@ -30,7 +30,7 @@ public class GuiEditList extends GuiScreen
     public void initGui()
     {
         this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop);
-        this.buttonList.add(new GuiButton(2000, this.width / 2 - 155, this.height - 29, 150, 20, I18n.format("gui.done", new Object[0])));
+        this.buttonList.add(this.btnDone = new GuiButton(2000, this.width / 2 - 155, this.height - 29, 150, 20, I18n.format("gui.done", new Object[0])));
         this.buttonList.add(this.btnResetAll = new GuiButton(2001, this.width / 2 - 155 + 160, this.height - 29, 150, 20, I18n.format("controls.reset", new Object[0])));
     }
     
@@ -91,6 +91,13 @@ public class GuiEditList extends GuiScreen
             this.guiScrollList.keyTyped(eventChar, eventKey);
     }
     
+    @Override
+    public void updateScreen()
+    {
+        super.updateScreen();
+        this.guiScrollList.updateScreen();
+    }
+    
     /**
      * Draws the screen and all the components in it.
      */
@@ -103,6 +110,7 @@ public class GuiEditList extends GuiScreen
         if (this.titleLine2 != null)
             this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
         
+        this.btnDone.enabled = this.guiScrollList.isListSavable();
         this.btnResetAll.enabled = this.guiScrollList.isDirty();
         super.drawScreen(par1, par2, par3);
         this.guiScrollList.drawScreenPost(par1, par2, par3);
