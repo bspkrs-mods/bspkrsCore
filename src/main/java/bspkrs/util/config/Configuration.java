@@ -761,10 +761,14 @@ public class Configuration
                             switch (line.charAt(i))
                             {
                                 case '#':
+                                    if (tmpList != null)
+                                        break;
                                     skip = true;
                                     continue;
                                     
                                 case '"':
+                                    if (tmpList != null)
+                                        break;
                                     if (quoted)
                                     {
                                         quoted = false;
@@ -776,6 +780,8 @@ public class Configuration
                                     break;
                                 
                                 case '{':
+                                    if (tmpList != null)
+                                        break;
                                     name = line.substring(nameStart, nameEnd + 1);
                                     String qualifiedName = ConfigCategory.getQualifiedName(name, currentCat);
                                     
@@ -794,6 +800,8 @@ public class Configuration
                                     break;
                                 
                                 case '}':
+                                    if (tmpList != null)
+                                        break;
                                     if (currentCat == null)
                                     {
                                         throw new RuntimeException(String.format("Config file corrupt, attepted to close to many categories '%s:%d'", fileName, lineNum));
@@ -802,6 +810,8 @@ public class Configuration
                                     break;
                                 
                                 case '=':
+                                    if (tmpList != null)
+                                        break;
                                     name = line.substring(nameStart, nameEnd + 1);
                                     
                                     if (currentCat == null)
@@ -817,6 +827,8 @@ public class Configuration
                                     break;
                                 
                                 case ':':
+                                    if (tmpList != null)
+                                        break;
                                     type = Property.Type.tryParse(line.substring(nameStart, nameEnd + 1).charAt(0));
                                     nameStart = nameEnd = -1;
                                     break;
@@ -853,6 +865,8 @@ public class Configuration
                                     break;
                                 
                                 default:
+                                    if (tmpList != null)
+                                        break;
                                     throw new RuntimeException(String.format("Unknown character '%s' in '%s:%d'", line.charAt(i), fileName, lineNum));
                             }
                         }
