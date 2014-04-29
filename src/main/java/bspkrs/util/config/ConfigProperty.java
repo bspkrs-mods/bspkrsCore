@@ -307,7 +307,16 @@ public class ConfigProperty implements IConfigProperty
         if (isProperty)
             return prop.getDefault();
         else
-            return "";
+            return null;
+    }
+    
+    @Override
+    public String[] getDefaults()
+    {
+        if (isProperty)
+            return prop.getDefaults();
+        else
+            return null;
     }
     
     @Override

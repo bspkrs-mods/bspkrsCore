@@ -93,6 +93,13 @@ public interface IConfigProperty
     public String getDefault();
     
     /**
+     * [Property] Gets the String[] representation of this property's default value.
+     * 
+     * @return The String representation of this property's default value.
+     */
+    public String[] getDefaults();
+    
+    /**
      * [Property] Sets this property's value to the default value.
      */
     public void setToDefault();
