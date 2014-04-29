@@ -122,6 +122,13 @@ public class GuiConfig extends GuiScreen
             this.propertyList.keyTyped(eventChar, eventKey);
     }
     
+    @Override
+    public void updateScreen()
+    {
+        super.updateScreen();
+        this.propertyList.updateScreen();
+    }
+    
     /**
      * Draws the screen and all the components in it.
      */
