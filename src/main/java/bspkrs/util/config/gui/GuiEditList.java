@@ -1,11 +1,14 @@
 package bspkrs.util.config.gui;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.EnumChatFormatting;
 
 import org.lwjgl.input.Keyboard;
 
@@ -14,11 +17,15 @@ public class GuiEditList extends GuiScreen
     protected GuiScreen        parentScreen;
     protected IConfigProperty  prop;
     private GuiEditListEntries guiScrollList;
-    private GuiButton          btnResetAll, btnDone;
+    private GuiButton          btnUndoChanges, btnDefault, btnDone;
     private String             title;
     protected String           titleLine2;
+    protected String           titleLine3;
     protected int              slotIndex;
+    private final String[]     beforeValues;
     private String[]           currentValues;
+    private HoverChecker       tooltipHoverChecker;
+    private List               toolTip;
     
     public GuiEditList(GuiScreen parentScreen, IConfigProperty prop, int slotIndex, String[] currentValues)
     {
@@ -26,7 +33,42 @@ public class GuiEditList extends GuiScreen
         this.parentScreen = parentScreen;
         this.prop = prop;
         this.slotIndex = slotIndex;
+        this.beforeValues = currentValues;
         this.currentValues = currentValues;
+        this.toolTip = new ArrayList();
+        String propName = I18n.format(prop.getLanguageKey());
+        String comment;
+        
+        if (prop.getType().equals(ConfigGuiType.INTEGER))
+            comment = I18n.format(prop.getLanguageKey() + ".tooltip",
+                    "\n" + EnumChatFormatting.AQUA, prop.getDefault(), prop.getMinIntValue(), prop.getMaxIntValue());
+        else
+            comment = I18n.format(prop.getLanguageKey() + ".tooltip",
+                    "\n" + EnumChatFormatting.AQUA, prop.getDefault(), prop.getMinDoubleValue(), prop.getMaxDoubleValue());
+        
+        if (!comment.equals(prop.getLanguageKey() + ".tooltip"))
+            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+                    EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + comment, 300);
+        else if (prop.getComment() != null && !prop.getComment().trim().isEmpty())
+            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+                    EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + prop.getComment(), 300);
+        else
+            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+                    EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.RED + "No tooltip defined.", 300);
+        
+        if (parentScreen instanceof GuiConfig)
+        {
+            this.title = ((GuiConfig) parentScreen).title;
+            this.titleLine2 = ((GuiConfig) parentScreen).titleLine2;
+            this.titleLine3 = I18n.format(prop.getLanguageKey());
+            this.tooltipHoverChecker = new HoverChecker(28, 37, 0, parentScreen.width, 800);
+            
+        }
+        else
+        {
+            this.title = I18n.format(prop.getLanguageKey());
+            this.tooltipHoverChecker = new HoverChecker(8, 17, 0, parentScreen.width, 800);
+        }
     }
     
     /**
@@ -35,9 +77,15 @@ public class GuiEditList extends GuiScreen
     @Override
     public void initGui()
     {
-        this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop, this.currentValues);
-        this.buttonList.add(this.btnDone = new GuiButton(2000, this.width / 2 - 155, this.height - 29, 150, 20, I18n.format("gui.done", new Object[0])));
-        this.buttonList.add(this.btnResetAll = new GuiButton(2001, this.width / 2 - 155 + 160, this.height - 29, 150, 20, I18n.format("controls.reset", new Object[0])));
+        this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop, this.beforeValues, this.currentValues);
+        
+        int doneWidth = Math.max(mc.fontRenderer.getStringWidth(I18n.format("gui.done")) + 20, 100);
+        int undoWidth = mc.fontRenderer.getStringWidth("↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")) + 20;
+        int resetWidth = mc.fontRenderer.getStringWidth("☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")) + 20;
+        int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth) / 2;
+        this.buttonList.add(btnDone = new GuiButton(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
+        this.buttonList.add(btnDefault = new GuiButton(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5, this.height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
+        this.buttonList.add(btnUndoChanges = new GuiButton(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5, this.height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
     }
     
     @Override
@@ -58,7 +106,12 @@ public class GuiEditList extends GuiScreen
         else if (button.id == 2001)
         {
             this.currentValues = prop.getDefaults();
-            this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop, this.currentValues);
+            this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop, this.beforeValues, this.currentValues);
+        }
+        else if (button.id == 2002)
+        {
+            this.currentValues = Arrays.copyOf(beforeValues, beforeValues.length);
+            this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop, this.beforeValues, this.currentValues);
         }
     }
     
@@ -113,13 +166,21 @@ public class GuiEditList extends GuiScreen
         this.drawDefaultBackground();
         this.guiScrollList.drawScreen(par1, par2, par3);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
+        
         if (this.titleLine2 != null)
             this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
         
+        if (this.titleLine3 != null)
+            this.drawCenteredString(this.fontRendererObj, this.titleLine3, this.width / 2, 28, 16777215);
+        
         this.btnDone.enabled = this.guiScrollList.isListSavable();
-        this.btnResetAll.enabled = !this.guiScrollList.isDefault();
+        this.btnDefault.enabled = !this.guiScrollList.isDefault();
+        this.btnUndoChanges.enabled = this.guiScrollList.isChanged();
         super.drawScreen(par1, par2, par3);
         this.guiScrollList.drawScreenPost(par1, par2, par3);
+        
+        if (this.tooltipHoverChecker != null && this.tooltipHoverChecker.checkHover(par1, par2, true))
+            drawToolTip(this.toolTip, par1, par2);
     }
     
     public void drawToolTip(List stringList, int x, int y)

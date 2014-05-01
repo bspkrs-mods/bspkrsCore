@@ -24,7 +24,7 @@ public class GuiConfig extends GuiScreen
     protected String            titleLine2;
     protected IConfigProperty[] properties;
     protected GuiPropertyList   propertyList;
-    private GuiButton           btnResetAll;
+    private GuiButton           btnDefaultAll;
     private GuiButton           btnUndoAll;
     protected Method            saveAction;
     protected Object            configObject;
@@ -62,13 +62,13 @@ public class GuiConfig extends GuiScreen
     {
         if (this.propertyList == null)
             this.propertyList = new GuiPropertyList(this, mc);
-        this.buttonList.clear();
+        
         int doneWidth = Math.max(mc.fontRenderer.getStringWidth(I18n.format("gui.done")) + 20, 100);
         int undoWidth = mc.fontRenderer.getStringWidth("↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")) + 20;
         int resetWidth = mc.fontRenderer.getStringWidth("☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")) + 20;
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth) / 2;
         this.buttonList.add(new GuiButton(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
-        this.buttonList.add(this.btnResetAll = new GuiButton(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5, this.height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
+        this.buttonList.add(this.btnDefaultAll = new GuiButton(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5, this.height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
         this.buttonList.add(btnUndoAll = new GuiButton(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5, this.height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
         this.propertyList.initGui();
     }
@@ -157,7 +157,7 @@ public class GuiConfig extends GuiScreen
             this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
         
         this.btnUndoAll.enabled = this.propertyList.areAnyPropsChanged();
-        this.btnResetAll.enabled = !this.propertyList.areAllPropsDefault();
+        this.btnDefaultAll.enabled = !this.propertyList.areAllPropsDefault();
         super.drawScreen(par1, par2, par3);
         this.propertyList.drawScreenPost(par1, par2, par3);
     }

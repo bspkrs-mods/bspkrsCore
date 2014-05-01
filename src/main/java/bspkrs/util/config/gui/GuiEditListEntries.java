@@ -1,6 +1,7 @@
 package bspkrs.util.config.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -24,20 +25,24 @@ public class GuiEditListEntries extends GuiListExtended
     private IConfigProperty         prop;
     private List<IGuiEditListEntry> listEntries;
     private boolean                 isDefault;
+    private boolean                 isChanged;
     private boolean                 canAddMoreEntries;
     private final int               controlWidth;
+    private final String[]          beforeValues;
     private String[]                currentValues;
     
-    public GuiEditListEntries(GuiEditList parent, Minecraft mc, IConfigProperty prop, String[] currentValues)
+    public GuiEditListEntries(GuiEditList parent, Minecraft mc, IConfigProperty prop, String[] beforeValues, String[] currentValues)
     {
-        super(mc, parent.width, parent.height, parent.titleLine2 != null ? 33 : 23, parent.height - 32, 20);
+        super(mc, parent.width, parent.height, parent.titleLine2 != null ? (parent.titleLine3 != null ? 43 : 33) : 23, parent.height - 32, 20);
         this.parentGuiEditList = parent;
         this.mc = mc;
         this.prop = prop;
+        this.beforeValues = beforeValues;
         this.currentValues = currentValues;
         this.setShowSelectionBox(false);
-        this.isDefault = !this.prop.isDefault();
-        this.canAddMoreEntries = !prop.isListLengthFixed() && (prop.getMaxListLength() == -1 || prop.getStringList().length < prop.getMaxListLength());
+        this.isChanged = !Arrays.deepEquals(beforeValues, currentValues);
+        this.isDefault = Arrays.deepEquals(currentValues, prop.getDefaults());
+        this.canAddMoreEntries = !prop.isListLengthFixed() && (prop.getMaxListLength() == -1 || currentValues.length < prop.getMaxListLength());
         
         listEntries = new ArrayList<IGuiEditListEntry>();
         
@@ -53,10 +58,10 @@ public class GuiEditListEntries extends GuiListExtended
             for (String value : currentValues)
                 listEntries.add(new EditListDoubleEntry(Double.parseDouble(value)));
         else if (prop.isList())
-            for (String value : prop.getStringList())
+            for (String value : currentValues)
                 listEntries.add(new EditListStringEntry(value));
         
-        if (canAddMoreEntries)
+        if (!prop.isListLengthFixed())
             listEntries.add(new EditListBaseEntry());
         
     }
@@ -90,7 +95,6 @@ public class GuiEditListEntries extends GuiListExtended
     
     private void addNewEntryAtIndex(int index)
     {
-        
         if (prop.isList() && prop.getType().equals(ConfigGuiType.BOOLEAN))
             listEntries.add(index, new EditListBooleanEntry(true));
         else if (prop.isList() && prop.getType().equals(ConfigGuiType.INTEGER))
@@ -110,25 +114,42 @@ public class GuiEditListEntries extends GuiListExtended
         keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
     }
     
+    protected boolean isChanged()
+    {
+        return isChanged;
+    }
+    
     protected boolean isDefault()
     {
         return isDefault;
     }
     
-    private void recalculateIsDefault()
+    private void recalculateState()
     {
         isDefault = true;
+        isChanged = false;
+        
         int listLength = prop.isListLengthFixed() ? listEntries.size() : listEntries.size() - 1;
         
         if (listLength != prop.getDefaults().length)
         {
             isDefault = false;
-            return;
         }
         
-        for (int i = 0; i < listLength; i++)
-            if (!prop.getDefaults()[i].equals(listEntries.get(i).getValue()))
-                isDefault = false;
+        if (listLength != beforeValues.length)
+        {
+            isChanged = true;
+        }
+        
+        if (isDefault)
+            for (int i = 0; i < listLength; i++)
+                if (!prop.getDefaults()[i].equals(listEntries.get(i).getValue()))
+                    isDefault = false;
+        
+        if (!isChanged)
+            for (int i = 0; i < listLength; i++)
+                if (!beforeValues[i].equals(listEntries.get(i).getValue()))
+                    isChanged = true;
     }
     
     protected void keyTyped(char eventChar, int eventKey)
@@ -136,7 +157,7 @@ public class GuiEditListEntries extends GuiListExtended
         for (IGuiEditListEntry entry : this.listEntries)
             entry.keyTyped(eventChar, eventKey);
         
-        recalculateIsDefault();
+        recalculateState();
     }
     
     protected void updateScreen()
@@ -228,6 +249,7 @@ public class GuiEditListEntries extends GuiListExtended
         public EditListDoubleEntry(double value)
         {
             super(String.valueOf(value));
+            this.isValidated = true;
         }
         
         @Override
@@ -273,6 +295,7 @@ public class GuiEditListEntries extends GuiListExtended
         public EditListIntegerEntry(int value)
         {
             super(String.valueOf(value));
+            this.isValidated = true;
         }
         
         @Override
@@ -322,6 +345,7 @@ public class GuiEditListEntries extends GuiListExtended
             this.textFieldValue = new GuiTextField(GuiEditListEntries.this.mc.fontRenderer, width / 4 + 1, 0, controlWidth - 3, 16);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(value);
+            this.isValidated = prop.getValidStringPattern() != null;
         }
         
         @Override
@@ -390,6 +414,7 @@ public class GuiEditListEntries extends GuiListExtended
             super();
             this.value = value;
             this.btnValue = new GuiButton(0, 0, 0, controlWidth, 18, I18n.format(String.valueOf(value)));
+            this.isValidated = false;
         }
         
         @Override
@@ -416,7 +441,7 @@ public class GuiEditListEntries extends GuiListExtended
             {
                 btnValue.func_146113_a(mc.getSoundHandler());
                 value = !value;
-                recalculateIsDefault();
+                recalculateState();
                 return true;
             }
             
@@ -445,6 +470,7 @@ public class GuiEditListEntries extends GuiListExtended
         private final HoverChecker removeEntryHoverChecker;
         private List               addNewToolTip, removeToolTip;
         protected boolean          isValidValue = true;
+        protected boolean          isValidated  = false;
         
         public EditListBaseEntry()
         {
@@ -463,7 +489,7 @@ public class GuiEditListEntries extends GuiListExtended
         @Override
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
         {
-            if (this.getValue() != null)
+            if (this.getValue() != null && this.isValidated)
                 GuiEditListEntries.this.mc.fontRenderer.drawString(
                         isValidValue ? EnumChatFormatting.GREEN + "✔" : EnumChatFormatting.RED + "✕",
                         width / 4 - mc.fontRenderer.getStringWidth("✔") - 2,
@@ -509,12 +535,14 @@ public class GuiEditListEntries extends GuiListExtended
             {
                 btnAddNewEntryAbove.func_146113_a(mc.getSoundHandler());
                 addNewEntryAtIndex(index);
+                recalculateState();
                 return true;
             }
             else if (this.btnRemoveEntry.mousePressed(GuiEditListEntries.this.mc, x, y))
             {
                 btnRemoveEntry.func_146113_a(mc.getSoundHandler());
                 removeEntryAtIndex(index);
+                recalculateState();
                 return true;
             }
             

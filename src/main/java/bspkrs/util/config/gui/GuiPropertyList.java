@@ -874,7 +874,7 @@ public class GuiPropertyList extends GuiListExtended
         public GuiConfigListEntry(IConfigProperty prop)
         {
             this.prop = prop;
-            this.propName = I18n.format(prop.getLanguageKey(), new Object[0]);
+            this.propName = I18n.format(prop.getLanguageKey());
             this.btnUndoChanges = new GuiButton(0, 0, 0, 18, 18, "↩");
             this.btnDefault = new GuiButton(0, 0, 0, 18, 18, "☄");
             
@@ -887,7 +887,7 @@ public class GuiPropertyList extends GuiListExtended
             
             String comment;
             
-            if (prop.getType().equals(int.class))
+            if (prop.getType().equals(ConfigGuiType.INTEGER))
                 comment = I18n.format(prop.getLanguageKey() + ".tooltip",
                         "\n" + EnumChatFormatting.AQUA, prop.getDefault(), prop.getMinIntValue(), prop.getMaxIntValue());
             else

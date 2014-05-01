@@ -28,7 +28,7 @@ public class GuiBSConfig extends GuiConfig
     private static IConfigProperty[] getProps()
     {
         ConfigCategory cc = bspkrsCoreMod.instance.getConfig().getCategory(Configuration.CATEGORY_GENERAL);
-        IConfigProperty[] props = new IConfigProperty[ConfigElement.values().length + (bspkrsCoreMod.instance.allowDebugOutput ? 1 : 0)];
+        IConfigProperty[] props = new IConfigProperty[ConfigElement.values().length + 1];
         for (int i = 0; i < ConfigElement.values().length; i++)
         {
             ConfigElement ce = ConfigElement.values()[i];
@@ -37,8 +37,7 @@ public class GuiBSConfig extends GuiConfig
                 props[i] = new ConfigProperty(prop, ce.propertyType());
         }
         
-        if (bspkrsCoreMod.instance.allowDebugOutput)
-            props[props.length - 1] = new ConfigProperty(bspkrsCoreMod.instance.getConfig().getCategory(Configuration.CATEGORY_GENERAL + ".example_properties"));
+        props[props.length - 1] = new ConfigProperty(bspkrsCoreMod.instance.getConfig().getCategory(Configuration.CATEGORY_GENERAL + ".example_properties"));
         
         return props;
     }

@@ -151,12 +151,12 @@ public class Property
         setName(name);
         this.type = type;
         this.value = "";
-        this.values = values;
+        this.values = Arrays.copyOf(values, values.length);
         this.defaultValue = "";
         for (String s : values)
             this.defaultValue += ", [" + s + "]";
         this.defaultValue = this.defaultValue.replaceFirst(", ", "");
-        this.defaultValues = values;
+        this.defaultValues = Arrays.copyOf(values, values.length);
         this.validValues = validValues;
         wasRead = read;
         isList = true;
@@ -311,7 +311,11 @@ public class Property
     
     protected void setDefaultValues(String[] values)
     {
-        this.defaultValues = values;
+        this.defaultValue = "";
+        for (String s : values)
+            this.defaultValue += ", [" + s + "]";
+        this.defaultValue = this.defaultValue.replaceFirst(", ", "");
+        this.defaultValues = Arrays.copyOf(values, values.length);
     }
     
     protected void setMinValue(String minValue)
@@ -719,7 +723,7 @@ public class Property
     
     public void set(String[] values)
     {
-        this.values = values;
+        this.values = Arrays.copyOf(values, values.length);
         changed = true;
     }
     

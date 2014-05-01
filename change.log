@@ -1,3 +1,9 @@
+6.9 - ???
+- added better prop state handling
+- added undo buttons
+- added example props to regular config
+- fixed bugs in list edit screen
+- added titles to list edit screen
 6.8 - 25-Apr-2014
 - catch exceptions due to really large numbers being entered in numeric config fields
 - added ability to add a Pattern object to STRING props to validate input
