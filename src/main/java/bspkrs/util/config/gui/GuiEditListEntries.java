@@ -15,6 +15,7 @@ import org.lwjgl.input.Keyboard;
 
 import bspkrs.client.util.HUDUtils;
 import bspkrs.util.ReflectionHelper;
+import bspkrs.util.config.gui.GuiPropertyList.EditListPropEntry;
 
 public class GuiEditListEntries extends GuiListExtended
 {
@@ -22,18 +23,20 @@ public class GuiEditListEntries extends GuiListExtended
     private Minecraft               mc;
     private IConfigProperty         prop;
     private List<IGuiEditListEntry> listEntries;
-    private boolean                 isDirty;
+    private boolean                 isDefault;
     private boolean                 canAddMoreEntries;
     private final int               controlWidth;
+    private String[]                currentValues;
     
-    public GuiEditListEntries(GuiEditList parent, Minecraft mc, IConfigProperty prop)
+    public GuiEditListEntries(GuiEditList parent, Minecraft mc, IConfigProperty prop, String[] currentValues)
     {
         super(mc, parent.width, parent.height, parent.titleLine2 != null ? 33 : 23, parent.height - 32, 20);
         this.parentGuiEditList = parent;
         this.mc = mc;
         this.prop = prop;
+        this.currentValues = currentValues;
         this.setShowSelectionBox(false);
-        this.isDirty = !this.prop.isDefault();
+        this.isDefault = !this.prop.isDefault();
         this.canAddMoreEntries = !prop.isListLengthFixed() && (prop.getMaxListLength() == -1 || prop.getStringList().length < prop.getMaxListLength());
         
         listEntries = new ArrayList<IGuiEditListEntry>();
@@ -41,14 +44,14 @@ public class GuiEditListEntries extends GuiListExtended
         controlWidth = (parent.width / 2) - (prop.isListLengthFixed() ? 0 : 48);
         
         if (prop.isList() && prop.getType().equals(ConfigGuiType.BOOLEAN))
-            for (boolean value : prop.getBooleanList())
-                listEntries.add(new EditListBooleanEntry(value));
+            for (String value : currentValues)
+                listEntries.add(new EditListBooleanEntry(Boolean.valueOf(value)));
         else if (prop.isList() && prop.getType().equals(ConfigGuiType.INTEGER))
-            for (int value : prop.getIntList())
-                listEntries.add(new EditListIntegerEntry(value));
+            for (String value : currentValues)
+                listEntries.add(new EditListIntegerEntry(Integer.parseInt(value)));
         else if (prop.isList() && prop.getType().equals(ConfigGuiType.DOUBLE))
-            for (double value : prop.getDoubleList())
-                listEntries.add(new EditListDoubleEntry(value));
+            for (String value : currentValues)
+                listEntries.add(new EditListDoubleEntry(Double.parseDouble(value)));
         else if (prop.isList())
             for (String value : prop.getStringList())
                 listEntries.add(new EditListStringEntry(value));
@@ -107,25 +110,25 @@ public class GuiEditListEntries extends GuiListExtended
         keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
     }
     
-    protected boolean isDirty()
+    protected boolean isDefault()
     {
-        return isDirty;
+        return isDefault;
     }
     
-    private void recalculateIsDirty()
+    private void recalculateIsDefault()
     {
-        isDirty = false;
+        isDefault = true;
         int listLength = prop.isListLengthFixed() ? listEntries.size() : listEntries.size() - 1;
         
         if (listLength != prop.getDefaults().length)
         {
-            isDirty = true;
+            isDefault = false;
             return;
         }
         
         for (int i = 0; i < listLength; i++)
             if (!prop.getDefaults()[i].equals(listEntries.get(i).getValue()))
-                isDirty = true;
+                isDefault = false;
     }
     
     protected void keyTyped(char eventChar, int eventKey)
@@ -133,7 +136,7 @@ public class GuiEditListEntries extends GuiListExtended
         for (IGuiEditListEntry entry : this.listEntries)
             entry.keyTyped(eventChar, eventKey);
         
-        recalculateIsDirty();
+        recalculateIsDefault();
     }
     
     protected void updateScreen()
@@ -161,37 +164,52 @@ public class GuiEditListEntries extends GuiListExtended
     {
         int listLength = prop.isListLengthFixed() ? listEntries.size() : listEntries.size() - 1;
         
-        if (prop.isList() && prop.getType().equals(ConfigGuiType.BOOLEAN))
+        if (parentGuiEditList.slotIndex != -1 && parentGuiEditList.parentScreen != null
+                && parentGuiEditList.parentScreen instanceof GuiConfig
+                && ((GuiConfig) parentGuiEditList.parentScreen).propertyList.getListEntry(parentGuiEditList.slotIndex) instanceof EditListPropEntry)
         {
-            boolean[] abol = new boolean[listLength];
-            for (int i = 0; i < listLength; i++)
-                abol[i] = Boolean.parseBoolean(listEntries.get(i).getValue());
+            EditListPropEntry entry = (EditListPropEntry) ((GuiConfig) parentGuiEditList.parentScreen).propertyList.getListEntry(parentGuiEditList.slotIndex);
             
-            prop.set(abol);
-        }
-        else if (prop.isList() && prop.getType().equals(ConfigGuiType.INTEGER))
-        {
-            int[] ai = new int[listLength];
-            for (int i = 0; i < listLength; i++)
-                ai[i] = Integer.parseInt(listEntries.get(i).getValue());
-            
-            prop.set(ai);
-        }
-        else if (prop.isList() && prop.getType().equals(ConfigGuiType.DOUBLE))
-        {
-            double[] ad = new double[listLength];
-            for (int i = 0; i < listLength; i++)
-                ad[i] = Double.parseDouble(listEntries.get(i).getValue());
-            
-            prop.set(ad);
-        }
-        else if (prop.isList())
-        {
             String[] as = new String[listLength];
             for (int i = 0; i < listLength; i++)
                 as[i] = listEntries.get(i).getValue();
             
-            prop.set(as);
+            entry.setListFromChildScreen(as);
+        }
+        else
+        {
+            if (prop.isList() && prop.getType().equals(ConfigGuiType.BOOLEAN))
+            {
+                boolean[] abol = new boolean[listLength];
+                for (int i = 0; i < listLength; i++)
+                    abol[i] = Boolean.parseBoolean(listEntries.get(i).getValue());
+                
+                prop.set(abol);
+            }
+            else if (prop.isList() && prop.getType().equals(ConfigGuiType.INTEGER))
+            {
+                int[] ai = new int[listLength];
+                for (int i = 0; i < listLength; i++)
+                    ai[i] = Integer.parseInt(listEntries.get(i).getValue());
+                
+                prop.set(ai);
+            }
+            else if (prop.isList() && prop.getType().equals(ConfigGuiType.DOUBLE))
+            {
+                double[] ad = new double[listLength];
+                for (int i = 0; i < listLength; i++)
+                    ad[i] = Double.parseDouble(listEntries.get(i).getValue());
+                
+                prop.set(ad);
+            }
+            else if (prop.isList())
+            {
+                String[] as = new String[listLength];
+                for (int i = 0; i < listLength; i++)
+                    as[i] = listEntries.get(i).getValue();
+                
+                prop.set(as);
+            }
         }
     }
     
@@ -398,7 +416,7 @@ public class GuiEditListEntries extends GuiListExtended
             {
                 btnValue.func_146113_a(mc.getSoundHandler());
                 value = !value;
-                recalculateIsDirty();
+                recalculateIsDefault();
                 return true;
             }
             

@@ -39,6 +39,9 @@ public class TestModSimpleConfig
     public static float            unboundedFloat                   = unboundedFloatDefault;
     private final static float     boundedFloatDefault              = 100.0F;
     public static float            boundedFloat                     = boundedFloatDefault;
+    private final static String    chatColorPickerDefault           = "c";
+    public static String           chatColorPicker                  = chatColorPickerDefault;
+    private final static String[]  chatColorPickerValues            = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
     
     private static Configuration   config;
     
@@ -53,23 +56,42 @@ public class TestModSimpleConfig
         syncConfig();
     }
     
+    /**
+     * syncConfig() is used to load your config initially, or reload the fields after editing the values in the GUI. It must sync all the
+     * metadata used by the GUI controls such as language keys, valid values, or min/max bounds.
+     */
     public static void syncConfig()
     {
         Property temp;
         
         config.load();
         
-        temp = config.get(CATEGORY_GENERAL, "enabled", enabledDefault, "Enables or disables this mod.");
+        temp = config.get(CATEGORY_GENERAL, "enabled", enabledDefault, "Enables or disables this mod (not that there is anything to disable).");
         //temp.setLanguageKey("bspkrs.testmod.configgui." + temp.getName());
         enabled = temp.getBoolean();
-        
-        temp = config.get(CATEGORY_GENERAL, "fixedBooleanList", fixedBooleanListDefault, "", true);
+        temp = config.get(CATEGORY_GENERAL, "fixedBooleanList", fixedBooleanListDefault, "This is a Boolean list that has a fixed length of 6.", true);
         //temp.setLanguageKey("bspkrs.testmod.configgui." + temp.getName());
         fixedBooleanList = temp.getBooleanList();
-        
-        temp = config.get(CATEGORY_GENERAL, "variablePatternStringList", variablePatternStringListDefault, "", false, variablePatternStringListPattern);
+        temp = config.get(CATEGORY_GENERAL, "variablePatternStringList", variablePatternStringListDefault, "This is a String List that is validated using a Pattern object. 27 entries are allowed.", false, 27, variablePatternStringListPattern);
         //temp.setLanguageKey("bspkrs.testmod.configgui." + temp.getName());
         variablePatternStringList = temp.getStringList();
+        temp = config.get(CATEGORY_GENERAL, "regularString", regularStringDefault, "Just a regular String... no requirements.");
+        //temp.setLanguageKey("bspkrs.testmod.configgui." + temp.getName());
+        regularString = temp.getString();
+        temp = config.get(CATEGORY_GENERAL, "patternString", patternStringDefault, "This comma-separated String is validated using a Pattern object.", patternStringPattern);
+        patternString = temp.getString();
+        temp = config.get(CATEGORY_GENERAL, "selectString", selectStringDefault, "If a String[] of valid values is given to a String property, the GUI control is a cycle button.", selectStringValues);
+        selectString = temp.getString();
+        temp = config.get(CATEGORY_GENERAL, "unboundedInteger", unboundedIntegerDefault, "Integer prop without bounds.");
+        unboundedInteger = temp.getInt();
+        temp = config.get(CATEGORY_GENERAL, "boundedInteger", boundedIntegerDefault, "Integer prop with bounds.", -1, 200);
+        boundedInteger = temp.getInt();
+        temp = config.get(CATEGORY_GENERAL, "unboundedFloat", unboundedFloatDefault, "Float prop without bounds.");
+        unboundedFloat = (float) temp.getDouble();
+        temp = config.get(CATEGORY_GENERAL, "boundedFloat", boundedFloatDefault, "Float prop with bounds.", -1.1F, 225.25F);
+        boundedFloat = (float) temp.getDouble();
+        temp = config.get(CATEGORY_GENERAL, "chatColorPicker", chatColorPickerDefault, "This property selects a color code for chat formatting.", Property.Type.COLOR, chatColorPickerValues);
+        chatColorPicker = temp.getString();
         
         config.save();
     }

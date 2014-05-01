@@ -153,6 +153,9 @@ public class Property
         this.value = "";
         this.values = values;
         this.defaultValue = "";
+        for (String s : values)
+            this.defaultValue += ", [" + s + "]";
+        this.defaultValue = this.defaultValue.replaceFirst(", ", "");
         this.defaultValues = values;
         this.validValues = validValues;
         wasRead = read;

@@ -2,6 +2,7 @@ package bspkrs.util.config.gui;
 
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -16,11 +17,16 @@ public class GuiEditList extends GuiScreen
     private GuiButton          btnResetAll, btnDone;
     private String             title;
     protected String           titleLine2;
+    protected int              slotIndex;
+    private String[]           currentValues;
     
-    public GuiEditList(GuiScreen parentScreen, IConfigProperty prop)
+    public GuiEditList(GuiScreen parentScreen, IConfigProperty prop, int slotIndex, String[] currentValues)
     {
+        this.mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;
         this.prop = prop;
+        this.slotIndex = slotIndex;
+        this.currentValues = currentValues;
     }
     
     /**
@@ -29,7 +35,7 @@ public class GuiEditList extends GuiScreen
     @Override
     public void initGui()
     {
-        this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop);
+        this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop, this.currentValues);
         this.buttonList.add(this.btnDone = new GuiButton(2000, this.width / 2 - 155, this.height - 29, 150, 20, I18n.format("gui.done", new Object[0])));
         this.buttonList.add(this.btnResetAll = new GuiButton(2001, this.width / 2 - 155 + 160, this.height - 29, 150, 20, I18n.format("controls.reset", new Object[0])));
     }
@@ -51,8 +57,8 @@ public class GuiEditList extends GuiScreen
         }
         else if (button.id == 2001)
         {
-            this.prop.setToDefault();
-            this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop);
+            this.currentValues = prop.getDefaults();
+            this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop, this.currentValues);
         }
     }
     
@@ -111,7 +117,7 @@ public class GuiEditList extends GuiScreen
             this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
         
         this.btnDone.enabled = this.guiScrollList.isListSavable();
-        this.btnResetAll.enabled = this.guiScrollList.isDirty();
+        this.btnResetAll.enabled = !this.guiScrollList.isDefault();
         super.drawScreen(par1, par2, par3);
         this.guiScrollList.drawScreenPost(par1, par2, par3);
     }

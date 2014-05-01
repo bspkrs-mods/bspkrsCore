@@ -1,10 +1,13 @@
 package bspkrs.util.config.gui;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiListExtended;
+import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
@@ -24,11 +27,11 @@ public class GuiPropertyList extends GuiListExtended
     private final Minecraft             mc;
     private final IGuiConfigListEntry[] listEntries;
     private int                         maxLabelTextWidth = 0;
-    private final int                   labelX;
-    private final int                   controlX;
-    private final int                   controlWidth;
-    private final int                   resetX;
-    private final int                   scrollBarX;
+    private int                         labelX;
+    private int                         controlX;
+    private int                         controlWidth;
+    private int                         resetX;
+    private int                         scrollBarX;
     
     public GuiPropertyList(GuiConfig parent, Minecraft mc)
     {
@@ -120,6 +123,28 @@ public class GuiPropertyList extends GuiListExtended
         }
     }
     
+    protected void initGui()
+    {
+        this.width = parentGuiConfig.width;
+        try
+        {
+            ReflectionHelper.setIntValue(GuiSlot.class, "field_148158_l", "height", this, parentGuiConfig.height);
+        }
+        catch (Throwable e)
+        {}
+        this.top = parentGuiConfig.titleLine2 != null ? 33 : 23;
+        this.bottom = parentGuiConfig.height - 32;
+        this.left = 0;
+        this.right = width;
+        int viewWidth = this.maxLabelTextWidth + 8 + (width / 2);
+        labelX = (this.width / 2) - (viewWidth / 2);
+        controlX = labelX + maxLabelTextWidth + 8;
+        resetX = (this.width / 2) + (viewWidth / 2) - 45;
+        controlWidth = resetX - controlX - 5;
+        scrollBarX = resetX + 45;
+        
+    }
+    
     @Override
     protected int getSize()
     {
@@ -189,6 +214,21 @@ public class GuiPropertyList extends GuiListExtended
             listEntries[i].setToDefault();
     }
     
+    protected boolean areAnyPropsChanged()
+    {
+        for (int i = 0; i < this.getSize(); i++)
+            if (listEntries[i].isChanged())
+                return true;
+        
+        return false;
+    }
+    
+    protected void undoAllChanges()
+    {
+        for (int i = 0; i < this.getSize(); i++)
+            listEntries[i].undoChanges();
+    }
+    
     protected void drawScreenPost(int mouseX, int mouseY, float f)
     {
         for (int i = 0; i < this.getSize(); i++)
@@ -205,27 +245,61 @@ public class GuiPropertyList extends GuiListExtended
     @SideOnly(Side.CLIENT)
     public class BooleanPropEntry extends ButtonPropEntry
     {
+        private final boolean beforeValue;
+        private boolean       currentValue;
         
         private BooleanPropEntry(IConfigProperty prop)
         {
             super(prop);
+            this.beforeValue = prop.getBoolean();
+            this.currentValue = beforeValue;
+            updateValueButtonText();
         }
         
         @Override
         public void updateValueButtonText()
         {
-            String trans = I18n.format(String.valueOf(prop.getString()));
-            if (!trans.equals(prop.getString()))
-                this.btnValue.displayString = trans;
-            else
-                this.btnValue.displayString = this.prop.getString();
-            btnValue.packedFGColour = prop.getBoolean() ? HUDUtils.getColorCode('2', true) : HUDUtils.getColorCode('4', true);
+            this.btnValue.displayString = I18n.format(String.valueOf(currentValue));
+            btnValue.packedFGColour = currentValue ? HUDUtils.getColorCode('2', true) : HUDUtils.getColorCode('4', true);
         }
         
         @Override
-        public void valueButtonPressed()
+        public void valueButtonPressed(int slotIndex)
         {
-            prop.set(!prop.getBoolean());
+            currentValue = !currentValue;
+        }
+        
+        @Override
+        public boolean isDefault()
+        {
+            return currentValue == Boolean.valueOf(prop.getDefault());
+        }
+        
+        @Override
+        public void setToDefault()
+        {
+            currentValue = Boolean.valueOf(prop.getDefault());
+            updateValueButtonText();
+        }
+        
+        @Override
+        public boolean isChanged()
+        {
+            return currentValue != beforeValue;
+        }
+        
+        @Override
+        public void undoChanges()
+        {
+            currentValue = beforeValue;
+            updateValueButtonText();
+        }
+        
+        @Override
+        public void saveProperty()
+        {
+            if (isChanged())
+                prop.set(currentValue);
         }
     }
     
@@ -235,56 +309,76 @@ public class GuiPropertyList extends GuiListExtended
     @SideOnly(Side.CLIENT)
     public class SelectStringPropEntry extends ButtonPropEntry
     {
-        private int index;
+        private final int beforeIndex;
+        private final int defaultIndex;
+        protected int     currentIndex;
         
         private SelectStringPropEntry(IConfigProperty prop)
         {
             super(prop);
-            resetIndex();
+            beforeIndex = getIndex(prop.getString());
+            defaultIndex = getIndex(prop.getDefault());
+            currentIndex = beforeIndex;
+            updateValueButtonText();
         }
         
-        private void resetIndex()
+        private int getIndex(String s)
         {
             for (int i = 0; i < prop.getValidValues().length; i++)
-                if (prop.getValidValues()[i].equalsIgnoreCase(prop.getString()))
+                if (prop.getValidValues()[i].equalsIgnoreCase(s))
                 {
-                    index = i;
-                    break;
+                    return i;
                 }
-        }
-        
-        /**
-         * Returns true if the mouse has been pressed on this control.
-         */
-        @Override
-        public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
-        {
-            if (super.mousePressed(index, x, y, mouseEvent, relativeX, relativeY))
-            {
-                resetIndex();
-                return true;
-            }
             
-            return false;
+            return 0;
         }
         
         @Override
         public void updateValueButtonText()
         {
-            String trans = I18n.format(String.valueOf(prop.getString()));
-            if (!trans.equals(prop.getString()))
-                this.btnValue.displayString = trans;
-            else
-                this.btnValue.displayString = this.prop.getString();
+            this.btnValue.displayString = I18n.format(prop.getValidValues()[currentIndex]);
         }
         
         @Override
-        public void valueButtonPressed()
+        public void valueButtonPressed(int slotIndex)
         {
-            if (++this.index >= prop.getValidValues().length)
-                this.index = 0;
+            if (++this.currentIndex >= prop.getValidValues().length)
+                this.currentIndex = 0;
             
-            prop.set(prop.getValidValues()[this.index]);
+            updateValueButtonText();
+        }
+        
+        @Override
+        public boolean isDefault()
+        {
+            return currentIndex == defaultIndex;
+        }
+        
+        @Override
+        public void setToDefault()
+        {
+            currentIndex = defaultIndex;
+            updateValueButtonText();
+        }
+        
+        @Override
+        public boolean isChanged()
+        {
+            return currentIndex != beforeIndex;
+        }
+        
+        @Override
+        public void undoChanges()
+        {
+            currentIndex = beforeIndex;
+            updateValueButtonText();
+        }
+        
+        @Override
+        public void saveProperty()
+        {
+            if (isChanged())
+                prop.set(prop.getValidValues()[currentIndex]);
         }
     }
     
@@ -297,23 +391,20 @@ public class GuiPropertyList extends GuiListExtended
         ColorPropEntry(IConfigProperty prop)
         {
             super(prop);
+            updateValueButtonText();
         }
         
         @Override
-        public void drawEntry(int p_148279_1_, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean p_148279_9_)
+        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
         {
-            this.btnValue.packedFGColour = HUDUtils.getColorCode(this.prop.getString().charAt(0), true);
-            super.drawEntry(p_148279_1_, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, p_148279_9_);
+            this.btnValue.packedFGColour = HUDUtils.getColorCode(this.prop.getValidValues()[currentIndex].charAt(0), true);
+            super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
         }
         
         @Override
         public void updateValueButtonText()
         {
-            String trans = I18n.format(String.valueOf(prop.getString()));
-            if (!trans.equals(prop.getString()))
-                this.btnValue.displayString = trans + " - " + I18n.format("bspkrs.configgui.sampletext");
-            else
-                this.btnValue.displayString = this.prop.getString() + " - " + I18n.format("bspkrs.configgui.sampletext");
+            this.btnValue.displayString = I18n.format(prop.getValidValues()[currentIndex]) + " - " + I18n.format("bspkrs.configgui.sampletext");
         }
     }
     
@@ -322,9 +413,14 @@ public class GuiPropertyList extends GuiListExtended
      */
     public class EditListPropEntry extends ButtonPropEntry
     {
+        private final String[] beforeValues;
+        private String[]       currentValues;
+        
         public EditListPropEntry(IConfigProperty prop)
         {
             super(prop);
+            beforeValues = prop.getStringList();
+            currentValues = prop.getStringList();
             updateValueButtonText();
         }
         
@@ -332,19 +428,64 @@ public class GuiPropertyList extends GuiListExtended
         public void updateValueButtonText()
         {
             String buttonText = "";
-            for (String s : prop.getStringList())
-                buttonText += "[" + s + "], ";
+            for (String s : currentValues)
+                buttonText += ", [" + s + "]";
+            
+            buttonText = buttonText.replaceFirst(", ", "");
             
             if (mc.fontRenderer.getStringWidth(buttonText) > controlWidth - 6)
-                this.btnValue.displayString = mc.fontRenderer.trimStringToWidth(buttonText, controlWidth - 6 - mc.fontRenderer.getStringWidth("...")) + "...";
+                this.btnValue.displayString =
+                        mc.fontRenderer.trimStringToWidth(buttonText, controlWidth - 6 - mc.fontRenderer.getStringWidth("...")).trim() + "...";
             else
                 this.btnValue.displayString = buttonText;
         }
         
         @Override
-        public void valueButtonPressed()
+        public void valueButtonPressed(int slotIndex)
         {
-            mc.displayGuiScreen(new GuiEditList(GuiPropertyList.this.parentGuiConfig, prop));
+            mc.displayGuiScreen(new GuiEditList(GuiPropertyList.this.parentGuiConfig, prop, slotIndex, currentValues));
+        }
+        
+        public void setListFromChildScreen(String[] newList)
+        {
+            if (!Arrays.deepEquals(currentValues, newList))
+            {
+                currentValues = newList;
+                updateValueButtonText();
+            }
+        }
+        
+        @Override
+        public boolean isDefault()
+        {
+            return Arrays.deepEquals(prop.getDefaults(), currentValues);
+        }
+        
+        @Override
+        public void setToDefault()
+        {
+            this.currentValues = prop.getDefaults();
+            updateValueButtonText();
+        }
+        
+        @Override
+        public boolean isChanged()
+        {
+            return !Arrays.deepEquals(beforeValues, currentValues);
+        }
+        
+        @Override
+        public void undoChanges()
+        {
+            currentValues = beforeValues;
+            updateValueButtonText();
+        }
+        
+        @Override
+        public void saveProperty()
+        {
+            if (isChanged())
+                this.prop.set(currentValues);
         }
     }
     
@@ -364,14 +505,22 @@ public class GuiPropertyList extends GuiListExtended
         
         public abstract void updateValueButtonText();
         
-        public abstract void valueButtonPressed();
+        public abstract void valueButtonPressed(int slotIndex);
         
         @Override
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
         {
             super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
+            try
+            {
+                ReflectionHelper.setIntValue(GuiButton.class, "field_146120_f", "width", this.btnValue, GuiPropertyList.this.controlWidth);
+            }
+            catch (Throwable e)
+            {
+                e.printStackTrace();
+            }
+            this.btnValue.xPosition = GuiPropertyList.this.controlX;
             this.btnValue.yPosition = y;
-            updateValueButtonText();
             this.btnValue.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
         }
         
@@ -384,7 +533,8 @@ public class GuiPropertyList extends GuiListExtended
             if (this.btnValue.mousePressed(GuiPropertyList.this.mc, x, y))
             {
                 btnValue.func_146113_a(mc.getSoundHandler());
-                valueButtonPressed();
+                valueButtonPressed(index);
+                updateValueButtonText();
                 return true;
             }
             else
@@ -412,10 +562,6 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public void mouseClicked(int x, int y, int mouseEvent)
         {}
-        
-        @Override
-        public void saveProperty()
-        {}
     }
     
     /**
@@ -424,9 +570,12 @@ public class GuiPropertyList extends GuiListExtended
     @SideOnly(Side.CLIENT)
     public class IntegerPropEntry extends StringPropEntry
     {
+        private final int beforeValue;
+        
         private IntegerPropEntry(IConfigProperty prop)
         {
             super(prop);
+            this.beforeValue = prop.getInt();
         }
         
         @Override
@@ -460,21 +609,52 @@ public class GuiPropertyList extends GuiListExtended
         }
         
         @Override
-        public void saveProperty()
+        public boolean isChanged()
         {
             try
             {
-                int value = Integer.parseInt(textFieldValue.getText().trim());
-                if (value >= prop.getMinIntValue() && value <= prop.getMaxIntValue())
-                    this.prop.set(value);
-                else
-                    this.prop.setToDefault();
+                return this.beforeValue != Integer.parseInt(textFieldValue.getText().trim());
             }
             catch (Throwable e)
             {
-                this.prop.setToDefault();
+                return true;
             }
-            
+        }
+        
+        @Override
+        public void undoChanges()
+        {
+            this.textFieldValue.setText(String.valueOf(beforeValue));
+        }
+        
+        @Override
+        public void saveProperty()
+        {
+            if (isChanged() && this.isValidValue)
+                try
+                {
+                    int value = Integer.parseInt(textFieldValue.getText().trim());
+                    this.prop.set(value);
+                    
+                }
+                catch (Throwable e)
+                {
+                    this.prop.setToDefault();
+                }
+            else if (isChanged() && !this.isValidValue)
+                try
+                {
+                    int value = Integer.parseInt(textFieldValue.getText().trim());
+                    if (value < prop.getMinIntValue())
+                        this.prop.set(prop.getMinIntValue());
+                    else
+                        this.prop.set(prop.getMaxIntValue());
+                    
+                }
+                catch (Throwable e)
+                {
+                    this.prop.setToDefault();
+                }
         }
     }
     
@@ -484,9 +664,12 @@ public class GuiPropertyList extends GuiListExtended
     @SideOnly(Side.CLIENT)
     public class DoublePropEntry extends StringPropEntry
     {
+        private final double beforeValue;
+        
         private DoublePropEntry(IConfigProperty prop)
         {
             super(prop);
+            this.beforeValue = prop.getDouble();
         }
         
         @Override
@@ -521,22 +704,52 @@ public class GuiPropertyList extends GuiListExtended
         }
         
         @Override
-        public void saveProperty()
+        public boolean isChanged()
         {
             try
             {
-                double value = Double.parseDouble(textFieldValue.getText().trim());
-                if (value >= prop.getMinDoubleValue() && value <= prop.getMaxDoubleValue())
-                    this.prop.set(value);
-                else
-                    this.prop.setToDefault();
-                
+                return this.beforeValue != Double.parseDouble(textFieldValue.getText().trim());
             }
             catch (Throwable e)
             {
-                this.prop.setToDefault();
+                return true;
             }
-            
+        }
+        
+        @Override
+        public void undoChanges()
+        {
+            this.textFieldValue.setText(String.valueOf(beforeValue));
+        }
+        
+        @Override
+        public void saveProperty()
+        {
+            if (isChanged() && this.isValidValue)
+                try
+                {
+                    double value = Double.parseDouble(textFieldValue.getText().trim());
+                    this.prop.set(value);
+                    
+                }
+                catch (Throwable e)
+                {
+                    this.prop.setToDefault();
+                }
+            else if (isChanged() && !this.isValidValue)
+                try
+                {
+                    double value = Double.parseDouble(textFieldValue.getText().trim());
+                    if (value < prop.getMinDoubleValue())
+                        this.prop.set(prop.getMinDoubleValue());
+                    else
+                        this.prop.set(prop.getMaxDoubleValue());
+                    
+                }
+                catch (Throwable e)
+                {
+                    this.prop.setToDefault();
+                }
         }
     }
     
@@ -547,10 +760,12 @@ public class GuiPropertyList extends GuiListExtended
     public class StringPropEntry extends GuiConfigListEntry
     {
         protected final GuiTextField textFieldValue;
+        private final String         beforeValue;
         
         private StringPropEntry(IConfigProperty prop)
         {
             super(prop);
+            beforeValue = prop.getString();
             this.textFieldValue = new GuiTextField(GuiPropertyList.this.mc.fontRenderer, controlX + 1, 0, controlWidth - 3, 16);
             this.textFieldValue.setMaxStringLength(10000);
             this.textFieldValue.setText(prop.getString());
@@ -562,8 +777,12 @@ public class GuiPropertyList extends GuiListExtended
             super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
             try
             {
+                if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146209_f", "xPosition", this.textFieldValue, -1) != GuiPropertyList.this.controlX + 1)
+                    ReflectionHelper.setIntValue(GuiTextField.class, "field_146209_f", "xPosition", this.textFieldValue, GuiPropertyList.this.controlX + 1);
                 if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146210_g", "yPosition", this.textFieldValue, -1) != y + 1)
                     ReflectionHelper.setIntValue(GuiTextField.class, "field_146210_g", "yPosition", this.textFieldValue, y + 1);
+                if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146218_h", "width", this.textFieldValue, -1) != GuiPropertyList.this.controlWidth - 3)
+                    ReflectionHelper.setIntValue(GuiTextField.class, "field_146218_h", "width", this.textFieldValue, GuiPropertyList.this.controlWidth - 3);
             }
             catch (Throwable e)
             {
@@ -601,22 +820,34 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public boolean isDefault()
         {
-            return this.prop.getDefault().trim().equals(this.textFieldValue.getText().trim());
+            return this.prop.getDefault().equals(this.textFieldValue.getText());
         }
         
         @Override
         public void setToDefault()
         {
             this.textFieldValue.setText(this.prop.getDefault());
-            keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
+            keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_HOME);
+        }
+        
+        @Override
+        public boolean isChanged()
+        {
+            return !this.beforeValue.equals(textFieldValue.getText());
+        }
+        
+        @Override
+        public void undoChanges()
+        {
+            this.textFieldValue.setText(beforeValue);
         }
         
         @Override
         public void saveProperty()
         {
-            if (this.textFieldValue.getText().trim().length() > 0)
-                this.prop.set(this.textFieldValue.getText().trim());
-            else
+            if (isChanged() && this.isValidValue)
+                this.prop.set(this.textFieldValue.getText());
+            else if (isChanged() && !this.isValidValue)
                 this.prop.setToDefault();
         }
     }
@@ -629,17 +860,30 @@ public class GuiPropertyList extends GuiListExtended
     {
         protected final IConfigProperty prop;
         protected final String          propName;
+        protected final GuiButton       btnUndoChanges;
         protected final GuiButton       btnDefault;
         private long                    hoverStart   = -1;
         private List                    toolTip;
+        private List                    undoToolTip;
+        private List                    defaultToolTip;
         protected boolean               isValidValue = true;
         private HoverChecker            tooltipHoverChecker;
+        private HoverChecker            undoHoverChecker;
+        private HoverChecker            defaultHoverChecker;
         
         public GuiConfigListEntry(IConfigProperty prop)
         {
             this.prop = prop;
             this.propName = I18n.format(prop.getLanguageKey(), new Object[0]);
-            this.btnDefault = new GuiButton(0, 0, 0, 40, 18, I18n.format("controls.reset", new Object[0]));
+            this.btnUndoChanges = new GuiButton(0, 0, 0, 18, 18, "↩");
+            this.btnDefault = new GuiButton(0, 0, 0, 18, 18, "☄");
+            
+            this.undoHoverChecker = new HoverChecker(this.btnUndoChanges, 800);
+            this.defaultHoverChecker = new HoverChecker(this.btnDefault, 800);
+            this.undoToolTip = new ArrayList();
+            this.undoToolTip.add(I18n.format("bspkrs.configgui.tooltip.undoChanges"));
+            this.defaultToolTip = new ArrayList();
+            this.defaultToolTip.add(I18n.format("bspkrs.configgui.tooltip.resetToDefault"));
             
             String comment;
             
@@ -664,14 +908,26 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
         {
+            boolean isChanged = isChanged();
+            String label = (!isValidValue ? EnumChatFormatting.RED.toString() :
+                    (isChanged ? EnumChatFormatting.WHITE.toString() : EnumChatFormatting.GRAY.toString()))
+                    + (isChanged ? EnumChatFormatting.ITALIC.toString() : "") + this.propName;
             GuiPropertyList.this.mc.fontRenderer.drawString(
-                    isValidValue ? this.propName : EnumChatFormatting.RED + this.propName,
+                    label,
                     GuiPropertyList.this.labelX,
                     y + slotHeight / 2 - GuiPropertyList.this.mc.fontRenderer.FONT_HEIGHT / 2,
                     16777215);
-            this.btnDefault.xPosition = GuiPropertyList.this.resetX;
+            
+            this.btnUndoChanges.xPosition = GuiPropertyList.this.resetX;
+            this.btnUndoChanges.yPosition = y;
+            this.btnUndoChanges.enabled = isChanged;
+            this.btnUndoChanges.displayString = "↩";
+            this.btnUndoChanges.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
+            
+            this.btnDefault.xPosition = GuiPropertyList.this.resetX + 22;
             this.btnDefault.yPosition = y;
             this.btnDefault.enabled = !isDefault();
+            this.btnDefault.displayString = "☄";
             this.btnDefault.drawButton(GuiPropertyList.this.mc, mouseX, mouseY);
             
             if (this.tooltipHoverChecker == null)
@@ -683,12 +939,18 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public void drawToolTip(int mouseX, int mouseY)
         {
+            boolean canHover = mouseY < GuiPropertyList.this.bottom && mouseY > GuiPropertyList.this.top;
             if (toolTip != null && this.tooltipHoverChecker != null)
             {
-                boolean canHover = mouseY < GuiPropertyList.this.bottom && mouseY > GuiPropertyList.this.top;
                 if (this.tooltipHoverChecker.checkHover(mouseX, mouseY, canHover))
                     GuiPropertyList.this.parentGuiConfig.drawToolTip(toolTip, mouseX, mouseY);
             }
+            
+            if (this.undoHoverChecker.checkHover(mouseX, mouseY, canHover))
+                GuiPropertyList.this.parentGuiConfig.drawToolTip(undoToolTip, mouseX, mouseY);
+            
+            if (this.defaultHoverChecker.checkHover(mouseX, mouseY, canHover))
+                GuiPropertyList.this.parentGuiConfig.drawToolTip(defaultToolTip, mouseX, mouseY);
         }
         
         @Override
@@ -698,6 +960,12 @@ public class GuiPropertyList extends GuiListExtended
             {
                 btnDefault.func_146113_a(mc.getSoundHandler());
                 setToDefault();
+                return true;
+            }
+            else if (this.btnUndoChanges.mousePressed(GuiPropertyList.this.mc, x, y))
+            {
+                btnUndoChanges.func_146113_a(mc.getSoundHandler());
+                undoChanges();
                 return true;
             }
             return false;
@@ -710,16 +978,10 @@ public class GuiPropertyList extends GuiListExtended
         }
         
         @Override
-        public boolean isDefault()
-        {
-            return prop.isDefault();
-        }
+        public abstract boolean isDefault();
         
         @Override
-        public void setToDefault()
-        {
-            this.prop.setToDefault();
-        }
+        public abstract void setToDefault();
         
         @Override
         public abstract void keyTyped(char eventChar, int eventKey);
@@ -729,6 +991,12 @@ public class GuiPropertyList extends GuiListExtended
         
         @Override
         public abstract void mouseClicked(int x, int y, int mouseEvent);
+        
+        @Override
+        public abstract boolean isChanged();
+        
+        @Override
+        public abstract void undoChanges();
         
         @Override
         public abstract void saveProperty();
@@ -842,6 +1110,16 @@ public class GuiPropertyList extends GuiListExtended
         public void saveProperty()
         {}
         
+        @Override
+        public boolean isChanged()
+        {
+            return false;
+        }
+        
+        @Override
+        public void undoChanges()
+        {}
+        
     }
     
     @SideOnly(Side.CLIENT)
@@ -856,6 +1134,10 @@ public class GuiPropertyList extends GuiListExtended
         public boolean isDefault();
         
         public void setToDefault();
+        
+        public void undoChanges();
+        
+        public boolean isChanged();
         
         public void saveProperty();
         
