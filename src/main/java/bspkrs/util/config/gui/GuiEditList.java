@@ -17,7 +17,7 @@ public class GuiEditList extends GuiScreen
     protected GuiScreen        parentScreen;
     protected IConfigProperty  prop;
     private GuiEditListEntries guiScrollList;
-    private GuiButton          btnUndoChanges, btnDefault, btnDone;
+    private GuiButtonExt       btnUndoChanges, btnDefault, btnDone;
     private String             title;
     protected String           titleLine2;
     protected String           titleLine3;
@@ -83,9 +83,9 @@ public class GuiEditList extends GuiScreen
         int undoWidth = mc.fontRenderer.getStringWidth("↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")) + 20;
         int resetWidth = mc.fontRenderer.getStringWidth("☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")) + 20;
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth) / 2;
-        this.buttonList.add(btnDone = new GuiButton(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
-        this.buttonList.add(btnDefault = new GuiButton(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5, this.height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
-        this.buttonList.add(btnUndoChanges = new GuiButton(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5, this.height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
+        this.buttonList.add(btnDone = new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
+        this.buttonList.add(btnDefault = new GuiButtonExt(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5, this.height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
+        this.buttonList.add(btnUndoChanges = new GuiButtonExt(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5, this.height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
     }
     
     @Override

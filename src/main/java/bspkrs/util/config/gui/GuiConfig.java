@@ -24,8 +24,8 @@ public class GuiConfig extends GuiScreen
     protected String            titleLine2;
     protected IConfigProperty[] properties;
     protected GuiPropertyList   propertyList;
-    private GuiButton           btnDefaultAll;
-    private GuiButton           btnUndoAll;
+    private GuiButtonExt        btnDefaultAll;
+    private GuiButtonExt        btnUndoAll;
     protected Method            saveAction;
     protected Object            configObject;
     protected Method            afterSaveAction;
@@ -67,9 +67,9 @@ public class GuiConfig extends GuiScreen
         int undoWidth = mc.fontRenderer.getStringWidth("↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")) + 20;
         int resetWidth = mc.fontRenderer.getStringWidth("☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")) + 20;
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth) / 2;
-        this.buttonList.add(new GuiButton(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
-        this.buttonList.add(this.btnDefaultAll = new GuiButton(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5, this.height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
-        this.buttonList.add(btnUndoAll = new GuiButton(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5, this.height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
+        this.buttonList.add(new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
+        this.buttonList.add(this.btnDefaultAll = new GuiButtonExt(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5, this.height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
+        this.buttonList.add(btnUndoAll = new GuiButtonExt(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5, this.height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
         this.propertyList.initGui();
     }
     

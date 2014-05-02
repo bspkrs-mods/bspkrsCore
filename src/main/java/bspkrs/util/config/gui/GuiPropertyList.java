@@ -142,7 +142,6 @@ public class GuiPropertyList extends GuiListExtended
         resetX = (this.width / 2) + (viewWidth / 2) - 45;
         controlWidth = resetX - controlX - 5;
         scrollBarX = resetX + 45;
-        
     }
     
     @Override
@@ -427,17 +426,11 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public void updateValueButtonText()
         {
-            String buttonText = "";
+            this.btnValue.displayString = "";
             for (String s : currentValues)
-                buttonText += ", [" + s + "]";
+                this.btnValue.displayString += ", [" + s + "]";
             
-            buttonText = buttonText.replaceFirst(", ", "");
-            
-            if (mc.fontRenderer.getStringWidth(buttonText) > controlWidth - 6)
-                this.btnValue.displayString =
-                        mc.fontRenderer.trimStringToWidth(buttonText, controlWidth - 6 - mc.fontRenderer.getStringWidth("...")).trim() + "...";
-            else
-                this.btnValue.displayString = buttonText;
+            this.btnValue.displayString = this.btnValue.displayString.replaceFirst(", ", "");
         }
         
         @Override
@@ -495,12 +488,12 @@ public class GuiPropertyList extends GuiListExtended
     @SideOnly(Side.CLIENT)
     public abstract class ButtonPropEntry extends GuiConfigListEntry
     {
-        protected final GuiButton btnValue;
+        protected final GuiButtonExt btnValue;
         
         private ButtonPropEntry(IConfigProperty prop)
         {
             super(prop);
-            this.btnValue = new GuiButton(0, controlX, 0, controlWidth, 18, I18n.format(prop.getString(), new Object[0]));
+            this.btnValue = new GuiButtonExt(0, controlX, 0, controlWidth, 18, I18n.format(prop.getString(), new Object[0]));
         }
         
         public abstract void updateValueButtonText();
@@ -860,8 +853,8 @@ public class GuiPropertyList extends GuiListExtended
     {
         protected final IConfigProperty prop;
         protected final String          propName;
-        protected final GuiButton       btnUndoChanges;
-        protected final GuiButton       btnDefault;
+        protected final GuiButtonExt    btnUndoChanges;
+        protected final GuiButtonExt    btnDefault;
         private long                    hoverStart   = -1;
         private List                    toolTip;
         private List                    undoToolTip;
@@ -875,8 +868,8 @@ public class GuiPropertyList extends GuiListExtended
         {
             this.prop = prop;
             this.propName = I18n.format(prop.getLanguageKey());
-            this.btnUndoChanges = new GuiButton(0, 0, 0, 18, 18, "↩");
-            this.btnDefault = new GuiButton(0, 0, 0, 18, 18, "☄");
+            this.btnUndoChanges = new GuiButtonExt(0, 0, 0, 18, 18, "↩");
+            this.btnDefault = new GuiButtonExt(0, 0, 0, 18, 18, "☄");
             
             this.undoHoverChecker = new HoverChecker(this.btnUndoChanges, 800);
             this.defaultHoverChecker = new HoverChecker(this.btnDefault, 800);
@@ -1011,7 +1004,7 @@ public class GuiPropertyList extends GuiListExtended
     {
         protected final IConfigProperty prop;
         protected final String          propName;
-        protected final GuiButton       btnSelectCategory;
+        protected final GuiButtonExt    btnSelectCategory;
         private long                    hoverStart = -1;
         private List                    toolTip;
         private HoverChecker            tooltipHoverChecker;
@@ -1025,7 +1018,7 @@ public class GuiPropertyList extends GuiListExtended
             else
                 this.propName = I18n.format(prop.getLanguageKey());
             
-            this.btnSelectCategory = new GuiButton(0, 0, 0, 300, 18, I18n.format(propName, new Object[0]));
+            this.btnSelectCategory = new GuiButtonExt(0, 0, 0, 300, 18, I18n.format(propName, new Object[0]));
             
             String comment = I18n.format(prop.getLanguageKey() + ".tooltip");
             

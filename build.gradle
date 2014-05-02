@@ -17,6 +17,8 @@ buildscript {
 
 apply plugin: "forge"
 
+compileJava.options.encoding = 'UTF-8'
+
 // define the properties file
 ext.configFile = file "build.properties"
 

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.Tessellator;
@@ -406,14 +405,14 @@ public class GuiEditListEntries extends GuiListExtended
     
     public class EditListBooleanEntry extends EditListBaseEntry
     {
-        protected final GuiButton btnValue;
-        private boolean           value;
+        protected final GuiButtonExt btnValue;
+        private boolean              value;
         
         public EditListBooleanEntry(boolean value)
         {
             super();
             this.value = value;
-            this.btnValue = new GuiButton(0, 0, 0, controlWidth, 18, I18n.format(String.valueOf(value)));
+            this.btnValue = new GuiButtonExt(0, 0, 0, controlWidth, 18, I18n.format(String.valueOf(value)));
             this.isValidated = false;
         }
         
@@ -464,19 +463,19 @@ public class GuiEditListEntries extends GuiListExtended
     
     public class EditListBaseEntry implements IGuiEditListEntry
     {
-        protected final GuiButton  btnAddNewEntryAbove;
-        private final HoverChecker addNewEntryAboveHoverChecker;
-        protected final GuiButton  btnRemoveEntry;
-        private final HoverChecker removeEntryHoverChecker;
-        private List               addNewToolTip, removeToolTip;
-        protected boolean          isValidValue = true;
-        protected boolean          isValidated  = false;
+        protected final GuiButtonExt btnAddNewEntryAbove;
+        private final HoverChecker   addNewEntryAboveHoverChecker;
+        protected final GuiButtonExt btnRemoveEntry;
+        private final HoverChecker   removeEntryHoverChecker;
+        private List                 addNewToolTip, removeToolTip;
+        protected boolean            isValidValue = true;
+        protected boolean            isValidated  = false;
         
         public EditListBaseEntry()
         {
-            this.btnAddNewEntryAbove = new GuiButton(0, 0, 0, 18, 18, "+");
+            this.btnAddNewEntryAbove = new GuiButtonExt(0, 0, 0, 18, 18, "+");
             this.btnAddNewEntryAbove.packedFGColour = HUDUtils.getColorCode('2', true);
-            this.btnRemoveEntry = new GuiButton(0, 0, 0, 18, 18, "x");
+            this.btnRemoveEntry = new GuiButtonExt(0, 0, 0, 18, 18, "x");
             this.btnRemoveEntry.packedFGColour = HUDUtils.getColorCode('c', true);
             this.addNewEntryAboveHoverChecker = new HoverChecker(this.btnAddNewEntryAbove, 800);
             this.removeEntryHoverChecker = new HoverChecker(this.btnRemoveEntry, 800);
