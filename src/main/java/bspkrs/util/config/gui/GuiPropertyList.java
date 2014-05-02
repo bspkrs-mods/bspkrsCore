@@ -80,7 +80,7 @@ public class GuiPropertyList extends GuiListExtended
                     this.listEntries[i++] = new GuiPropertyList.DoublePropEntry(prop);
                 else if (prop.getType().equals(ConfigGuiType.COLOR))
                 {
-                    if (prop.getValidValues().length > 0)
+                    if (prop.getValidValues() != null && prop.getValidValues().length > 0)
                         this.listEntries[i++] = new GuiPropertyList.ColorPropEntry(prop);
                     else
                         this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
@@ -112,7 +112,7 @@ public class GuiPropertyList extends GuiListExtended
                 }
                 else if (prop.getType().equals(ConfigGuiType.STRING))
                 {
-                    if (prop.getValidValues().length > 0)
+                    if (prop.getValidValues() != null && prop.getValidValues().length > 0)
                         this.listEntries[i++] = new GuiPropertyList.SelectStringPropEntry(prop);
                     else
                         this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);

@@ -104,30 +104,194 @@ public class Configuration
     
     /******************************************************************************************************************
      * 
+     * BOOLEAN gets
+     * 
+     *****************************************************************************************************************/
+    
+    /**
+     * Gets a boolean Property object without a comment using the default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @return a boolean Property object without a comment with isHotLoadable = false
+     */
+    public Property get(String category, String key, boolean defaultValue)
+    {
+        return get(category, key, defaultValue, (String) null);
+    }
+    
+    /**
+     * Gets a boolean Property object with a comment using the default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @return a boolean Property object without a comment with isHotLoadable = false
+     */
+    public Property get(String category, String key, boolean defaultValue, String comment)
+    {
+        return get(category, key, defaultValue, comment, false);
+        
+    }
+    
+    /**
+     * Gets a boolean Property object with a comment using the defined isHotLoadable value.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not
+     * @return a boolean Property object with a comment using the defined isHotLoadable value
+     */
+    public Property get(String category, String key, boolean defaultValue, String comment, boolean isHotLoadable)
+    {
+        Property prop = get(category, key, Boolean.toString(defaultValue), comment, BOOLEAN);
+        prop.setDefaultValue(Boolean.toString(defaultValue));
+        prop.setIsHotLoadable(isHotLoadable);
+        
+        if (!prop.isBooleanValue())
+        {
+            prop.set(defaultValue);
+        }
+        return prop;
+    }
+    
+    /**
+     * Gets a boolean array Property without a comment using the default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @return a boolean array Property without a comment using these defaults: isListLengthFixed = false, maxListLength = -1, and
+     *         isHotLoadable = false
+     */
+    public Property get(String category, String key, boolean[] defaultValues)
+    {
+        return get(category, key, defaultValues, (String) null);
+    }
+    
+    /**
+     * Gets a boolean array Property with a comment using the default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @return a boolean array Property with a comment using these defaults: isListLengthFixed = false, maxListLength = -1, and
+     *         isHotLoadable = false
+     */
+    public Property get(String category, String key, boolean[] defaultValues, String comment)
+    {
+        return get(category, key, defaultValues, comment, false, -1, false);
+    }
+    
+    /**
+     * Gets a boolean array Property with a comment and the defined isHotLoadable value using the default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not
+     * @return a boolean array Property with a comment and the defined isHotLoadable value using these defaults: isListLengthFixed = false,
+     *         maxListLength = -1
+     */
+    public Property get(String category, String key, boolean[] defaultValues, String comment, boolean isHotLoadable)
+    {
+        return get(category, key, defaultValues, comment, false, -1, isHotLoadable);
+    }
+    
+    /**
+     * Gets a boolean array Property with all settings defined.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param isListLengthFixed boolean for whether this array is required to be a specific length (defined by the default value array
+     *            length or maxListLength)
+     * @param maxListLength the maximum length of this array, use -1 for no max length
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not
+     * @return a boolean array Property with all settings defined
+     */
+    public Property get(String category, String key, boolean[] defaultValues, String comment,
+            boolean isListLengthFixed, int maxListLength, boolean isHotLoadable)
+    {
+        String[] values = new String[defaultValues.length];
+        for (int i = 0; i < defaultValues.length; i++)
+        {
+            values[i] = Boolean.toString(defaultValues[i]);
+        }
+        
+        Property prop = get(category, key, values, comment, BOOLEAN);
+        prop.setDefaultValues(values);
+        prop.setIsListLengthFixed(isListLengthFixed);
+        prop.setMaxListLength(maxListLength);
+        prop.setIsHotLoadable(isHotLoadable);
+        
+        if (!prop.isBooleanList())
+        {
+            prop.set(values);
+        }
+        
+        return prop;
+    }
+    
+    /******************************************************************************************************************
+     * 
      * INTEGER gets
      * 
      *****************************************************************************************************************/
+    
+    /**
+     * Gets an integer Property object without a comment using default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @return an integer Property object with default bounds of Integer.MIN_VALUE and Integer.MAX_VALUE and isHotLoadable = false
+     */
     public Property get(String category, String key, int defaultValue)
     {
-        return get(category, key, defaultValue, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return get(category, key, defaultValue, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
     }
     
-    public Property get(String category, String key, int defaultValue, int minValue, int maxValue)
-    {
-        return get(category, key, defaultValue, (String) null, minValue, maxValue);
-    }
-    
+    /**
+     * Gets an integer Property object with a comment using default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @return an integer Property object with default bounds of Integer.MIN_VALUE and Integer.MAX_VALUE and isHotLoadable = false
+     */
     public Property get(String category, String key, int defaultValue, String comment)
     {
-        return get(category, key, defaultValue, comment, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return get(category, key, defaultValue, comment, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
     }
     
-    public Property get(String category, String key, int defaultValue, String comment, int minValue, int maxValue)
+    /**
+     * Gets an integer Property object with the defined comment, minimum and maximum bounds, and isHotLoadable value.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @param minValue minimum boundary
+     * @param maxValue maximum boundary
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not
+     * @return an integer Property object with the defined comment, minimum and maximum bounds, and isHotLoadable value
+     */
+    public Property get(String category, String key, int defaultValue, String comment, int minValue, int maxValue, boolean isHotLoadable)
     {
-        Property prop = get(category, key, Integer.toString(defaultValue), comment, INTEGER, new String[0], null);
+        Property prop = get(category, key, Integer.toString(defaultValue), comment, INTEGER);
         prop.setDefaultValue(Integer.toString(defaultValue));
         prop.setMinValue(Integer.toString(minValue));
         prop.setMaxValue(Integer.toString(maxValue));
+        prop.setIsHotLoadable(isHotLoadable);
         
         if (!prop.isIntValue())
         {
@@ -136,77 +300,70 @@ public class Configuration
         return prop;
     }
     
+    /**
+     * Gets an integer array Property object without a comment using default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @return an integer array Property object with default bounds of Integer.MIN_VALUE and Integer.MAX_VALUE, isListLengthFixed = false,
+     *         maxListLength = -1, and isHotLoadable = false
+     */
     public Property get(String category, String key, int[] defaultValues)
     {
         return get(category, key, defaultValues, (String) null);
     }
     
-    public Property get(String category, String key, int[] defaultValues, boolean isListLengthFixed)
-    {
-        return get(category, key, defaultValues, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE, isListLengthFixed, -1);
-    }
-    
-    public Property get(String category, String key, int[] defaultValues, int maxListLength)
-    {
-        return get(category, key, defaultValues, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, int[] defaultValues, boolean isListLengthFixed, int maxListLength)
-    {
-        return get(category, key, defaultValues, (String) null, Integer.MIN_VALUE, Integer.MAX_VALUE, isListLengthFixed, maxListLength);
-    }
-    
+    /**
+     * Gets an integer array Property object with a comment using default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @return an integer array Property object with default bounds of Integer.MIN_VALUE and Integer.MAX_VALUE, isListLengthFixed = false,
+     *         maxListLength = -1, and isHotLoadable = false
+     */
     public Property get(String category, String key, int[] defaultValues, String comment)
     {
-        return get(category, key, defaultValues, comment, Integer.MIN_VALUE, Integer.MAX_VALUE, false, -1);
+        return get(category, key, defaultValues, comment, Integer.MIN_VALUE, Integer.MAX_VALUE, false, -1, false);
     }
     
-    public Property get(String category, String key, int[] defaultValues, String comment, boolean isListLengthFixed)
+    /**
+     * Gets an integer array Property object with the defined comment, minimum and maximum bounds, and isHotLoadable value.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param minValue minimum boundary
+     * @param maxValue maximum boundary
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not
+     * @return an integer array Property object with the defined comment, minimum and maximum bounds, isHotLoadable value, isListLengthFixed
+     *         = false, maxListLength = -1
+     */
+    public Property get(String category, String key, int[] defaultValues, String comment, int minValue, int maxValue, boolean isHotLoadable)
     {
-        return get(category, key, defaultValues, comment, Integer.MIN_VALUE, Integer.MAX_VALUE, isListLengthFixed, -1);
+        return get(category, key, defaultValues, comment, minValue, maxValue, false, -1, isHotLoadable);
     }
     
-    public Property get(String category, String key, int[] defaultValues, String comment, int maxListLength)
-    {
-        return get(category, key, defaultValues, comment, Integer.MIN_VALUE, Integer.MAX_VALUE, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, int[] defaultValues, int minValue, int maxValue)
-    {
-        return get(category, key, defaultValues, (String) null, minValue, maxValue);
-    }
-    
-    public Property get(String category, String key, int[] defaultValues, int minValue, int maxValue, boolean isListLengthFixed)
-    {
-        return get(category, key, defaultValues, (String) null, minValue, maxValue, isListLengthFixed, -1);
-    }
-    
-    public Property get(String category, String key, int[] defaultValues, int minValue, int maxValue, int maxListLength)
-    {
-        return get(category, key, defaultValues, (String) null, minValue, maxValue, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, int[] defaultValues, int minValue, int maxValue, boolean isListLengthFixed, int maxListLength)
-    {
-        return get(category, key, defaultValues, (String) null, minValue, maxValue, isListLengthFixed, maxListLength);
-    }
-    
-    public Property get(String category, String key, int[] defaultValues, String comment, int minValue, int maxValue)
-    {
-        return get(category, key, defaultValues, comment, minValue, maxValue, false, -1);
-    }
-    
-    public Property get(String category, String key, int[] defaultValues, String comment, int minValue, int maxValue, boolean isListLengthFixed)
-    {
-        return get(category, key, defaultValues, comment, minValue, maxValue, isListLengthFixed, -1);
-    }
-    
-    public Property get(String category, String key, int[] defaultValues, String comment, int minValue, int maxValue, int maxListLength)
-    {
-        return get(category, key, defaultValues, comment, minValue, maxValue, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, int[] defaultValues, String comment, int minValue, int maxValue, boolean isListLengthFixed, int maxListLength)
+    /**
+     * Gets an integer array Property object with all settings defined.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param minValue minimum boundary
+     * @param maxValue maximum boundary
+     * @param isListLengthFixed boolean for whether this array is required to be a specific length (defined by the default value array
+     *            length or maxListLength)
+     * @param maxListLength the maximum length of this array, use -1 for no max length
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not
+     * @return an integer array Property object with all settings defined
+     */
+    public Property get(String category, String key, int[] defaultValues, String comment, int minValue, int maxValue,
+            boolean isListLengthFixed, int maxListLength, boolean isHotLoadable)
     {
         String[] values = new String[defaultValues.length];
         for (int i = 0; i < defaultValues.length; i++)
@@ -220,86 +377,9 @@ public class Configuration
         prop.setMaxValue(Integer.toString(maxValue));
         prop.setIsListLengthFixed(isListLengthFixed);
         prop.setMaxListLength(maxListLength);
+        prop.setIsHotLoadable(isHotLoadable);
         
         if (!prop.isIntList())
-        {
-            prop.set(values);
-        }
-        
-        return prop;
-    }
-    
-    /******************************************************************************************************************
-     * 
-     * BOOLEAN gets
-     * 
-     *****************************************************************************************************************/
-    public Property get(String category, String key, boolean defaultValue)
-    {
-        return get(category, key, defaultValue, (String) null);
-    }
-    
-    public Property get(String category, String key, boolean defaultValue, String comment)
-    {
-        Property prop = get(category, key, Boolean.toString(defaultValue), comment, BOOLEAN, new String[0], null);
-        prop.setDefaultValue(Boolean.toString(defaultValue));
-        
-        if (!prop.isBooleanValue())
-        {
-            prop.set(defaultValue);
-        }
-        return prop;
-    }
-    
-    public Property get(String category, String key, boolean[] defaultValues)
-    {
-        return get(category, key, defaultValues, (String) null);
-    }
-    
-    public Property get(String category, String key, boolean[] defaultValues, boolean isListLengthFixed)
-    {
-        return get(category, key, defaultValues, (String) null, isListLengthFixed, -1);
-    }
-    
-    public Property get(String category, String key, boolean[] defaultValues, int maxListLength)
-    {
-        return get(category, key, defaultValues, (String) null, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, boolean[] defaultValues, boolean isListLengthFixed, int maxListLength)
-    {
-        return get(category, key, defaultValues, (String) null, isListLengthFixed, maxListLength);
-    }
-    
-    public Property get(String category, String key, boolean[] defaultValues, String comment)
-    {
-        return get(category, key, defaultValues, comment, false, -1);
-    }
-    
-    public Property get(String category, String key, boolean[] defaultValues, String comment, boolean isListLengthFixed)
-    {
-        return get(category, key, defaultValues, comment, isListLengthFixed, -1);
-    }
-    
-    public Property get(String category, String key, boolean[] defaultValues, String comment, int maxListLength)
-    {
-        return get(category, key, defaultValues, comment, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, boolean[] defaultValues, String comment, boolean isListLengthFixed, int maxListLength)
-    {
-        String[] values = new String[defaultValues.length];
-        for (int i = 0; i < defaultValues.length; i++)
-        {
-            values[i] = Boolean.toString(defaultValues[i]);
-        }
-        
-        Property prop = get(category, key, values, comment, BOOLEAN);
-        prop.setDefaultValues(values);
-        prop.setIsListLengthFixed(isListLengthFixed);
-        prop.setMaxListLength(maxListLength);
-        
-        if (!prop.isBooleanList())
         {
             prop.set(values);
         }
@@ -312,27 +392,53 @@ public class Configuration
      * DOUBLE gets
      * 
      *****************************************************************************************************************/
+    
+    /**
+     * Gets a double Property object without a comment using default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @return a double Property object with default bounds of Double.MIN_VALUE and Double.MAX_VALUE and isHotLoadable = false
+     */
     public Property get(String category, String key, double defaultValue)
     {
         return get(category, key, defaultValue, (String) null);
     }
     
-    public Property get(String category, String key, double defaultValue, double minValue, double maxValue)
-    {
-        return get(category, key, defaultValue, (String) null, minValue, maxValue);
-    }
-    
+    /**
+     * Gets a double Property object with a comment using default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @return a double Property object with default bounds of Double.MIN_VALUE and Double.MAX_VALUE and isHotLoadable = false
+     */
     public Property get(String category, String key, double defaultValue, String comment)
     {
-        return get(category, key, defaultValue, comment, Double.MIN_VALUE, Double.MAX_VALUE);
+        return get(category, key, defaultValue, comment, Double.MIN_VALUE, Double.MAX_VALUE, false);
     }
     
-    public Property get(String category, String key, double defaultValue, String comment, double minValue, double maxValue)
+    /**
+     * Gets a double Property object with the defined comment, minimum and maximum bounds, and isHotLoadable value.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @param minValue minimum boundary
+     * @param maxValue maximum boundary
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not
+     * @return a double Property object with the defined comment, minimum and maximum bounds, and isHotLoadable value
+     */
+    public Property get(String category, String key, double defaultValue, String comment, double minValue, double maxValue, boolean isHotLoadable)
     {
         Property prop = get(category, key, Double.toString(defaultValue), comment, DOUBLE);
         prop.setDefaultValue(Double.toString(defaultValue));
         prop.setMinValue(Double.toString(minValue));
         prop.setMaxValue(Double.toString(maxValue));
+        prop.setIsHotLoadable(isHotLoadable);
         
         if (!prop.isDoubleValue())
         {
@@ -341,77 +447,70 @@ public class Configuration
         return prop;
     }
     
+    /**
+     * Gets a double array Property object without a comment using default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @return a double array Property object with default bounds of Double.MIN_VALUE and Double.MAX_VALUE, isListLengthFixed = false,
+     *         maxListLength = -1, and isHotLoadable = false
+     */
     public Property get(String category, String key, double[] defaultValues)
     {
         return get(category, key, defaultValues, null);
     }
     
-    public Property get(String category, String key, double[] defaultValues, boolean isListLengthFixed)
-    {
-        return get(category, key, defaultValues, null, Double.MIN_VALUE, Double.MAX_VALUE, isListLengthFixed, -1);
-    }
-    
-    public Property get(String category, String key, double[] defaultValues, int maxListLength)
-    {
-        return get(category, key, defaultValues, null, Double.MIN_VALUE, Double.MAX_VALUE, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, double[] defaultValues, boolean isListLengthFixed, int maxListLength)
-    {
-        return get(category, key, defaultValues, null, Double.MIN_VALUE, Double.MAX_VALUE, isListLengthFixed, maxListLength);
-    }
-    
+    /**
+     * Gets a double array Property object without a comment using default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @return a double array Property object with default bounds of Double.MIN_VALUE and Double.MAX_VALUE, isListLengthFixed = false,
+     *         maxListLength = -1, and isHotLoadable = false
+     */
     public Property get(String category, String key, double[] defaultValues, String comment)
     {
-        return get(category, key, defaultValues, comment, Double.MIN_VALUE, Double.MAX_VALUE, false, -1);
+        return get(category, key, defaultValues, comment, Double.MIN_VALUE, Double.MAX_VALUE, false, -1, false);
     }
     
-    public Property get(String category, String key, double[] defaultValues, String comment, boolean isListLengthFixed)
+    /**
+     * Gets a double array Property object with the defined comment, minimum and maximum bounds, and isHotLoadable value.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param minValue minimum boundary
+     * @param maxValue maximum boundary
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not
+     * @return a double array Property object with the defined comment, minimum and maximum bounds, isHotLoadable value, isListLengthFixed =
+     *         false, maxListLength = -1
+     */
+    public Property get(String category, String key, double[] defaultValues, String comment, double minValue, double maxValue, boolean isHotLoadable)
     {
-        return get(category, key, defaultValues, comment, Double.MIN_VALUE, Double.MAX_VALUE, isListLengthFixed, -1);
+        return get(category, key, defaultValues, comment, minValue, maxValue, false, -1, isHotLoadable);
     }
     
-    public Property get(String category, String key, double[] defaultValues, String comment, int maxListLength)
-    {
-        return get(category, key, defaultValues, comment, Double.MIN_VALUE, Double.MAX_VALUE, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, double[] defaultValues, double minValue, double maxValue)
-    {
-        return get(category, key, defaultValues, null, minValue, maxValue);
-    }
-    
-    public Property get(String category, String key, double[] defaultValues, double minValue, double maxValue, boolean isListLengthFixed)
-    {
-        return get(category, key, defaultValues, null, minValue, maxValue, isListLengthFixed, -1);
-    }
-    
-    public Property get(String category, String key, double[] defaultValues, double minValue, double maxValue, int maxListLength)
-    {
-        return get(category, key, defaultValues, null, minValue, maxValue, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, double[] defaultValues, double minValue, double maxValue, boolean isListLengthFixed, int maxListLength)
-    {
-        return get(category, key, defaultValues, null, minValue, maxValue, isListLengthFixed, maxListLength);
-    }
-    
-    public Property get(String category, String key, double[] defaultValues, String comment, double minValue, double maxValue)
-    {
-        return get(category, key, defaultValues, comment, minValue, maxValue, false, -1);
-    }
-    
-    public Property get(String category, String key, double[] defaultValues, String comment, double minValue, double maxValue, boolean isListLengthFixed)
-    {
-        return get(category, key, defaultValues, comment, minValue, maxValue, isListLengthFixed, -1);
-    }
-    
-    public Property get(String category, String key, double[] defaultValues, String comment, double minValue, double maxValue, int maxListLength)
-    {
-        return get(category, key, defaultValues, comment, minValue, maxValue, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, double[] defaultValues, String comment, double minValue, double maxValue, boolean isListLengthFixed, int maxListLength)
+    /**
+     * Gets a double array Property object with all settings defined.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param minValue minimum boundary
+     * @param maxValue maximum boundary
+     * @param isListLengthFixed boolean for whether this array is required to be a specific length (defined by the default value array
+     *            length or maxListLength)
+     * @param maxListLength the maximum length of this array, use -1 for no max length
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not.
+     * @return a double array Property object with all settings defined
+     */
+    public Property get(String category, String key, double[] defaultValues, String comment, double minValue, double maxValue,
+            boolean isListLengthFixed, int maxListLength, boolean isHotLoadable)
     {
         String[] values = new String[defaultValues.length];
         for (int i = 0; i < defaultValues.length; i++)
@@ -425,6 +524,7 @@ public class Configuration
         prop.setMaxValue(Double.toString(maxValue));
         prop.setIsListLengthFixed(isListLengthFixed);
         prop.setMaxListLength(maxListLength);
+        prop.setIsHotLoadable(isHotLoadable);
         
         if (!prop.isDoubleList())
         {
@@ -439,116 +539,192 @@ public class Configuration
      * STRING gets
      * 
      *****************************************************************************************************************/
+    
+    /**
+     * Gets a string Property without a comment using the default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @return a string Property with validationPattern = null, validValues = null, and isHotLoadable = false
+     */
     public Property get(String category, String key, String defaultValue)
     {
         return get(category, key, defaultValue, (String) null);
     }
     
+    /**
+     * Gets a string Property with a comment using the default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @return a string Property with validationPattern = null, validValues = null, and isHotLoadable = false
+     */
     public Property get(String category, String key, String defaultValue, String comment)
     {
-        return get(category, key, defaultValue, comment, STRING, new String[0], (Pattern) null);
+        return get(category, key, defaultValue, comment, STRING);
     }
     
-    public Property get(String category, String key, String defaultValue, Pattern pattern)
+    /**
+     * Gets a string Property with a comment using the defined validationPattern and otherwise default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @param validationPattern a Pattern object for input validation
+     * @return a string Property with the defined validationPattern, validValues = null, and isHotLoadable = false
+     */
+    public Property get(String category, String key, String defaultValue, String comment, Pattern validationPattern)
     {
-        return get(category, key, defaultValue, (String) null, pattern);
+        Property prop = get(category, key, defaultValue, comment, STRING);
+        prop.setValidStringPattern(validationPattern);
+        return prop;
     }
     
-    public Property get(String category, String key, String defaultValue, String comment, Pattern pattern)
-    {
-        return get(category, key, defaultValue, comment, STRING, new String[0], pattern);
-    }
-    
-    public Property get(String category, String key, String defaultValue, String[] validValues)
-    {
-        return get(category, key, defaultValue, (String) null, validValues);
-    }
-    
+    /**
+     * Gets a string Property with a comment using the defined validValues array and otherwise default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @param validValues an array of valid values that this Property can be set to. If an array is provided the Config GUI control will be
+     *            a value cycle button.
+     * @return a string Property with the defined validValues array, validationPattern = null, and isHotLoadable = false
+     */
     public Property get(String category, String key, String defaultValue, String comment, String[] validValues)
     {
-        return get(category, key, defaultValue, comment, STRING, validValues, (Pattern) null);
+        Property prop = get(category, key, defaultValue, comment, STRING);
+        prop.setValidValues(validValues);
+        return prop;
     }
     
+    /**
+     * Gets a string Property with a comment using the defined validationPattern, isHotLoadable value, and validvalues = null.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @param validationPattern a Pattern object for input validation
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not.
+     * @return a string Property with a comment with the defined validationPattern, isHotLoadable value, and validvalues = null
+     */
+    public Property get(String category, String key, String defaultValue, String comment, Pattern validationPattern, boolean isHotLoadable)
+    {
+        Property prop = get(category, key, defaultValue, comment, STRING);
+        prop.setValidStringPattern(validationPattern);
+        prop.setIsHotLoadable(isHotLoadable);
+        return prop;
+    }
+    
+    /**
+     * Gets a string Property with a comment using the defined validValues array, isHotLoadable value, and validationPattern = null.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @param validValues an array of valid values that this Property can be set to. If an array is provided the Config GUI control will be
+     *            a value cycle button.
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not.
+     * @return a string Property with a comment using the defined validValues array, isHotLoadable value, and validationPattern = null
+     */
+    public Property get(String category, String key, String defaultValue, String comment, String[] validValues, boolean isHotLoadable)
+    {
+        Property prop = get(category, key, defaultValue, comment, STRING);
+        prop.setValidValues(validValues);
+        prop.setIsHotLoadable(isHotLoadable);
+        return prop;
+    }
+    
+    /**
+     * Gets a string array Property without a comment using the default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @return a string array Property with validationPattern = null, isListLengthFixed = false, maxListLength = -1, and isHotLoadable =
+     *         false
+     */
     public Property get(String category, String key, String[] defaultValues)
     {
-        return get(category, key, defaultValues, (String) null, (Pattern) null);
+        return get(category, key, defaultValues, (String) null, false, -1, (Pattern) null, false);
     }
     
-    public Property get(String category, String key, String[] defaultValues, Pattern pattern)
-    {
-        return get(category, key, defaultValues, (String) null, pattern);
-    }
-    
-    public Property get(String category, String key, String[] defaultValues, boolean isListLengthFixed)
-    {
-        return get(category, key, defaultValues, (String) null, isListLengthFixed, -1);
-    }
-    
-    public Property get(String category, String key, String[] defaultValues, boolean isListLengthFixed, Pattern pattern)
-    {
-        return get(category, key, defaultValues, (String) null, isListLengthFixed, -1, pattern);
-    }
-    
-    public Property get(String category, String key, String[] defaultValues, int maxListLength)
-    {
-        return get(category, key, defaultValues, (String) null, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, String[] defaultValues, int maxListLength, Pattern pattern)
-    {
-        return get(category, key, defaultValues, (String) null, false, maxListLength, pattern);
-    }
-    
-    public Property get(String category, String key, String[] defaultValues, boolean isListLengthFixed, int maxListLength)
-    {
-        return get(category, key, defaultValues, (String) null, isListLengthFixed, maxListLength);
-    }
-    
-    public Property get(String category, String key, String[] defaultValues, boolean isListLengthFixed, int maxListLength, Pattern pattern)
-    {
-        return get(category, key, defaultValues, (String) null, isListLengthFixed, maxListLength, pattern);
-    }
-    
+    /**
+     * Gets a string array Property with a comment using the default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @return a string array Property with validationPattern = null, isListLengthFixed = false, maxListLength = -1, and isHotLoadable =
+     *         false
+     */
     public Property get(String category, String key, String[] defaultValues, String comment)
     {
-        return get(category, key, defaultValues, comment, false, -1);
+        return get(category, key, defaultValues, comment, false, -1, (Pattern) null, false);
     }
     
-    public Property get(String category, String key, String[] defaultValues, String comment, Pattern pattern)
+    /**
+     * Gets a string array Property with a comment using the defined validationPattern and otherwise default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param validationPattern a Pattern object for input validation
+     * @return a string array Property with the defined validationPattern, isListLengthFixed = false, maxListLength = -1, and isHotLoadable
+     *         = false
+     */
+    public Property get(String category, String key, String[] defaultValues, String comment, Pattern validationPattern)
     {
-        return get(category, key, defaultValues, comment, false, -1, pattern);
+        return get(category, key, defaultValues, comment, false, -1, validationPattern, false);
     }
     
-    public Property get(String category, String key, String[] defaultValues, String comment, boolean isListLengthFixed)
+    /**
+     * Gets a string array Property with a comment using the defined validationPattern, isHotLoadable value, and otherwise default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param validationPattern a Pattern object for input validation
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not.
+     * @return a string array Property with the defined validationPattern, isHotLoadable value, isListLengthFixed = false, and maxListLength
+     *         = -1
+     */
+    public Property get(String category, String key, String[] defaultValues, String comment, Pattern validationPattern, boolean isHotLoadable)
     {
-        return get(category, key, defaultValues, comment, isListLengthFixed, -1);
+        return get(category, key, defaultValues, comment, false, -1, validationPattern, isHotLoadable);
     }
     
-    public Property get(String category, String key, String[] defaultValues, String comment, boolean isListLengthFixed, Pattern pattern)
+    /**
+     * Gets a string array Property with a comment with all settings defined.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param isListLengthFixed boolean for whether this array is required to be a specific length (defined by the default value array
+     *            length or maxListLength)
+     * @param maxListLength the maximum length of this array, use -1 for no max length
+     * @param validationPattern a Pattern object for input validation
+     * @param isHotLoadable boolean for whether this Property can be edited while a world is running or not.
+     * @return a string array Property with a comment with all settings defined
+     */
+    public Property get(String category, String key, String[] defaultValues, String comment,
+            boolean isListLengthFixed, int maxListLength, Pattern validationPattern, boolean isHotLoadable)
     {
-        return get(category, key, defaultValues, comment, isListLengthFixed, -1, pattern);
-    }
-    
-    public Property get(String category, String key, String[] defaultValues, String comment, int maxListLength)
-    {
-        return get(category, key, defaultValues, comment, false, maxListLength);
-    }
-    
-    public Property get(String category, String key, String[] defaultValues, String comment, int maxListLength, Pattern pattern)
-    {
-        return get(category, key, defaultValues, comment, false, maxListLength, pattern);
-    }
-    
-    public Property get(String category, String key, String[] defaultValues, String comment, boolean isListLengthFixed, int maxListLength)
-    {
-        return get(category, key, defaultValues, comment, isListLengthFixed, maxListLength, null);
-    }
-    
-    public Property get(String category, String key, String[] defaultValues, String comment, boolean isListLengthFixed, int maxListLength, Pattern pattern)
-    {
-        Property prop = get(category, key, defaultValues, comment, STRING, pattern);
+        Property prop = get(category, key, defaultValues, comment, STRING);
         prop.setIsListLengthFixed(isListLengthFixed);
         prop.setMaxListLength(maxListLength);
+        prop.setValidStringPattern(validationPattern);
+        prop.setIsHotLoadable(isHotLoadable);
         return prop;
     }
     
@@ -557,22 +733,18 @@ public class Configuration
      * GENERIC gets
      * 
      *****************************************************************************************************************/
+    
+    /**
+     * Gets a Property object of the specified type using default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @param type a Property.Type enum value
+     * @return a Property object of the specified type using default settings
+     */
     public Property get(String category, String key, String defaultValue, String comment, Property.Type type)
-    {
-        return get(category, key, defaultValue, comment, type, new String[0], null);
-    }
-    
-    public Property get(String category, String key, String defaultValue, String comment, Property.Type type, Pattern pattern)
-    {
-        return get(category, key, defaultValue, comment, type, new String[0], pattern);
-    }
-    
-    public Property get(String category, String key, String defaultValue, String comment, Property.Type type, String[] validValues)
-    {
-        return get(category, key, defaultValue, comment, type, validValues, null);
-    }
-    
-    public Property get(String category, String key, String defaultValue, String comment, Property.Type type, String[] validValues, Pattern pattern)
     {
         if (!caseSensitiveCustomCategories)
         {
@@ -587,24 +759,20 @@ public class Configuration
             
             if (prop.getType() == null)
             {
-                prop = new Property(prop.getName(), prop.getString(), type, validValues);
+                prop = new Property(prop.getName(), prop.getString(), type);
                 cat.put(key, prop);
             }
             
-            prop.setValidValues(validValues);
             prop.setDefaultValue(defaultValue);
-            prop.setValidStringPattern(pattern);
             prop.comment = comment;
             return prop;
         }
         else if (defaultValue != null)
         {
-            Property prop = new Property(key, defaultValue, type, validValues);
+            Property prop = new Property(key, defaultValue, type);
             prop.set(defaultValue); //Set and mark as dirty to signify it should save 
             cat.put(key, prop);
-            prop.setValidValues(validValues);
             prop.setDefaultValue(defaultValue);
-            prop.setValidStringPattern(pattern);
             prop.comment = comment;
             return prop;
         }
@@ -614,12 +782,17 @@ public class Configuration
         }
     }
     
+    /**
+     * Gets a list (array) Property object of the specified type using default settings.
+     * 
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param type a Property.Type enum value
+     * @return a list (array) Property object of the specified type using default settings
+     */
     public Property get(String category, String key, String[] defaultValues, String comment, Property.Type type)
-    {
-        return get(category, key, defaultValues, comment, type, null);
-    }
-    
-    public Property get(String category, String key, String[] defaultValues, String comment, Property.Type type, Pattern pattern)
     {
         if (!caseSensitiveCustomCategories)
         {
@@ -639,7 +812,6 @@ public class Configuration
             }
             
             prop.setDefaultValues(defaultValues);
-            prop.setValidStringPattern(pattern);
             prop.comment = comment;
             
             return prop;
@@ -648,7 +820,6 @@ public class Configuration
         {
             Property prop = new Property(key, defaultValues, type);
             prop.setDefaultValues(defaultValues);
-            prop.setValidStringPattern(pattern);
             prop.comment = comment;
             cat.put(key, prop);
             return prop;
@@ -664,6 +835,7 @@ public class Configuration
      * Other methods
      * 
      *****************************************************************************************************************/
+    
     public boolean hasCategory(String category)
     {
         return categories.get(category) != null;
@@ -1020,6 +1192,10 @@ public class Configuration
         return ret;
     }
     
+    /**
+     * 
+     * @param category the config category
+     */
     public void removeCategory(ConfigCategory category)
     {
         for (ConfigCategory child : category.getChildren())
@@ -1038,6 +1214,12 @@ public class Configuration
         }
     }
     
+    /**
+     * Adds a comment to the specified ConfigCategory object
+     * 
+     * @param category the config category
+     * @param comment a String comment
+     */
     public void addCustomCategoryComment(String category, String comment)
     {
         if (!caseSensitiveCustomCategories)
@@ -1045,6 +1227,12 @@ public class Configuration
         getCategory(category).setComment(comment);
     }
     
+    /**
+     * Adds a language key to the specified ConfigCategory object
+     * 
+     * @param category the config category
+     * @param langKey a language key string such as configcategory.general
+     */
     public void addCustomCategoryLanguageKey(String category, String langKey)
     {
         if (!caseSensitiveCustomCategories)
@@ -1344,7 +1532,8 @@ public class Configuration
      */
     public String getString(String name, String category, String defaultValue, String comment, String[] validValues, String langKey)
     {
-        Property prop = this.get(category, name, defaultValue, validValues);
+        Property prop = this.get(category, name, defaultValue);
+        prop.setValidValues(validValues);
         prop.setLanguageKey(langKey);
         prop.comment = comment + " [default: " + defaultValue + "]";
         return prop.getString();
@@ -1361,7 +1550,7 @@ public class Configuration
      */
     public String[] getStringList(String name, String category, String[] defaultValues, String comment)
     {
-        return getStringList(name, category, defaultValues, comment, new String[0], name);
+        return getStringList(name, category, defaultValues, comment, (String[]) null, name);
     }
     
     /**
