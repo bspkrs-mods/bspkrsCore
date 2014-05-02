@@ -68,8 +68,8 @@ public class Property
     private String        minValue;
     private String        maxValue;
     
+    private boolean       isHotLoadable;
     private Pattern       stringPattern;
-    
     private final boolean wasRead;
     private final boolean isList;
     private boolean       isListLengthFixed = false;
@@ -116,6 +116,7 @@ public class Property
         this.defaultValues = new String[0];
         this.validValues = validValues;
         this.type = type;
+        this.isHotLoadable = false;
         wasRead = read;
         isList = false;
         this.isListLengthFixed = false;
@@ -158,6 +159,7 @@ public class Property
         this.defaultValue = this.defaultValue.replaceFirst(", ", "");
         this.defaultValues = Arrays.copyOf(values, values.length);
         this.validValues = validValues;
+        this.isHotLoadable = false;
         wasRead = read;
         isList = true;
         this.isListLengthFixed = false;
@@ -284,6 +286,16 @@ public class Property
         return this.isListLengthFixed;
     }
     
+    public void setIsHotLoadable(boolean bol)
+    {
+        this.isHotLoadable = bol;
+    }
+    
+    public boolean isHotLoadable()
+    {
+        return this.isHotLoadable;
+    }
+    
     public void setValidStringPattern(Pattern pattern)
     {
         this.stringPattern = pattern;
@@ -358,7 +370,7 @@ public class Property
         return value;
     }
     
-    protected void setValidValues(String[] validValues)
+    public void setValidValues(String[] validValues)
     {
         this.validValues = validValues;
     }
