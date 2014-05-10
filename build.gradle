@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 buildscript {
     repositories {
         mavenCentral()
@@ -38,8 +40,18 @@ minecraft {
     assetDir = "run/assets"
 }
 
-// add some stuff to the version
-version = "${config.mod_version}(${config.minecraft_version})"
+compileJava.source = 'build/sources/java'
+
+task updateTokens(type:Copy){
+  from(sourceSets.main.java)
+  {
+    include '**/*.java'    
+  }  
+  into 'build/sources/java'
+  filter(ReplaceTokens, tokens: [MINECRAFT_VERSION: config.minecraft_version, MOD_VERSION: config.mod_version])
+}
+
+compileJava.dependsOn updateTokens
 
 processResources {
     // replace stuff in the files we want.
@@ -49,13 +61,13 @@ processResources {
 
         // replaces
         expand ([
-            'mod_version': version,
-            'minecraft_version': project.config.minecraft_version,
-            'build_number': project.config.build_number,
+            'mod_version': config.mod_version,
+            'forge_version': config.forge_version,
+            'minecraft_version': config.minecraft_version,
         ])
     }
 
-    // copy everything else, thats we didnt do before
+    // copy everything else that we didnt do before
     from(sourceSets.main.resources.srcDirs) {
         exclude '**/*.info'
         exclude '**/*.properties'
