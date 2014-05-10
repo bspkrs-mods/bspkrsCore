@@ -9,6 +9,7 @@ import net.minecraft.util.StatCollector;
 import bspkrs.bspkrscore.fml.bspkrsCoreMod;
 import bspkrs.util.config.ConfigCategory;
 import bspkrs.util.config.Configuration;
+import bspkrs.util.config.Property;
 
 import com.google.common.collect.Ordering;
 
@@ -35,6 +36,7 @@ public class ModVersionChecker
     private final String                                lastNewVersionFound;
     private final String                                CHECK_ERROR       = "check_error";
     private final boolean                               errorDetected;
+    private final int                                   runsSinceLastMessage;
     
     public ModVersionChecker(String modID, String curVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg)
     {
@@ -86,6 +88,10 @@ public class ModVersionChecker
         
         if (!cc.containsKey(modID))
             versionCheckTracker.get("version_check_tracker", modID, curVer);
+        
+        Property count = versionCheckTracker.get("version_check_tracker.runs_since_last_message", modID, 0);
+        runsSinceLastMessage = count.getInt() % 6;
+        count.set(runsSinceLastMessage + 1);
         
         if (!newVersion.equals(CHECK_ERROR) && isCurrentVersion(curVer, newVersion))
             lastNewVersionFound = newVersion;
@@ -184,7 +190,7 @@ public class ModVersionChecker
     
     public boolean isCurrentVersion()
     {
-        return isCurrentVersion(lastNewVersionFound, newVersion);
+        return isCurrentVersion(runsSinceLastMessage == 0 ? currentVersion : lastNewVersionFound, newVersion);
     }
     
     public static boolean isCurrentVersion(String oldVer, String newVer)
