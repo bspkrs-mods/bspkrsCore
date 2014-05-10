@@ -24,12 +24,13 @@ import com.google.common.collect.ImmutableSet;
 public class ConfigCategory implements Map<String, Property>
 {
     private String                    name;
-    private String                    comment    = "";
+    private String                    comment       = "";
     private String                    languagekey;
-    private ArrayList<ConfigCategory> children   = new ArrayList<ConfigCategory>();
-    private Map<String, Property>     properties = new TreeMap<String, Property>();
+    private ArrayList<ConfigCategory> children      = new ArrayList<ConfigCategory>();
+    private Map<String, Property>     properties    = new TreeMap<String, Property>();
     public final ConfigCategory       parent;
-    private boolean                   changed    = false;
+    private boolean                   changed       = false;
+    private boolean                   isHotLoadable = false;
     
     public ConfigCategory(String name)
     {
@@ -88,9 +89,10 @@ public class ConfigCategory implements Map<String, Property>
         return ImmutableMap.copyOf(properties);
     }
     
-    public void setLanguageKey(String languagekey)
+    public ConfigCategory setLanguageKey(String languagekey)
     {
         this.languagekey = languagekey;
+        return this;
     }
     
     public String getLanguagekey()
@@ -101,14 +103,26 @@ public class ConfigCategory implements Map<String, Property>
             return getQualifiedName();
     }
     
-    public void setComment(String comment)
+    public ConfigCategory setComment(String comment)
     {
         this.comment = comment;
+        return this;
     }
     
     public String getComment()
     {
         return this.comment;
+    }
+    
+    public ConfigCategory setIsHotLoadable(boolean isHotLoadable)
+    {
+        this.isHotLoadable = isHotLoadable;
+        return this;
+    }
+    
+    public boolean isHotLoadable()
+    {
+        return this.isHotLoadable;
     }
     
     public boolean containsKey(String key)
@@ -340,12 +354,13 @@ public class ConfigCategory implements Map<String, Property>
         return ImmutableSet.copyOf(children);
     }
     
-    public void removeChild(ConfigCategory child)
+    public ConfigCategory removeChild(ConfigCategory child)
     {
         if (children.contains(child))
         {
             children.remove(child);
             changed = true;
         }
+        return this;
     }
 }

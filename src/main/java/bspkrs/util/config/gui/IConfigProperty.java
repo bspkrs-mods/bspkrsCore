@@ -105,6 +105,14 @@ public interface IConfigProperty
     public void setToDefault();
     
     /**
+     * [Property, Category] Whether or not this property is safe to modify while a world is running.
+     * 
+     * @return true if this property can be modified while a world is running, false otherwise. For Categories return true if ALL properties
+     *         in the category are modifiable while a world is running, false if any are not hot loadable.
+     */
+    public boolean isHotLoadable();
+    
+    /**
      * [Property] Gets this property value as a boolean. Generally you should be sure of the type before calling this.
      * 
      * @return This property value as a boolean.

@@ -156,6 +156,15 @@ public class ConfigProperty implements IConfigProperty
     }
     
     @Override
+    public boolean isHotLoadable()
+    {
+        if (isProperty)
+            return prop.isHotLoadable();
+        else
+            return ctgy.isHotLoadable();
+    }
+    
+    @Override
     public boolean getBoolean()
     {
         if (isProperty)

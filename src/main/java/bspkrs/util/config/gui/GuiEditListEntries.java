@@ -254,32 +254,36 @@ public class GuiEditListEntries extends GuiListExtended
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            String validChars = "0123456789";
-            String before = this.textFieldValue.getText();
-            if (validChars.contains(String.valueOf(eventChar)) ||
-                    (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
-                    || (!before.contains(".") && eventChar == '.')
-                    || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
+            if (parentGuiEditList.enabled || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
                     || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
-                this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
-            
-            if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
             {
-                try
+                String validChars = "0123456789";
+                String before = this.textFieldValue.getText();
+                if (validChars.contains(String.valueOf(eventChar)) ||
+                        (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
+                        || (!before.contains(".") && eventChar == '.')
+                        || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
+                        || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
+                    this.textFieldValue.textboxKeyTyped((parentGuiEditList.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                
+                if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
                 {
-                    double value = Double.parseDouble(textFieldValue.getText().trim());
-                    if (value < prop.getMinDoubleValue() || value > prop.getMaxDoubleValue())
+                    try
+                    {
+                        double value = Double.parseDouble(textFieldValue.getText().trim());
+                        if (value < prop.getMinDoubleValue() || value > prop.getMaxDoubleValue())
+                            this.isValidValue = false;
+                        else
+                            this.isValidValue = true;
+                    }
+                    catch (Throwable e)
+                    {
                         this.isValidValue = false;
-                    else
-                        this.isValidValue = true;
+                    }
                 }
-                catch (Throwable e)
-                {
+                else
                     this.isValidValue = false;
-                }
             }
-            else
-                this.isValidValue = false;
         }
         
         @Override
@@ -300,31 +304,35 @@ public class GuiEditListEntries extends GuiListExtended
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            String validChars = "0123456789";
-            String before = this.textFieldValue.getText();
-            if (validChars.contains(String.valueOf(eventChar))
-                    || (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
-                    || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE
-                    || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
-                this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
-            
-            if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
+            if (parentGuiEditList.enabled || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
+                    || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
             {
-                try
+                String validChars = "0123456789";
+                String before = this.textFieldValue.getText();
+                if (validChars.contains(String.valueOf(eventChar))
+                        || (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
+                        || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE
+                        || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
+                    this.textFieldValue.textboxKeyTyped((parentGuiEditList.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                
+                if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
                 {
-                    long value = Long.parseLong(textFieldValue.getText().trim());
-                    if (value < prop.getMinIntValue() || value > prop.getMaxIntValue())
+                    try
+                    {
+                        long value = Long.parseLong(textFieldValue.getText().trim());
+                        if (value < prop.getMinIntValue() || value > prop.getMaxIntValue())
+                            this.isValidValue = false;
+                        else
+                            this.isValidValue = true;
+                    }
+                    catch (Throwable e)
+                    {
                         this.isValidValue = false;
-                    else
-                        this.isValidValue = true;
+                    }
                 }
-                catch (Throwable e)
-                {
+                else
                     this.isValidValue = false;
-                }
             }
-            else
-                this.isValidValue = false;
         }
         
         @Override
@@ -372,14 +380,18 @@ public class GuiEditListEntries extends GuiListExtended
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            this.textFieldValue.textboxKeyTyped(eventChar, eventKey);
-            
-            if (prop.getValidStringPattern() != null)
+            if (parentGuiEditList.enabled || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
+                    || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
             {
-                if (prop.getValidStringPattern().matcher(this.textFieldValue.getText().trim()).matches())
-                    isValidValue = true;
-                else
-                    isValidValue = false;
+                this.textFieldValue.textboxKeyTyped((parentGuiEditList.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                
+                if (prop.getValidStringPattern() != null)
+                {
+                    if (prop.getValidStringPattern().matcher(this.textFieldValue.getText().trim()).matches())
+                        isValidValue = true;
+                    else
+                        isValidValue = false;
+                }
             }
         }
         
@@ -413,6 +425,7 @@ public class GuiEditListEntries extends GuiListExtended
             super();
             this.value = value;
             this.btnValue = new GuiButtonExt(0, 0, 0, controlWidth, 18, I18n.format(String.valueOf(value)));
+            this.btnValue.enabled = parentGuiEditList.enabled;
             this.isValidated = false;
         }
         
@@ -420,7 +433,7 @@ public class GuiEditListEntries extends GuiListExtended
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
         {
             super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
-            this.btnValue.xPosition = width / 4;
+            this.btnValue.xPosition = listWidth / 4;
             this.btnValue.yPosition = y;
             
             String trans = I18n.format(String.valueOf(value));
@@ -475,8 +488,10 @@ public class GuiEditListEntries extends GuiListExtended
         {
             this.btnAddNewEntryAbove = new GuiButtonExt(0, 0, 0, 18, 18, "+");
             this.btnAddNewEntryAbove.packedFGColour = HUDUtils.getColorCode('2', true);
+            this.btnAddNewEntryAbove.enabled = parentGuiEditList.enabled;
             this.btnRemoveEntry = new GuiButtonExt(0, 0, 0, 18, 18, "x");
             this.btnRemoveEntry.packedFGColour = HUDUtils.getColorCode('c', true);
+            this.btnRemoveEntry.enabled = parentGuiEditList.enabled;
             this.addNewEntryAboveHoverChecker = new HoverChecker(this.btnAddNewEntryAbove, 800);
             this.removeEntryHoverChecker = new HoverChecker(this.btnRemoveEntry, 800);
             this.addNewToolTip = new ArrayList();
@@ -491,11 +506,11 @@ public class GuiEditListEntries extends GuiListExtended
             if (this.getValue() != null && this.isValidated)
                 GuiEditListEntries.this.mc.fontRenderer.drawString(
                         isValidValue ? EnumChatFormatting.GREEN + "✔" : EnumChatFormatting.RED + "✕",
-                        width / 4 - mc.fontRenderer.getStringWidth("✔") - 2,
+                        listWidth / 4 - mc.fontRenderer.getStringWidth("✔") - 2,
                         y + slotHeight / 2 - GuiEditListEntries.this.mc.fontRenderer.FONT_HEIGHT / 2,
                         16777215);
             
-            int half = width / 2;
+            int half = listWidth / 2;
             if (canAddMoreEntries)
             {
                 this.btnAddNewEntryAbove.visible = true;

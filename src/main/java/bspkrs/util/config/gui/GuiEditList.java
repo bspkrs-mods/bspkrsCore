@@ -26,8 +26,9 @@ public class GuiEditList extends GuiScreen
     private String[]           currentValues;
     private HoverChecker       tooltipHoverChecker;
     private List               toolTip;
+    protected boolean          enabled;
     
-    public GuiEditList(GuiScreen parentScreen, IConfigProperty prop, int slotIndex, String[] currentValues)
+    public GuiEditList(GuiScreen parentScreen, IConfigProperty prop, int slotIndex, String[] currentValues, boolean enabled)
     {
         this.mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;
@@ -36,6 +37,7 @@ public class GuiEditList extends GuiScreen
         this.beforeValues = currentValues;
         this.currentValues = currentValues;
         this.toolTip = new ArrayList();
+        this.enabled = enabled;
         String propName = I18n.format(prop.getLanguageKey());
         String comment;
         
@@ -174,12 +176,12 @@ public class GuiEditList extends GuiScreen
             this.drawCenteredString(this.fontRendererObj, this.titleLine3, this.width / 2, 28, 16777215);
         
         this.btnDone.enabled = this.guiScrollList.isListSavable();
-        this.btnDefault.enabled = !this.guiScrollList.isDefault();
-        this.btnUndoChanges.enabled = this.guiScrollList.isChanged();
+        this.btnDefault.enabled = enabled && !this.guiScrollList.isDefault();
+        this.btnUndoChanges.enabled = enabled && this.guiScrollList.isChanged();
         super.drawScreen(par1, par2, par3);
         this.guiScrollList.drawScreenPost(par1, par2, par3);
         
-        if (this.tooltipHoverChecker != null && this.tooltipHoverChecker.checkHover(par1, par2, true))
+        if (this.tooltipHoverChecker != null && this.tooltipHoverChecker.checkHover(par1, par2))
             drawToolTip(this.toolTip, par1, par2);
     }
     
