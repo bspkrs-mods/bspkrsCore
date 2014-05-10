@@ -94,7 +94,6 @@ public class BlockID
     {
         int result = 23;
         result = HashCodeUtil.hash(result, id);
-        result = HashCodeUtil.hash(result, metadata);
         return result;
     }
     

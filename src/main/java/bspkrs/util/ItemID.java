@@ -84,7 +84,6 @@ public class ItemID
     {
         int result = 31;
         result = HashCodeUtil.hash(result, id);
-        result = HashCodeUtil.hash(result, damage);
         return result;
     }
     
