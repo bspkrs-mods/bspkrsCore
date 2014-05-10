@@ -10,12 +10,5 @@ public class NetworkHandler
     public void clientLoggedIn(ClientConnectedToServerEvent event)
     {
         bspkrsCoreMod.proxy.registerGameTickHandler();
-        bspkrsCoreMod.proxy.unRegisterMainMenuTickHandler();
-    }
-    
-    @SubscribeEvent
-    public void clientDisconnectedFromServer(ClientDisconnectionFromServerEvent event)
-    {
-        bspkrsCoreMod.proxy.registerMainMenuTickHandler();
     }
 }

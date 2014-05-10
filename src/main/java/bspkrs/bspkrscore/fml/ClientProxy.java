@@ -1,13 +1,12 @@
 package bspkrs.bspkrscore.fml;
 
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy
 {
-    private BSMainMenuRenderTicker renderTicker;
-    
     @Override
     protected void registerGameTickHandler()
     {
@@ -18,16 +17,6 @@ public class ClientProxy extends CommonProxy
     @Override
     protected void registerMainMenuTickHandler()
     {
-        if (renderTicker == null)
-            renderTicker = new BSMainMenuRenderTicker();
-        
-        renderTicker.register();
-    }
-    
-    @Override
-    protected void unRegisterMainMenuTickHandler()
-    {
-        if (renderTicker != null)
-            renderTicker.unRegister();
+        MinecraftForge.EVENT_BUS.register(new BSMainMenuRenderTicker());
     }
 }

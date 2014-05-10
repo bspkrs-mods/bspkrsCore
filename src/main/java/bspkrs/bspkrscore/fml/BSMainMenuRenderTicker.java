@@ -22,6 +22,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.GuiOpenEvent;
 
 import org.lwjgl.input.Mouse;
 
@@ -126,7 +127,16 @@ public class BSMainMenuRenderTicker
     public BSMainMenuRenderTicker()
     {
         mcClient = FMLClientHandler.instance().getClient();
-        init();
+    }
+    
+    @SubscribeEvent
+    public void onGuiOpen(GuiOpenEvent event)
+    {
+        if (bspkrsCoreMod.instance.showMainMenuMobs)
+            if (event.gui != null && event.gui instanceof GuiMainMenu)
+                register();
+            else
+                unRegister();
     }
     
     @SubscribeEvent

@@ -7,7 +7,4 @@ public class CommonProxy
     
     protected void registerMainMenuTickHandler()
     {}
-    
-    protected void unRegisterMainMenuTickHandler()
-    {}
 }
