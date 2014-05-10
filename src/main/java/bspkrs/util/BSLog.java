@@ -4,7 +4,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import cpw.mods.fml.common.FMLLog;
+import bspkrs.bspkrscore.fml.Reference;
 
 public enum BSLog
 {
@@ -25,7 +25,7 @@ public enum BSLog
         if (logger != null)
             return;
         
-        logger = LogManager.getLogger("bspkrsCore");
+        logger = LogManager.getLogger(Reference.MODID);
     }
     
     public static void info(String format, Object... args)

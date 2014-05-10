@@ -7,11 +7,12 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import net.minecraftforge.client.ClientCommandHandler;
-import bspkrs.util.BSConfiguration;
+import net.minecraftforge.common.MinecraftForge;
 import bspkrs.util.CommonUtils;
 import bspkrs.util.Const;
 import bspkrs.util.ModVersionChecker;
 import bspkrs.util.UniqueNameListGenerator;
+import bspkrs.util.config.ConfigChangedEvent;
 import bspkrs.util.config.Configuration;
 import bspkrs.util.config.Property;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -25,11 +26,11 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = "bspkrsCore", name = "bspkrsCore", version = "6.9(" + Const.MCVERSION + ")", dependencies = "before:*", useMetadata = true,
-        guiFactory = "bspkrs.bspkrscore.fml.gui.ModGuiFactoryHandler")
+@Mod(modid = Reference.MODID, name = Reference.NAME, version = "@MOD_VERSION@", useMetadata = true, guiFactory = Reference.GUI_FACTORY)
 public class bspkrsCoreMod
 {
     // config stuff
@@ -75,20 +76,18 @@ public class bspkrsCoreMod
     public String               chatColorPicker                  = chatColorPickerDefault;
     private final String[]      chatColorPickerValues            = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
     
-    @Metadata(value = "bspkrsCore")
+    @Metadata(value = Reference.MODID)
     public static ModMetadata   metadata;
     
-    @Instance(value = "bspkrsCore")
+    @Instance(value = Reference.MODID)
     public static bspkrsCoreMod instance;
     
-    @SidedProxy(clientSide = "bspkrs.bspkrscore.fml.ClientProxy", serverSide = "bspkrs.bspkrscore.fml.CommonProxy")
+    @SidedProxy(clientSide = Reference.PROXY_CLIENT, serverSide = Reference.PROXY_COMMON)
     public static CommonProxy   proxy;
     
     protected ModVersionChecker versionChecker;
-    private final String        versionURL                       = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
-    private final String        mcfTopic                         = "http://www.minecraftforum.net/topic/1114612-";
-    
-    private Configuration       config;
+    protected final String      versionURL                       = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
+    protected final String      mcfTopic                         = "http://www.minecraftforum.net/topic/1114612-";
     
     @SideOnly(Side.CLIENT)
     protected BSCClientTicker   ticker;
@@ -107,7 +106,7 @@ public class bspkrsCoreMod
           //                file.delete();
         }
         
-        config = new Configuration(file);
+        Reference.config = new Configuration(file);
         
         syncConfig();
     }
@@ -115,61 +114,71 @@ public class bspkrsCoreMod
     public void syncConfig()
     {
         Property temp;
-        String ctgyGen = BSConfiguration.CATEGORY_GENERAL;
-        config.load();
+        String ctgyGen = Configuration.CATEGORY_GENERAL;
+        Reference.config.load();
         
-        config.addCustomCategoryComment(ctgyGen, "ATTENTION: Editing this file manually is no longer necessary. \n" +
+        Reference.config.addCustomCategoryComment(ctgyGen, "ATTENTION: Editing this file manually is no longer necessary. \n" +
                 "On the Mods list screen select the entry for bspkrsCore, then click the Config button to modify these settings.");
         
-        allowUpdateCheck = config.getBoolean(ConfigElement.ALLOW_UPDATE_CHECK.key(), ctgyGen, allowUpdateCheckDefault, ConfigElement.ALLOW_UPDATE_CHECK.desc(), ConfigElement.ALLOW_UPDATE_CHECK.languageKey());
-        allowDebugOutput = config.getBoolean(ConfigElement.ALLOW_DEBUG_OUTPUT.key(), ctgyGen, allowDebugOutput, ConfigElement.ALLOW_DEBUG_OUTPUT.desc(), ConfigElement.ALLOW_DEBUG_OUTPUT.languageKey());
-        updateTimeoutMilliseconds = config.getInt(ConfigElement.UPDATE_TIMEOUT_MILLISECONDS.key(), ctgyGen, updateTimeoutMillisecondsDefault, 100, 30000, ConfigElement.UPDATE_TIMEOUT_MILLISECONDS.desc(), ConfigElement.UPDATE_TIMEOUT_MILLISECONDS.languageKey());
-        generateUniqueNamesFile = config.getBoolean(ConfigElement.GENERATE_UNIQUE_NAMES_FILE.key(), ctgyGen, generateUniqueNamesFileDefault, ConfigElement.GENERATE_UNIQUE_NAMES_FILE.desc(), ConfigElement.GENERATE_UNIQUE_NAMES_FILE.languageKey());
-        showMainMenuMobs = config.getBoolean(ConfigElement.SHOW_MAIN_MENU_MOBS.key(), ctgyGen, showMainMenuMobsDefault, ConfigElement.SHOW_MAIN_MENU_MOBS.desc(), ConfigElement.SHOW_MAIN_MENU_MOBS.languageKey());
+        allowUpdateCheck = Reference.config.getBoolean(ConfigElement.ALLOW_UPDATE_CHECK.key(), ctgyGen, allowUpdateCheckDefault, ConfigElement.ALLOW_UPDATE_CHECK.desc(), ConfigElement.ALLOW_UPDATE_CHECK.languageKey());
+        allowDebugOutput = Reference.config.getBoolean(ConfigElement.ALLOW_DEBUG_OUTPUT.key(), ctgyGen, allowDebugOutput, ConfigElement.ALLOW_DEBUG_OUTPUT.desc(), ConfigElement.ALLOW_DEBUG_OUTPUT.languageKey());
+        updateTimeoutMilliseconds = Reference.config.getInt(ConfigElement.UPDATE_TIMEOUT_MILLISECONDS.key(), ctgyGen, updateTimeoutMillisecondsDefault, 100, 30000, ConfigElement.UPDATE_TIMEOUT_MILLISECONDS.desc(), ConfigElement.UPDATE_TIMEOUT_MILLISECONDS.languageKey());
+        generateUniqueNamesFile = Reference.config.getBoolean(ConfigElement.GENERATE_UNIQUE_NAMES_FILE.key(), ctgyGen, generateUniqueNamesFileDefault, ConfigElement.GENERATE_UNIQUE_NAMES_FILE.desc(), ConfigElement.GENERATE_UNIQUE_NAMES_FILE.languageKey());
+        showMainMenuMobs = Reference.config.getBoolean(ConfigElement.SHOW_MAIN_MENU_MOBS.key(), ctgyGen, showMainMenuMobsDefault, ConfigElement.SHOW_MAIN_MENU_MOBS.desc(), ConfigElement.SHOW_MAIN_MENU_MOBS.languageKey());
         
         // example stuff
-        temp = config.get(CATEGORY_GENERAL + ".example_properties", "fixedBooleanList", fixedBooleanListDefault, "This is a Boolean list that has a fixed length of 6.", true, -1, true);
+        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "fixedBooleanList", fixedBooleanListDefault, "This is a Boolean list that has a fixed length of 6.", true, -1, true);
         temp.setLanguageKey("bspkrs.configgui.example." + temp.getName());
+        temp.setIsHotLoadable(true);
         fixedBooleanList = temp.getBooleanList();
-        temp = config.get(CATEGORY_GENERAL + ".example_properties", "variablePatternStringList", variablePatternStringListDefault, "This is a String List that is validated using a Pattern object. 27 entries are allowed.", false, 27, variablePatternStringListPattern, true);
+        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "variablePatternStringList", variablePatternStringListDefault, "This is a String List that is validated using a Pattern object. 27 entries are allowed.", false, 27, variablePatternStringListPattern, true);
         temp.setLanguageKey("bspkrs.configgui.example." + temp.getName());
         variablePatternStringList = temp.getStringList();
-        temp = config.get(CATEGORY_GENERAL + ".example_properties", "regularString", regularStringDefault, "Just a regular String... no requirements.");
+        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "regularString", regularStringDefault, "Just a regular String... no requirements.");
         temp.setLanguageKey("bspkrs.configgui.example." + temp.getName());
+        temp.setIsHotLoadable(true);
         regularString = temp.getString();
-        temp = config.get(CATEGORY_GENERAL + ".example_properties", "patternString", patternStringDefault, "This comma-separated String is validated using a Pattern object.", patternStringPattern, true);
+        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "patternString", patternStringDefault, "This comma-separated String is validated using a Pattern object.", patternStringPattern, true);
         temp.setLanguageKey("bspkrs.configgui.example." + temp.getName());
         patternString = temp.getString();
-        temp = config.get(CATEGORY_GENERAL + ".example_properties", "selectString", selectStringDefault, "If a String[] of valid values is given to a String property, the GUI control is a cycle button.", selectStringValues, true);
+        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "selectString", selectStringDefault, "If a String[] of valid values is given to a String property, the GUI control is a cycle button.", selectStringValues, true);
         temp.setLanguageKey("bspkrs.configgui.example." + temp.getName());
+        temp.setIsHotLoadable(true);
         selectString = temp.getString();
-        temp = config.get(CATEGORY_GENERAL + ".example_properties", "unboundedInteger", unboundedIntegerDefault, "Integer prop without bounds.", Integer.MIN_VALUE, Integer.MAX_VALUE, true);
+        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "unboundedInteger", unboundedIntegerDefault, "Integer prop without bounds.", Integer.MIN_VALUE, Integer.MAX_VALUE, true);
         temp.setLanguageKey("bspkrs.configgui.example." + temp.getName());
+        temp.setIsHotLoadable(true);
         unboundedInteger = temp.getInt();
-        temp = config.get(CATEGORY_GENERAL + ".example_properties", "boundedInteger", boundedIntegerDefault, "Integer prop with bounds.", -1, 200, true);
+        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "boundedInteger", boundedIntegerDefault, "Integer prop with bounds.", -1, 200, true);
         temp.setLanguageKey("bspkrs.configgui.example." + temp.getName());
         boundedInteger = temp.getInt();
-        temp = config.get(CATEGORY_GENERAL + ".example_properties", "unboundedFloat", unboundedFloatDefault, "Float prop without bounds.", Float.MIN_VALUE, Float.MAX_VALUE, true);
+        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "unboundedFloat", unboundedFloatDefault, "Float prop without bounds.", Float.MIN_VALUE, Float.MAX_VALUE, true);
         temp.setLanguageKey("bspkrs.configgui.example." + temp.getName());
+        temp.setIsHotLoadable(true);
         unboundedFloat = (float) temp.getDouble();
-        temp = config.get(CATEGORY_GENERAL + ".example_properties", "boundedFloat", boundedFloatDefault, "Float prop with bounds.", -1.1F, 225.25F, true);
+        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "boundedFloat", boundedFloatDefault, "Float prop with bounds.", -1.1F, 225.25F, true);
         temp.setLanguageKey("bspkrs.configgui.example." + temp.getName());
         boundedFloat = (float) temp.getDouble();
-        temp = config.get(CATEGORY_GENERAL + ".example_properties", "chatColorPicker", chatColorPickerDefault, "This property selects a color code for chat formatting.", Property.Type.COLOR);
+        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "chatColorPicker", chatColorPickerDefault, "This property selects a color code for chat formatting.", Property.Type.COLOR);
         temp.setValidValues(chatColorPickerValues);
         temp.setIsHotLoadable(true);
         temp.setLanguageKey("bspkrs.configgui.example." + temp.getName());
         chatColorPicker = temp.getString();
         
-        config.addCustomCategoryComment(ctgyGen + ".example_properties", "This section contains example properties to demo the config GUI controls.");
-        config.addCustomCategoryLanguageKey(ctgyGen + ".example_properties", "bspkrs.configgui.ctgy.example_properties");
+        Reference.config.addCustomCategoryComment(ctgyGen + ".example_properties", "This section contains example properties to demo the config GUI controls.");
+        Reference.config.addCustomCategoryLanguageKey(ctgyGen + ".example_properties", "bspkrs.configgui.ctgy.example_properties");
         
-        config.save();
+        Reference.config.save();
     }
     
-    public Configuration getConfig()
+    @SubscribeEvent
+    public void onConfigChanged(ConfigChangedEvent event)
     {
-        return config;
+        if (event.modID.equals(Reference.MODID))
+        {
+            Reference.config.save();
+            syncConfig();
+        }
     }
     
     @EventHandler
@@ -177,7 +186,7 @@ public class bspkrsCoreMod
     {
         if (allowUpdateCheck)
         {
-            versionChecker = new ModVersionChecker(metadata.name, metadata.version, versionURL, mcfTopic);
+            versionChecker = new ModVersionChecker(Reference.MODID, metadata.version, versionURL, mcfTopic);
             versionChecker.checkVersionWithLogging();
         }
         
@@ -187,6 +196,8 @@ public class bspkrsCoreMod
             ClientCommandHandler.instance.registerCommand(new CommandBS());
             isCommandRegistered = true;
         }
+        
+        MinecraftForge.EVENT_BUS.register(instance);
     }
     
     @EventHandler
