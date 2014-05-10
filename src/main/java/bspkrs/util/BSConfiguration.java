@@ -8,6 +8,7 @@ import net.minecraftforge.common.config.Property;
 /**
  * This class offers advanced configurations capabilities, allowing to provide various categories for configuration variables.
  */
+@Deprecated
 public class BSConfiguration extends Configuration
 {
     private final File fileRef;
