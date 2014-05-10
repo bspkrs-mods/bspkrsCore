@@ -7,9 +7,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.input.Keyboard;
 
+import bspkrs.util.config.ConfigChangedEvent;
+import bspkrs.util.config.ConfigChangedEvent.PostConfigChangedEvent;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -20,22 +25,77 @@ public class GuiConfig extends GuiScreen
      * A reference to the screen object that created this. Used for navigating between screens.
      */
     private GuiScreen           parentScreen;
-    protected String            title = "Config GUI";
+    protected String            title        = "Config GUI";
     protected String            titleLine2;
     protected IConfigProperty[] properties;
     protected GuiPropertyList   propertyList;
     private GuiButtonExt        btnDefaultAll;
     private GuiButtonExt        btnUndoAll;
+    @Deprecated
     protected Method            saveAction;
+    @Deprecated
     protected Object            configObject;
+    @Deprecated
     protected Method            afterSaveAction;
+    @Deprecated
     protected Object            afterSaveObject;
+    protected final String      modID;
+    protected final boolean     allowNonHotLoadConfigChanges;
+    protected final boolean     areAllPropsHotLoadable;
+    private boolean             needsRefresh = true;
     
+    /**
+     * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded.
+     * 
+     * @param parentScreen the parent GuiScreen object
+     * @param properties an array of IConfigProperty objects
+     * @param areAllPropsHotLoadable send true if every property on this screen is able to be modified on the fly while a world is running
+     * @param modID the mod ID for the mod whose config settings will be edited
+     * @param allowNonHotLoadConfigChanges send true if all config properties can be modified, send false when only isHotLoadable() == true
+     *            properties can be edited
+     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
+     *            edited.
+     */
+    public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, boolean areAllPropsHotLoadable, String modID,
+            boolean allowNonHotLoadConfigChanges, String title)
+    {
+        this(parentScreen, properties, areAllPropsHotLoadable, modID, allowNonHotLoadConfigChanges, title, null);
+    }
+    
+    /**
+     * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded.
+     * 
+     * @param parentScreen the parent GuiScreen object
+     * @param properties an array of IConfigProperty objects
+     * @param modID the mod ID for the mod whose config settings will be edited
+     * @param allowNonHotLoadConfigChanges send true if all config properties can be modified, send false when only isHotLoadable() == true
+     *            properties can be edited
+     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
+     *            edited.
+     * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category path of the category
+     *            currently being edited.
+     */
+    public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, boolean areAllPropsHotLoadable, String modID,
+            boolean allowNonHotLoadConfigChanges, String title, String titleLine2)
+    {
+        this.mc = Minecraft.getMinecraft();
+        this.parentScreen = parentScreen;
+        this.properties = properties;
+        this.propertyList = new GuiPropertyList(this, mc);
+        this.areAllPropsHotLoadable = areAllPropsHotLoadable;
+        this.modID = modID;
+        this.allowNonHotLoadConfigChanges = allowNonHotLoadConfigChanges;
+        this.title = title;
+        this.titleLine2 = titleLine2;
+    }
+    
+    @Deprecated
     public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, Method saveAction, Object configObject, Method afterSaveAction, Object afterSaveObject)
     {
         this(parentScreen, properties, saveAction, configObject, afterSaveAction, afterSaveObject, null);
     }
     
+    @Deprecated
     public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, Method saveAction, Object configObject, Method afterSaveAction, Object afterSaveObject, String titleLine2)
     {
         this.mc = Minecraft.getMinecraft();
@@ -45,13 +105,25 @@ public class GuiConfig extends GuiScreen
         this.configObject = configObject;
         this.afterSaveAction = afterSaveAction;
         this.afterSaveObject = afterSaveObject;
-        //this.propertyList = new GuiPropertyList(this, mc);
+        this.propertyList = new GuiPropertyList(this, mc);
         this.titleLine2 = titleLine2;
+        this.areAllPropsHotLoadable = false;
+        this.modID = null;
+        this.allowNonHotLoadConfigChanges = true;
         
         if (mc.mcDataDir.getAbsolutePath().endsWith("."))
             this.title = configObject.toString().replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/").substring(0, mc.mcDataDir.getAbsolutePath().length() - 1), "/.minecraft/");
         else
             this.title = configObject.toString().replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/"), "/.minecraft");
+    }
+    
+    public static String getAbridgedConfigPath(String path)
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.mcDataDir.getAbsolutePath().endsWith("."))
+            return path.replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/").substring(0, mc.mcDataDir.getAbsolutePath().length() - 1), "/.minecraft/");
+        else
+            return path.replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/"), "/.minecraft");
     }
     
     /**
@@ -60,8 +132,11 @@ public class GuiConfig extends GuiScreen
     @Override
     public void initGui()
     {
-        if (this.propertyList == null)
+        if (this.propertyList == null || this.needsRefresh)
+        {
             this.propertyList = new GuiPropertyList(this, mc);
+            this.needsRefresh = false;
+        }
         
         int doneWidth = Math.max(mc.fontRenderer.getStringWidth(I18n.format("gui.done")) + 20, 100);
         int undoWidth = mc.fontRenderer.getStringWidth("↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")) + 20;
@@ -80,11 +155,25 @@ public class GuiConfig extends GuiScreen
         {
             try
             {
-                this.propertyList.saveProperties();
-                if (saveAction != null)
-                    this.saveAction.invoke(configObject);
-                if (afterSaveAction != null)
-                    this.afterSaveAction.invoke(afterSaveObject);
+                if (this.parentScreen == null || !(this.parentScreen instanceof GuiConfig) && this.propertyList.areAnyPropsChanged(true))
+                {
+                    this.propertyList.saveProperties();
+                    
+                    if (modID == null)
+                    {
+                        if (saveAction != null)
+                            this.saveAction.invoke(configObject);
+                        if (afterSaveAction != null)
+                            this.afterSaveAction.invoke(afterSaveObject);
+                    }
+                    else if (Loader.isModLoaded(modID))
+                    {
+                        ConfigChangedEvent event = new ConfigChangedEvent(modID, this.allowNonHotLoadConfigChanges);
+                        MinecraftForge.EVENT_BUS.post(event);
+                        if (!event.getResult().equals(Result.DENY))
+                            MinecraftForge.EVENT_BUS.post(new PostConfigChangedEvent(modID, allowNonHotLoadConfigChanges));
+                    }
+                }
             }
             catch (Throwable e)
             {
@@ -156,8 +245,8 @@ public class GuiConfig extends GuiScreen
         if (this.titleLine2 != null)
             this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
         
-        this.btnUndoAll.enabled = this.propertyList.areAnyPropsChanged();
-        this.btnDefaultAll.enabled = !this.propertyList.areAllPropsDefault();
+        this.btnUndoAll.enabled = this.propertyList.areAnyPropsEnabled() && this.propertyList.areAnyPropsChanged(false);
+        this.btnDefaultAll.enabled = this.propertyList.areAnyPropsEnabled() && !this.propertyList.areAllPropsDefault();
         super.drawScreen(par1, par2, par3);
         this.propertyList.drawScreenPost(par1, par2, par3);
     }
