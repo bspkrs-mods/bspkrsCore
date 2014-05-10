@@ -33,6 +33,11 @@ public class HoverChecker
         this.right = right;
     }
     
+    public boolean checkHover(int mouseX, int mouseY)
+    {
+        return checkHover(mouseX, mouseY, true);
+    }
+    
     public boolean checkHover(int mouseX, int mouseY, boolean canHover)
     {
         if (this.button != null)
