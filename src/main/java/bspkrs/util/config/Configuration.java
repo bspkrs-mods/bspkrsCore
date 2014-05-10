@@ -289,8 +289,8 @@ public class Configuration
     {
         Property prop = get(category, key, Integer.toString(defaultValue), comment, INTEGER);
         prop.setDefaultValue(Integer.toString(defaultValue));
-        prop.setMinValue(Integer.toString(minValue));
-        prop.setMaxValue(Integer.toString(maxValue));
+        prop.setMinValue(minValue);
+        prop.setMaxValue(maxValue);
         prop.setIsHotLoadable(isHotLoadable);
         
         if (!prop.isIntValue())
@@ -373,8 +373,8 @@ public class Configuration
         
         Property prop = get(category, key, values, comment, INTEGER);
         prop.setDefaultValues(values);
-        prop.setMinValue(Integer.toString(minValue));
-        prop.setMaxValue(Integer.toString(maxValue));
+        prop.setMinValue(minValue);
+        prop.setMaxValue(maxValue);
         prop.setIsListLengthFixed(isListLengthFixed);
         prop.setMaxListLength(maxListLength);
         prop.setIsHotLoadable(isHotLoadable);
@@ -436,8 +436,8 @@ public class Configuration
     {
         Property prop = get(category, key, Double.toString(defaultValue), comment, DOUBLE);
         prop.setDefaultValue(Double.toString(defaultValue));
-        prop.setMinValue(Double.toString(minValue));
-        prop.setMaxValue(Double.toString(maxValue));
+        prop.setMinValue(minValue);
+        prop.setMaxValue(maxValue);
         prop.setIsHotLoadable(isHotLoadable);
         
         if (!prop.isDoubleValue())
@@ -520,8 +520,8 @@ public class Configuration
         
         Property prop = get(category, key, values, comment, DOUBLE);
         prop.setDefaultValues(values);
-        prop.setMinValue(Double.toString(minValue));
-        prop.setMaxValue(Double.toString(maxValue));
+        prop.setMinValue(minValue);
+        prop.setMaxValue(maxValue);
         prop.setIsListLengthFixed(isListLengthFixed);
         prop.setMaxListLength(maxListLength);
         prop.setIsHotLoadable(isHotLoadable);
@@ -1220,11 +1220,12 @@ public class Configuration
      * @param category the config category
      * @param comment a String comment
      */
-    public void addCustomCategoryComment(String category, String comment)
+    public Configuration addCustomCategoryComment(String category, String comment)
     {
         if (!caseSensitiveCustomCategories)
             category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setComment(comment);
+        return this;
     }
     
     /**
@@ -1233,11 +1234,26 @@ public class Configuration
      * @param category the config category
      * @param langKey a language key string such as configcategory.general
      */
-    public void addCustomCategoryLanguageKey(String category, String langKey)
+    public Configuration addCustomCategoryLanguageKey(String category, String langKey)
     {
         if (!caseSensitiveCustomCategories)
             category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setLanguageKey(langKey);
+        return this;
+    }
+    
+    /**
+     * Sets the ConfigCategory.isHotLoadable flag to the specified value.
+     * 
+     * @param category
+     * @param isHotLoadable
+     */
+    public Configuration setCategoryIsHotLoadable(String category, boolean isHotLoadable)
+    {
+        if (!caseSensitiveCustomCategories)
+            category = category.toLowerCase(Locale.ENGLISH);
+        getCategory(category).setIsHotLoadable(isHotLoadable);
+        return this;
     }
     
     private void setChild(String name, Configuration child)
@@ -1650,8 +1666,8 @@ public class Configuration
         Property prop = this.get(category, name, defaultValue);
         prop.setLanguageKey(langKey);
         prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
-        prop.setMinValue(String.valueOf(minValue));
-        prop.setMaxValue(String.valueOf(maxValue));
+        prop.setMinValue(minValue);
+        prop.setMaxValue(maxValue);
         return prop.getInt(defaultValue) < minValue ? minValue : (prop.getInt(defaultValue) > maxValue ? maxValue : prop.getInt(defaultValue));
     }
     
@@ -1688,8 +1704,8 @@ public class Configuration
         Property prop = this.get(category, name, Float.toString(defaultValue), name);
         prop.setLanguageKey(langKey);
         prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
-        prop.setMinValue(String.valueOf(minValue));
-        prop.setMaxValue(String.valueOf(maxValue));
+        prop.setMinValue(minValue);
+        prop.setMaxValue(maxValue);
         try
         {
             return Float.parseFloat(prop.getString()) < minValue ? minValue : (Float.parseFloat(prop.getString()) > maxValue ? maxValue : Float.parseFloat(prop.getString()));

@@ -69,7 +69,7 @@ public class Property
     private String        maxValue;
     
     private boolean       isHotLoadable;
-    private Pattern       stringPattern;
+    private Pattern       stringValidationPattern;
     private final boolean wasRead;
     private final boolean isList;
     private boolean       isListLengthFixed = false;
@@ -170,6 +170,11 @@ public class Property
         this.comment = "";
     }
     
+    /**
+     * Returns whether or not this Property is defaulted.
+     * 
+     * @return true if the current value(s) is(are) deeply equal to the default value(s)
+     */
     public boolean isDefault()
     {
         if (this.isBooleanList())
@@ -240,23 +245,44 @@ public class Property
         return value.equals(defaultValue);
     }
     
-    public void setToDefault()
+    /**
+     * Sets the current value(s) of this Property to the default value(s).
+     */
+    public Property setToDefault()
     {
         this.value = this.defaultValue;
         this.values = Arrays.copyOf(this.defaultValues, this.defaultValues.length);
+        return this;
     }
     
+    /**
+     * Gets the raw String default value of this Property. Check for isList() == false first.
+     * 
+     * @return the default value String
+     */
     public String getDefault()
     {
         return defaultValue;
     }
     
+    /**
+     * Gets the raw String[] default values of this Property. Check for isList() == true first.
+     * 
+     * @return the default values String[]
+     */
     public String[] getDefaults()
     {
         return Arrays.copyOf(this.defaultValues, this.defaultValues.length);
     }
     
-    public void setMaxListLength(int max)
+    /**
+     * Sets the maximum length of this list/array Property. Only important if isList() == true. If the current values array or default
+     * values array is longer than the new maximum it will be resized. If calling both this method and setIsListLengthFixed(true), this
+     * method should be called afterwards (but is not required).
+     * 
+     * @param max the new maximum list length
+     */
+    public Property setMaxListLength(int max)
     {
         this.maxListLength = max;
         if (this.maxListLength != -1)
@@ -269,92 +295,294 @@ public class Property
                 if (this.isListLengthFixed || defaultValues.length > maxListLength)
                     defaultValues = Arrays.copyOf(defaultValues, maxListLength);
         }
+        return this;
     }
     
+    /**
+     * Gets the maximum length of this list/array Property. Only important if isList() == true.
+     * 
+     * @return the maximum array length
+     */
     public int getMaxListLength()
     {
         return this.maxListLength;
     }
     
-    public void setIsListLengthFixed(boolean bol)
+    /**
+     * Sets the flag for whether this list/array Property has a fixed length. Only important if isList() == true. If calling both this
+     * method and setMaxListLength(), this method should be called first (but is not required).
+     * 
+     * @param isListLengthFixed set to true if this list must be a specific length
+     */
+    public Property setIsListLengthFixed(boolean isListLengthFixed)
     {
-        this.isListLengthFixed = bol;
+        this.isListLengthFixed = isListLengthFixed;
+        return this;
     }
     
+    /**
+     * Returns whether or not this list/array has a fixed length. Only important if isList() == true.
+     * 
+     * @return true if this list has a fixed length, false otherwise
+     */
     public boolean isListLengthFixed()
     {
         return this.isListLengthFixed;
     }
     
-    public void setIsHotLoadable(boolean bol)
+    /**
+     * Sets the flag for whether or not this Property can be edited "on the fly" while a world is running. Care should be taken to ensure
+     * that only properties that are truly dynamic can be changed from the in-game options menu. When set to true the Property will be
+     * editable from both the main menu Mods list config screen and the in-game Mod Options config screen. When set to false the Property
+     * will only be editable from the main menu Mods list config screen.
+     * 
+     * @param isHotLoadable
+     */
+    public Property setIsHotLoadable(boolean isHotLoadable)
     {
-        this.isHotLoadable = bol;
+        this.isHotLoadable = isHotLoadable;
+        return this;
     }
     
+    /**
+     * Returns whether or not this Property is able to be edited "on the fly" while a world is running using the in-game Mod Options screen
+     * as well as the Mods list screen, or only from the Mods list screen.
+     * 
+     * @return true if this Property can be edited on the fly, false otherwise
+     */
     public boolean isHotLoadable()
     {
         return this.isHotLoadable;
     }
     
-    public void setValidStringPattern(Pattern pattern)
+    /**
+     * Sets a regex Pattern object used to validate user input for formatted String or String[] properties.
+     * 
+     * @param validationPattern
+     */
+    public Property setValidStringPattern(Pattern validationPattern)
     {
-        this.stringPattern = pattern;
+        this.stringValidationPattern = validationPattern;
+        return this;
     }
     
+    /**
+     * Gets the Pattern object used to validate user input for this Property.
+     * 
+     * @return the user input validation Pattern object, or null if none is set
+     */
     public Pattern getValidStringPattern()
     {
-        return this.stringPattern;
+        return this.stringValidationPattern;
     }
     
-    public void setLanguageKey(String value)
+    /**
+     * Sets the localization language key for this Property so that the config GUI screens are nice and pretty <3. The string languageKey +
+     * ".tooltip" is used for tooltips when a user hovers the mouse over a GUI property label. The following String.format() arguments are
+     * passed to the tooltip translation: %1$s == "\n" + EnumChatFormatting.AQUA, %2$s == default value, %3$s == minValue, %4$s == max
+     * value.
+     * 
+     * @param langKey a string language key such as myawesomemod.config.myPropName
+     */
+    public Property setLanguageKey(String langKey)
     {
-        this.langKey = value;
+        this.langKey = langKey;
+        return this;
     }
     
+    /**
+     * Gets the language key string for this Property.
+     * 
+     * @return the language key
+     */
     public String getLanguageKey()
     {
         return this.langKey;
     }
     
-    protected void setDefaultValue(String value)
+    /**
+     * Sets the default string value of this Property.
+     * 
+     * @param defaultValue a String value
+     */
+    public Property setDefaultValue(String defaultValue)
     {
-        this.defaultValue = value;
+        this.defaultValue = defaultValue;
+        return this;
     }
     
-    protected void setDefaultValues(String[] values)
+    /**
+     * Sets the default String[] values of this Property.
+     * 
+     * @param defaultValues an array of String values
+     */
+    public Property setDefaultValues(String[] defaultValues)
     {
         this.defaultValue = "";
-        for (String s : values)
+        for (String s : defaultValues)
             this.defaultValue += ", [" + s + "]";
         this.defaultValue = this.defaultValue.replaceFirst(", ", "");
-        this.defaultValues = Arrays.copyOf(values, values.length);
+        this.defaultValues = Arrays.copyOf(defaultValues, defaultValues.length);
+        return this;
     }
     
-    protected void setMinValue(String minValue)
+    /**
+     * Sets the default int value of this Property.
+     * 
+     * @param defaultValue an int value
+     */
+    public Property setDefaultValue(int defaultValue)
     {
-        this.minValue = minValue;
+        setDefaultValue(Integer.toString(defaultValue));
+        return this;
     }
     
-    protected void setMaxValue(String maxValue)
+    /**
+     * Sets the default int[] values of this Property.
+     * 
+     * @param defaultValues an array of int values
+     */
+    public Property setDefaultValues(int[] defaultValues)
     {
-        this.maxValue = maxValue;
+        String[] temp = new String[defaultValues.length];
+        for (int i = 0; i < defaultValues.length; i++)
+            temp[i] = Integer.toString(defaultValues[i]);
+        
+        setDefaultValues(temp);
+        return this;
     }
     
+    /**
+     * Sets the default double value of this Property.
+     * 
+     * @param defaultValue a double value
+     */
+    public Property setDefaultValue(double defaultValue)
+    {
+        setDefaultValue(Double.toString(defaultValue));
+        return this;
+    }
+    
+    /**
+     * Sets the default double[] values of this Property
+     * 
+     * @param defaultValues an array of double values
+     */
+    public Property setDefaultValues(double[] defaultValues)
+    {
+        String[] temp = new String[defaultValues.length];
+        for (int i = 0; i < defaultValues.length; i++)
+            temp[i] = Double.toString(defaultValues[i]);
+        
+        setDefaultValues(temp);
+        return this;
+    }
+    
+    /**
+     * Sets the default boolean value of this Property.
+     * 
+     * @param defaultValue a boolean value
+     */
+    public Property setDefaultValue(boolean defaultValue)
+    {
+        setDefaultValue(Boolean.toString(defaultValue));
+        return this;
+    }
+    
+    /**
+     * Sets the default boolean[] values of this Property.
+     * 
+     * @param defaultValues an array of boolean values
+     */
+    public Property setDefaultValues(boolean[] defaultValues)
+    {
+        String[] temp = new String[defaultValues.length];
+        for (int i = 0; i < defaultValues.length; i++)
+            temp[i] = Boolean.toString(defaultValues[i]);
+        
+        setDefaultValues(temp);
+        return this;
+    }
+    
+    /**
+     * Sets the minimum int value of this Property.
+     * 
+     * @param minValue an int value
+     */
+    public Property setMinValue(int minValue)
+    {
+        this.minValue = Integer.toString(minValue);
+        return this;
+    }
+    
+    /**
+     * Sets the maximum int value of this Property.
+     * 
+     * @param maxValue an int value
+     */
+    public Property setMaxValue(int maxValue)
+    {
+        this.maxValue = Integer.toString(maxValue);
+        return this;
+    }
+    
+    /**
+     * Sets the minimum double value of this Property.
+     * 
+     * @param minValue a double value
+     */
+    public Property setMinValue(double minValue)
+    {
+        this.minValue = Double.toString(minValue);
+        return this;
+    }
+    
+    /**
+     * Sets the maximum double value of this Property.
+     * 
+     * @param maxValue a double value
+     */
+    public Property setMaxValue(double maxValue)
+    {
+        this.maxValue = Double.toString(maxValue);
+        return this;
+    }
+    
+    /**
+     * Gets the minimum value as an int.
+     * 
+     * @return the minimum value bound
+     */
     public int getMinIntValue()
     {
         return Integer.parseInt(minValue);
     }
     
+    /**
+     * Gets the maximum value as an int.
+     * 
+     * @return the maximum value bound
+     */
     public int getMaxIntValue()
     {
         return Integer.parseInt(maxValue);
     }
     
+    /**
+     * Gets the minimum value as a double.
+     * 
+     * @return the minimum value bound
+     */
     public double getMinDoubleValue()
     {
         return Double.parseDouble(minValue);
     }
     
+    /**
+     * Gets the maximum value as a double.
+     * 
+     * @return the maximum value bound
+     */
     public double getMaxDoubleValue()
     {
         return Double.parseDouble(maxValue);
@@ -370,11 +598,23 @@ public class Property
         return value;
     }
     
-    public void setValidValues(String[] validValues)
+    /**
+     * Sets the array of valid values that this String Property can be set to. When an array of valid values is defined for a Property the
+     * GUI control for that property will be a value cycle button.
+     * 
+     * @param validValues a String array of valid values
+     */
+    public Property setValidValues(String[] validValues)
     {
         this.validValues = validValues;
+        return this;
     }
     
+    /**
+     * Gets the array of valid values that this String Property can be set to, or null if not defined.
+     * 
+     * @return a String array of valid values
+     */
     public String[] getValidValues()
     {
         return this.validValues;
@@ -686,14 +926,25 @@ public class Property
         return isList;
     }
     
+    /**
+     * Gets the name/key for this Property.
+     * 
+     * @return the Property name
+     */
     public String getName()
     {
         return name;
     }
     
-    public void setName(String name)
+    /**
+     * Sets the name/key for this Property.
+     * 
+     * @param name a name
+     */
+    public Property setName(String name)
     {
         this.name = name;
+        return this;
     }
     
     /**
@@ -707,16 +958,31 @@ public class Property
         return wasRead;
     }
     
+    /**
+     * Gets the Property.Type enum value for this Property.
+     * 
+     * @return the Property's type
+     */
     public Type getType()
     {
         return type;
     }
     
+    /**
+     * Returns whether or not this Property is a list/array.
+     * 
+     * @return true if this Property is a list/array, false otherwise
+     */
     public boolean isList()
     {
         return isList;
     }
     
+    /**
+     * Gets the changed status of this Property.
+     * 
+     * @return true if this Property has changed, false otherwise
+     */
     public boolean hasChanged()
     {
         return changed;
@@ -727,54 +993,102 @@ public class Property
         changed = false;
     }
     
-    public void set(String value)
+    /**
+     * Sets the value of this Property to the provided String value.
+     * 
+     * @param value
+     */
+    public Property set(String value)
     {
         this.value = value;
         changed = true;
+        return this;
     }
     
-    public void set(String[] values)
+    /**
+     * Sets the values of this Property to the provided String[] values.
+     * 
+     * @param values
+     */
+    public Property set(String[] values)
     {
         this.values = Arrays.copyOf(values, values.length);
         changed = true;
+        return this;
     }
     
-    public void set(int value)
+    /**
+     * Sets the value of this Property to the provided int value.
+     * 
+     * @param value
+     */
+    public Property set(int value)
     {
         set(Integer.toString(value));
+        return this;
     }
     
-    public void set(boolean value)
+    /**
+     * Sets the value of this Property to the provided boolean value.
+     * 
+     * @param value
+     */
+    public Property set(boolean value)
     {
         set(Boolean.toString(value));
+        return this;
     }
     
-    public void set(double value)
+    /**
+     * Sets the value of this Property to the provided double value.
+     * 
+     * @param value
+     */
+    public Property set(double value)
     {
         set(Double.toString(value));
+        return this;
     }
     
-    public void set(boolean[] values)
+    /**
+     * Sets the values of this Property to the provided boolean[] values.
+     * 
+     * @param values
+     */
+    public Property set(boolean[] values)
     {
         this.values = new String[values.length];
         for (int i = 0; i < values.length; i++)
             this.values[i] = String.valueOf(values[i]);
         changed = true;
+        return this;
     }
     
-    public void set(int[] values)
+    /**
+     * Sets the values of this Property to the provided int[] values.
+     * 
+     * @param values
+     */
+    public Property set(int[] values)
     {
         this.values = new String[values.length];
         for (int i = 0; i < values.length; i++)
             this.values[i] = String.valueOf(values[i]);
         changed = true;
+        return this;
     }
     
-    public void set(double[] values)
+    /**
+     * Sets the values of this Property to the provided double[] values.
+     * 
+     * @param values
+     */
+    public Property set(double[] values)
     {
         this.values = new String[values.length];
         for (int i = 0; i < values.length; i++)
             this.values[i] = String.valueOf(values[i]);
         changed = true;
+        return this;
     }
 }
