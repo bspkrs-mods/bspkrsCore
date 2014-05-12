@@ -24,7 +24,7 @@ public interface IConfigProperty
     
     /**
      * If {@code isCustomEntry()} returns true, this method MUST return a class that implements {@code IGuiConfigListEntry}. This class MUST
-     * provide a constructor with the following parameter types: {@code GuiConfig}, {@code IConfigProperty}
+     * provide a constructor with the following parameter types: {@code GuiConfig}, {@code GuiPropertyList}, {@code IConfigProperty}
      * 
      * @return a custom implementation of {@code IGuiConfigListEntry}
      */
