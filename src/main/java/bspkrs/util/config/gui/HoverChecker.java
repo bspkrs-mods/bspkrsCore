@@ -46,6 +46,7 @@ public class HoverChecker
             this.bottom = button.yPosition + ReflectionHelper.getIntValue(GuiButton.class, "field_146121_g", "height", button, 18);
             this.left = button.xPosition;
             this.right = button.xPosition + button.getButtonWidth();
+            canHover = canHover && button.visible;
         }
         
         if (canHover && hoverStart == -1 && mouseY >= top && mouseY <= bottom && mouseX >= left && mouseX <= right)
