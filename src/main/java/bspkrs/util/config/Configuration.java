@@ -1247,7 +1247,8 @@ public class Configuration
     /**
      * Sets the custom IGuiConfigListEntry class that should be used in place of the standard entry class (which is just a button that
      * navigates into the category). This class MUST provide a constructor with the following parameter types: {@code GuiConfig} (the parent
-     * GuiConfig screen will be provided), {@code IConfigProperty} (the IConfigProperty for this category will be provided).
+     * GuiConfig screen will be provided), {@code GuiPropertyList} (the parent GuiPropertyList will be provided), {@code IConfigProperty}
+     * (the IConfigProperty for this Property will be provided).
      * 
      * @param category the config category
      * @param clazz a class that implements IGuiConfigListEntry

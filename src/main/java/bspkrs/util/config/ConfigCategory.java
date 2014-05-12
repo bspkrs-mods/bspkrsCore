@@ -26,14 +26,14 @@ import com.google.common.collect.ImmutableSet;
 public class ConfigCategory implements Map<String, Property>
 {
     private String                               name;
-    private String                               comment       = "";
+    private String                               comment          = "";
     private String                               languagekey;
-    private ArrayList<ConfigCategory>            children      = new ArrayList<ConfigCategory>();
-    private Map<String, Property>                properties    = new TreeMap<String, Property>();
+    private ArrayList<ConfigCategory>            children         = new ArrayList<ConfigCategory>();
+    private Map<String, Property>                properties       = new TreeMap<String, Property>();
     public final ConfigCategory                  parent;
-    private boolean                              changed       = false;
-    private boolean                              isHotLoadable = false;
-    private Class<? extends IGuiConfigListEntry> customEntryClass;
+    private boolean                              changed          = false;
+    private boolean                              isHotLoadable    = false;
+    private Class<? extends IGuiConfigListEntry> customEntryClass = null;
     
     public ConfigCategory(String name)
     {

@@ -70,13 +70,19 @@ public class ConfigProperty implements IConfigProperty
     @Override
     public boolean hasCustomIGuiConfigListEntry()
     {
-        return false;
+        if (isProperty)
+            return prop.getCustomIGuiConfigListEntryClass() != null;
+        else
+            return ctgy.getCustomIGuiConfigListEntryClass() != null;
     }
     
     @Override
     public Class<? extends IGuiConfigListEntry> getCustomIGuiConfigListEntryClass()
     {
-        return null;
+        if (isProperty)
+            return prop.getCustomIGuiConfigListEntryClass();
+        else
+            return ctgy.getCustomIGuiConfigListEntryClass();
     }
     
     @Override
