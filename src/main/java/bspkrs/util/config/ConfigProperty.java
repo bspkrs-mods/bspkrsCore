@@ -1,9 +1,12 @@
 package bspkrs.util.config;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import bspkrs.util.config.gui.ConfigGuiType;
+import bspkrs.util.config.gui.GuiPropertyList.IGuiConfigListEntry;
 import bspkrs.util.config.gui.IConfigProperty;
 
 public class ConfigProperty implements IConfigProperty
@@ -32,18 +35,18 @@ public class ConfigProperty implements IConfigProperty
     }
     
     @Override
-    public IConfigProperty[] getConfigProperties()
+    public List<IConfigProperty> getConfigPropertiesList()
     {
         if (!isProperty)
         {
-            IConfigProperty[] props = new ConfigProperty[ctgy.getValues().size() + ctgy.getChildren().size()];
+            List<IConfigProperty> props = new ArrayList<IConfigProperty>();
             Iterator<ConfigCategory> ccI = ctgy.getChildren().iterator();
             Iterator<Property> pI = ctgy.getValues().values().iterator();
             int index = 0;
             while (ccI.hasNext())
-                props[index++] = new ConfigProperty(ccI.next());
+                props.add(new ConfigProperty(ccI.next()));
             while (pI.hasNext())
-                props[index++] = new ConfigProperty(pI.next());
+                props.add(new ConfigProperty(pI.next()));
             return props;
         }
         return null;
@@ -62,6 +65,18 @@ public class ConfigProperty implements IConfigProperty
     public boolean isProperty()
     {
         return isProperty;
+    }
+    
+    @Override
+    public boolean hasCustomIGuiConfigListEntry()
+    {
+        return false;
+    }
+    
+    @Override
+    public Class<? extends IGuiConfigListEntry> getCustomIGuiConfigListEntryClass()
+    {
+        return null;
     }
     
     @Override

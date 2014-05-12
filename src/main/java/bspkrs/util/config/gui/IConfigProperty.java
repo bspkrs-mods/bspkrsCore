@@ -1,15 +1,34 @@
 package bspkrs.util.config.gui;
 
+import java.util.List;
 import java.util.regex.Pattern;
+
+import bspkrs.util.config.gui.GuiPropertyList.IGuiConfigListEntry;
 
 public interface IConfigProperty
 {
     /**
-     * [Property, Category] Is this object a property object?
+     * [Property, Category, Custom] Is this object a property object?
      * 
-     * @return true if this is a property object, false if the object is a category object
+     * @return true if this is a property object, false if the object is a category object or a custom object
      */
     public boolean isProperty();
+    
+    /**
+     * [Property, Category, Custom] Does this object have a custom entry? If true is returned {@code getCustomEntry()} MUST return an object
+     * that implements {@code IGuiConfigListEntry}.
+     * 
+     * @return true if this object will use a custom IGuiConfigListEntry class, false otherwise.
+     */
+    public boolean hasCustomIGuiConfigListEntry();
+    
+    /**
+     * If {@code isCustomEntry()} returns true, this method MUST return a class that implements {@code IGuiConfigListEntry}. This class MUST
+     * provide a constructor with the following parameter types: {@code GuiConfig}, {@code IConfigProperty}
+     * 
+     * @return a custom implementation of {@code IGuiConfigListEntry}
+     */
+    public Class<? extends IGuiConfigListEntry> getCustomIGuiConfigListEntryClass();
     
     /**
      * [Property, Category] Gets the name of this object.
@@ -42,12 +61,12 @@ public interface IConfigProperty
     public String getComment();
     
     /**
-     * [Category] Gets this category's child categories/properties. For best results this method should return an array with the child
+     * [Category] Gets this category's child categories/properties. For best results this method should return a List with the child
      * categories ordered before the child properties.
      * 
      * @return This category's child categories/properties.
      */
-    public IConfigProperty[] getConfigProperties();
+    public List<IConfigProperty> getConfigPropertiesList();
     
     /**
      * [Property, Category] Gets the ConfigGuiType value corresponding to the type of this property object, or CONFIG_CATEGORY if this is a

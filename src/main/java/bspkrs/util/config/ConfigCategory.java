@@ -17,20 +17,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import bspkrs.util.config.gui.GuiPropertyList.IGuiConfigListEntry;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 public class ConfigCategory implements Map<String, Property>
 {
-    private String                    name;
-    private String                    comment       = "";
-    private String                    languagekey;
-    private ArrayList<ConfigCategory> children      = new ArrayList<ConfigCategory>();
-    private Map<String, Property>     properties    = new TreeMap<String, Property>();
-    public final ConfigCategory       parent;
-    private boolean                   changed       = false;
-    private boolean                   isHotLoadable = false;
+    private String                               name;
+    private String                               comment       = "";
+    private String                               languagekey;
+    private ArrayList<ConfigCategory>            children      = new ArrayList<ConfigCategory>();
+    private Map<String, Property>                properties    = new TreeMap<String, Property>();
+    public final ConfigCategory                  parent;
+    private boolean                              changed       = false;
+    private boolean                              isHotLoadable = false;
+    private Class<? extends IGuiConfigListEntry> customEntryClass;
     
     public ConfigCategory(String name)
     {
@@ -87,6 +90,17 @@ public class ConfigCategory implements Map<String, Property>
     public Map<String, Property> getValues()
     {
         return ImmutableMap.copyOf(properties);
+    }
+    
+    public ConfigCategory setCustomIGuiConfigListEntryClass(Class<? extends IGuiConfigListEntry> clazz)
+    {
+        this.customEntryClass = clazz;
+        return this;
+    }
+    
+    public Class<? extends IGuiConfigListEntry> getCustomIGuiConfigListEntryClass()
+    {
+        return this.customEntryClass;
     }
     
     public ConfigCategory setLanguageKey(String languagekey)

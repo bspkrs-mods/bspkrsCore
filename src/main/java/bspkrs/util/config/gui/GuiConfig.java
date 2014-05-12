@@ -1,6 +1,7 @@
 package bspkrs.util.config.gui;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -24,25 +25,25 @@ public class GuiConfig extends GuiScreen
     /**
      * A reference to the screen object that created this. Used for navigating between screens.
      */
-    private GuiScreen           parentScreen;
-    protected String            title        = "Config GUI";
-    protected String            titleLine2;
-    protected IConfigProperty[] properties;
-    protected GuiPropertyList   propertyList;
-    private GuiButtonExt        btnDefaultAll;
-    private GuiButtonExt        btnUndoAll;
+    public final GuiScreen             parentScreen;
+    protected String                   title        = "Config GUI";
+    protected String                   titleLine2;
+    public final List<IConfigProperty> properties;
+    public GuiPropertyList             propertyList;
+    private GuiButtonExt               btnDefaultAll;
+    private GuiButtonExt               btnUndoAll;
     @Deprecated
-    protected Method            saveAction;
+    protected Method                   saveAction;
     @Deprecated
-    protected Object            configObject;
+    protected Object                   configObject;
     @Deprecated
-    protected Method            afterSaveAction;
+    protected Method                   afterSaveAction;
     @Deprecated
-    protected Object            afterSaveObject;
-    protected final String      modID;
-    protected final boolean     allowNonHotLoadConfigChanges;
-    protected final boolean     areAllPropsHotLoadable;
-    private boolean             needsRefresh = true;
+    protected Object                   afterSaveObject;
+    protected final String             modID;
+    public final boolean               allowNonHotLoadConfigChanges;
+    public final boolean               areAllPropsHotLoadable;
+    private boolean                    needsRefresh = true;
     
     /**
      * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded.
@@ -56,7 +57,26 @@ public class GuiConfig extends GuiScreen
      * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
      *            edited.
      */
+    @Deprecated
     public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, boolean areAllPropsHotLoadable, String modID,
+            boolean allowNonHotLoadConfigChanges, String title)
+    {
+        this(parentScreen, properties, areAllPropsHotLoadable, modID, allowNonHotLoadConfigChanges, title, null);
+    }
+    
+    /**
+     * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded.
+     * 
+     * @param parentScreen the parent GuiScreen object
+     * @param properties a List of IConfigProperty objects
+     * @param areAllPropsHotLoadable send true if every property on this screen is able to be modified on the fly while a world is running
+     * @param modID the mod ID for the mod whose config settings will be edited
+     * @param allowNonHotLoadConfigChanges send true if all config properties can be modified, send false when only isHotLoadable() == true
+     *            properties can be edited
+     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
+     *            edited.
+     */
+    public GuiConfig(GuiScreen parentScreen, List<IConfigProperty> properties, boolean areAllPropsHotLoadable, String modID,
             boolean allowNonHotLoadConfigChanges, String title)
     {
         this(parentScreen, properties, areAllPropsHotLoadable, modID, allowNonHotLoadConfigChanges, title, null);
@@ -75,7 +95,27 @@ public class GuiConfig extends GuiScreen
      * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category path of the category
      *            currently being edited.
      */
+    @Deprecated
     public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, boolean areAllPropsHotLoadable, String modID,
+            boolean allowNonHotLoadConfigChanges, String title, String titleLine2)
+    {
+        this(parentScreen, Arrays.asList(properties), areAllPropsHotLoadable, modID, allowNonHotLoadConfigChanges, title, titleLine2);
+    }
+    
+    /**
+     * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded.
+     * 
+     * @param parentScreen the parent GuiScreen object
+     * @param properties a List of IConfigProperty objects
+     * @param modID the mod ID for the mod whose config settings will be edited
+     * @param allowNonHotLoadConfigChanges send true if all config properties can be modified, send false when only isHotLoadable() == true
+     *            properties can be edited
+     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
+     *            edited.
+     * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category path of the category
+     *            currently being edited.
+     */
+    public GuiConfig(GuiScreen parentScreen, List<IConfigProperty> properties, boolean areAllPropsHotLoadable, String modID,
             boolean allowNonHotLoadConfigChanges, String title, String titleLine2)
     {
         this.mc = Minecraft.getMinecraft();
@@ -100,7 +140,7 @@ public class GuiConfig extends GuiScreen
     {
         this.mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;
-        this.properties = properties;
+        this.properties = Arrays.asList(properties);
         this.saveAction = saveAction;
         this.configObject = configObject;
         this.afterSaveAction = afterSaveAction;
@@ -246,7 +286,7 @@ public class GuiConfig extends GuiScreen
             this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
         
         this.btnUndoAll.enabled = this.propertyList.areAnyPropsEnabled() && this.propertyList.areAnyPropsChanged(false);
-        this.btnDefaultAll.enabled = this.propertyList.areAnyPropsEnabled() && !this.propertyList.areAllPropsDefault();
+        this.btnDefaultAll.enabled = this.propertyList.areAnyPropsEnabled() && !this.propertyList.areAllPropsDefault(false);
         super.drawScreen(par1, par2, par3);
         this.propertyList.drawScreenPost(par1, par2, par3);
     }

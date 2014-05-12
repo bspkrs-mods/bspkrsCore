@@ -29,6 +29,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import bspkrs.util.config.gui.GuiPropertyList.IGuiConfigListEntry;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 
@@ -1239,6 +1241,23 @@ public class Configuration
         if (!caseSensitiveCustomCategories)
             category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setLanguageKey(langKey);
+        return this;
+    }
+    
+    /**
+     * Sets the custom IGuiConfigListEntry class that should be used in place of the standard entry class (which is just a button that
+     * navigates into the category). This class MUST provide a constructor with the following parameter types: {@code GuiConfig} (the parent
+     * GuiConfig screen will be provided), {@code IConfigProperty} (the IConfigProperty for this category will be provided).
+     * 
+     * @param category the config category
+     * @param clazz a class that implements IGuiConfigListEntry
+     */
+    public Configuration setCategoryCustomIGuiConfigListEntryClass(String category, Class<? extends IGuiConfigListEntry> clazz)
+    {
+        
+        if (!caseSensitiveCustomCategories)
+            category = category.toLowerCase(Locale.ENGLISH);
+        getCategory(category).setCustomIGuiConfigListEntryClass(clazz);
         return this;
     }
     

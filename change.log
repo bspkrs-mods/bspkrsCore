@@ -4,6 +4,12 @@
 - added example props to regular config
 - fixed bugs in list edit screen
 - added titles to list edit screen
+- added isHotLoadable flag on Properties and Categories and hooked it all up
+- build script improvements
+- added code to redisplay version messages every so often instead of just once
+- better handling of main menu render ticker registration
+- created a way to make dynamically sized buttons that doesn't rely on the vanilla button code
+- added a way to allow IConfigProperty objects to define their own IGuiConfigListEntry GUIs
 6.8 - 25-Apr-2014
 - catch exceptions due to really large numbers being entered in numeric config fields
 - added ability to add a Pattern object to STRING props to validate input

@@ -17,23 +17,23 @@ import org.lwjgl.input.Keyboard;
 
 import bspkrs.client.util.HUDUtils;
 import bspkrs.util.ReflectionHelper;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiPropertyList extends GuiListExtended
 {
-    private final GuiConfig             parentGuiConfig;
-    private final Minecraft             mc;
-    private final IGuiConfigListEntry[] listEntries;
-    private int                         maxLabelTextWidth  = 0;
-    private int                         labelX;
-    private int                         controlX;
-    private int                         controlWidth;
-    private int                         resetX;
-    private int                         scrollBarX;
-    
-    private boolean                     hasChildCategories = false;
+    public final GuiConfig           parentGuiConfig;
+    private final Minecraft          mc;
+    public List<IGuiConfigListEntry> listEntries;
+    private int                      maxLabelTextWidth = 0;
+    private int                      maxEntryWidth     = 0;
+    private int                      labelX;
+    private int                      controlX;
+    private int                      controlWidth;
+    private int                      resetX;
+    private int                      scrollBarX;
     
     public GuiPropertyList(GuiConfig parent, Minecraft mc)
     {
@@ -41,7 +41,7 @@ public class GuiPropertyList extends GuiListExtended
         this.parentGuiConfig = parent;
         this.setShowSelectionBox(false);
         this.mc = mc;
-        this.listEntries = new IGuiConfigListEntry[parent.properties.length];
+        this.listEntries = new ArrayList<IGuiConfigListEntry>();
         int i = 0;
         String s = null;
         
@@ -58,8 +58,6 @@ public class GuiPropertyList extends GuiListExtended
                         this.maxLabelTextWidth = l;
                     }
                 }
-                else
-                    hasChildCategories = true;
             }
         }
         
@@ -68,61 +66,74 @@ public class GuiPropertyList extends GuiListExtended
         controlX = labelX + maxLabelTextWidth + 8;
         resetX = (this.width / 2) + (viewWidth / 2) - 45;
         controlWidth = resetX - controlX - 5;
-        scrollBarX = hasChildCategories ? Math.max(resetX + 45, this.width / 2 + 155 + 22 + 22) : resetX + 45;
+        scrollBarX = this.width;
         
         for (IConfigProperty prop : parent.properties)
         {
             if (prop != null)
             {
-                if (prop.isList())
-                    this.listEntries[i++] = new GuiPropertyList.EditListPropEntry(prop);
-                else if (prop.getType().equals(ConfigGuiType.BOOLEAN))
-                    this.listEntries[i++] = new GuiPropertyList.BooleanPropEntry(prop);
-                else if (prop.getType().equals(ConfigGuiType.INTEGER))
-                    this.listEntries[i++] = new GuiPropertyList.IntegerPropEntry(prop);
-                else if (prop.getType().equals(ConfigGuiType.DOUBLE))
-                    this.listEntries[i++] = new GuiPropertyList.DoublePropEntry(prop);
-                else if (prop.getType().equals(ConfigGuiType.COLOR))
+                if (prop.hasCustomIGuiConfigListEntry())
+                    try
+                    {
+                        this.listEntries.add(prop.getCustomIGuiConfigListEntryClass().getConstructor(GuiConfig.class, IConfigProperty.class).newInstance(this.parentGuiConfig, prop));
+                    }
+                    catch (Throwable e)
+                    {
+                        FMLLog.severe("There was a critical error instantiating the custom IGuiConfigListEntry for property %s.", prop.getName());
+                        e.printStackTrace();
+                    }
+                else if (prop.isProperty())
                 {
-                    if (prop.getValidValues() != null && prop.getValidValues().length > 0)
-                        this.listEntries[i++] = new GuiPropertyList.ColorPropEntry(prop);
-                    else
-                        this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-                }
-                else if (prop.getType().equals(ConfigGuiType.BLOCK_LIST))
-                {
-                    // TODO:
-                    this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-                }
-                else if (prop.getType().equals(ConfigGuiType.ITEMSTACK_LIST))
-                {
-                    // TODO:
-                    this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-                }
-                else if (prop.getType().equals(ConfigGuiType.ENTITY_LIST))
-                {
-                    // TODO:
-                    this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-                }
-                else if (prop.getType().equals(ConfigGuiType.BIOME_LIST))
-                {
-                    // TODO:
-                    this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-                }
-                else if (prop.getType().equals(ConfigGuiType.DIMENSION_LIST))
-                {
-                    // TODO:
-                    this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
-                }
-                else if (prop.getType().equals(ConfigGuiType.STRING))
-                {
-                    if (prop.getValidValues() != null && prop.getValidValues().length > 0)
-                        this.listEntries[i++] = new GuiPropertyList.SelectStringPropEntry(prop);
-                    else
-                        this.listEntries[i++] = new GuiPropertyList.StringPropEntry(prop);
+                    if (prop.isList())
+                        this.listEntries.add(new GuiPropertyList.EditListPropEntry(prop));
+                    else if (prop.getType().equals(ConfigGuiType.BOOLEAN))
+                        this.listEntries.add(new GuiPropertyList.BooleanPropEntry(prop));
+                    else if (prop.getType().equals(ConfigGuiType.INTEGER))
+                        this.listEntries.add(new GuiPropertyList.IntegerPropEntry(prop));
+                    else if (prop.getType().equals(ConfigGuiType.DOUBLE))
+                        this.listEntries.add(new GuiPropertyList.DoublePropEntry(prop));
+                    else if (prop.getType().equals(ConfigGuiType.COLOR))
+                    {
+                        if (prop.getValidValues() != null && prop.getValidValues().length > 0)
+                            this.listEntries.add(new GuiPropertyList.ColorPropEntry(prop));
+                        else
+                            this.listEntries.add(new GuiPropertyList.StringPropEntry(prop));
+                    }
+                    else if (prop.getType().equals(ConfigGuiType.BLOCK_LIST))
+                    {
+                        // TODO:
+                        this.listEntries.add(new GuiPropertyList.StringPropEntry(prop));
+                    }
+                    else if (prop.getType().equals(ConfigGuiType.ITEMSTACK_LIST))
+                    {
+                        // TODO:
+                        this.listEntries.add(new GuiPropertyList.StringPropEntry(prop));
+                    }
+                    else if (prop.getType().equals(ConfigGuiType.ENTITY_LIST))
+                    {
+                        // TODO:
+                        this.listEntries.add(new GuiPropertyList.StringPropEntry(prop));
+                    }
+                    else if (prop.getType().equals(ConfigGuiType.BIOME_LIST))
+                    {
+                        // TODO:
+                        this.listEntries.add(new GuiPropertyList.StringPropEntry(prop));
+                    }
+                    else if (prop.getType().equals(ConfigGuiType.DIMENSION_LIST))
+                    {
+                        // TODO:
+                        this.listEntries.add(new GuiPropertyList.StringPropEntry(prop));
+                    }
+                    else if (prop.getType().equals(ConfigGuiType.STRING))
+                    {
+                        if (prop.getValidValues() != null && prop.getValidValues().length > 0)
+                            this.listEntries.add(new GuiPropertyList.SelectStringPropEntry(prop));
+                        else
+                            this.listEntries.add(new GuiPropertyList.StringPropEntry(prop));
+                    }
                 }
                 else if (prop.getType().equals(ConfigGuiType.CONFIG_CATEGORY))
-                    this.listEntries[i++] = new GuiConfigCategoryListEntry(prop);
+                    this.listEntries.add(new GuiConfigCategoryListEntry(prop));
             }
         }
     }
@@ -145,13 +156,18 @@ public class GuiPropertyList extends GuiListExtended
         controlX = labelX + maxLabelTextWidth + 8;
         resetX = (this.width / 2) + (viewWidth / 2) - 45;
         controlWidth = resetX - controlX - 5;
-        scrollBarX = hasChildCategories ? Math.max(resetX + 45, this.width / 2 + 155 + 22 + 22) : resetX + 45;
+        
+        for (IGuiConfigListEntry entry : this.listEntries)
+            if (entry.getEntryRightBound() > this.maxEntryWidth)
+                this.maxEntryWidth = entry.getEntryRightBound();
+        
+        scrollBarX = this.maxEntryWidth + 5;
     }
     
     @Override
     protected int getSize()
     {
-        return this.listEntries.length;
+        return this.listEntries.size();
     }
     
     /**
@@ -160,7 +176,7 @@ public class GuiPropertyList extends GuiListExtended
     @Override
     public IGuiConfigListEntry getListEntry(int index)
     {
-        return this.listEntries[index];
+        return this.listEntries.get(index);
     }
     
     @Override
@@ -180,32 +196,32 @@ public class GuiPropertyList extends GuiListExtended
     
     protected void keyTyped(char eventChar, int eventKey)
     {
-        for (int i = 0; i < this.getSize(); i++)
-            listEntries[i].keyTyped(eventChar, eventKey);
+        for (IGuiConfigListEntry entry : this.listEntries)
+            entry.keyTyped(eventChar, eventKey);
     }
     
     protected void updateScreen()
     {
-        for (int i = 0; i < this.getSize(); i++)
-            listEntries[i].updateCursorCounter();
+        for (IGuiConfigListEntry entry : this.listEntries)
+            entry.updateCursorCounter();
     }
     
     protected void mouseClicked(int x, int y, int mouseEvent)
     {
-        for (int i = 0; i < this.getSize(); i++)
-            listEntries[i].mouseClicked(x, y, mouseEvent);
+        for (IGuiConfigListEntry entry : this.listEntries)
+            entry.mouseClicked(x, y, mouseEvent);
     }
     
     protected void saveProperties()
     {
-        for (int i = 0; i < this.getSize(); i++)
-            listEntries[i].saveProperty();
+        for (IGuiConfigListEntry entry : this.listEntries)
+            entry.saveProperty();
     }
     
-    protected boolean areAllPropsDefault()
+    protected boolean areAllPropsDefault(boolean includeSubCategoryProps)
     {
-        for (int i = 0; i < this.getSize(); i++)
-            if (!listEntries[i].isDefault())
+        for (IGuiConfigListEntry entry : this.listEntries)
+            if ((includeSubCategoryProps || !(entry instanceof GuiConfigCategoryListEntry)) && !entry.isDefault())
                 return false;
         
         return true;
@@ -213,14 +229,14 @@ public class GuiPropertyList extends GuiListExtended
     
     protected void setAllPropsDefault()
     {
-        for (int i = 0; i < this.getSize(); i++)
-            listEntries[i].setToDefault();
+        for (IGuiConfigListEntry entry : this.listEntries)
+            entry.setToDefault();
     }
     
     protected boolean areAnyPropsChanged(boolean includeSubCategoryProps)
     {
-        for (int i = 0; i < this.getSize(); i++)
-            if ((includeSubCategoryProps || !(listEntries[i] instanceof GuiConfigCategoryListEntry)) && listEntries[i].isChanged())
+        for (IGuiConfigListEntry entry : this.listEntries)
+            if ((includeSubCategoryProps || !(entry instanceof GuiConfigCategoryListEntry)) && entry.isChanged())
                 return true;
         
         return false;
@@ -228,8 +244,8 @@ public class GuiPropertyList extends GuiListExtended
     
     protected boolean areAnyPropsEnabled()
     {
-        for (int i = 0; i < this.getSize(); i++)
-            if (!(listEntries[i] instanceof GuiConfigCategoryListEntry) && listEntries[i].enabled())
+        for (IGuiConfigListEntry entry : this.listEntries)
+            if (!(entry instanceof GuiConfigCategoryListEntry) && entry.enabled())
                 return true;
         
         return false;
@@ -237,14 +253,14 @@ public class GuiPropertyList extends GuiListExtended
     
     protected void undoAllChanges()
     {
-        for (int i = 0; i < this.getSize(); i++)
-            listEntries[i].undoChanges();
+        for (IGuiConfigListEntry entry : this.listEntries)
+            entry.undoChanges();
     }
     
     protected void drawScreenPost(int mouseX, int mouseY, float f)
     {
-        for (int i = 0; i < this.getSize(); i++)
-            listEntries[i].drawToolTip(mouseX, mouseY);
+        for (IGuiConfigListEntry entry : this.listEntries)
+            entry.drawToolTip(mouseX, mouseY);
     }
     
     /**
@@ -254,7 +270,6 @@ public class GuiPropertyList extends GuiListExtended
     /**
      * BooleanPropEntry
      */
-    @SideOnly(Side.CLIENT)
     public class BooleanPropEntry extends ButtonPropEntry
     {
         private final boolean beforeValue;
@@ -326,7 +341,6 @@ public class GuiPropertyList extends GuiListExtended
     /**
      * SelectStringPropEntry
      */
-    @SideOnly(Side.CLIENT)
     public class SelectStringPropEntry extends ButtonPropEntry
     {
         private final int beforeIndex;
@@ -415,7 +429,6 @@ public class GuiPropertyList extends GuiListExtended
     /**
      * ColorPropEntry
      */
-    @SideOnly(Side.CLIENT)
     public class ColorPropEntry extends SelectStringPropEntry
     {
         ColorPropEntry(IConfigProperty prop)
@@ -523,7 +536,6 @@ public class GuiPropertyList extends GuiListExtended
     /**
      * ButtonPropEntry
      */
-    @SideOnly(Side.CLIENT)
     public abstract class ButtonPropEntry extends GuiConfigListEntry
     {
         protected final GuiButtonExt btnValue;
@@ -598,7 +610,6 @@ public class GuiPropertyList extends GuiListExtended
     /**
      * IntegerPropEntry
      */
-    @SideOnly(Side.CLIENT)
     public class IntegerPropEntry extends StringPropEntry
     {
         private final int beforeValue;
@@ -697,7 +708,6 @@ public class GuiPropertyList extends GuiListExtended
     /**
      * DoublePropEntry
      */
-    @SideOnly(Side.CLIENT)
     public class DoublePropEntry extends StringPropEntry
     {
         private final double beforeValue;
@@ -797,7 +807,6 @@ public class GuiPropertyList extends GuiListExtended
     /**
      * StringPropEntry
      */
-    @SideOnly(Side.CLIENT)
     public class StringPropEntry extends GuiConfigListEntry
     {
         protected final GuiTextField textFieldValue;
@@ -910,7 +919,6 @@ public class GuiPropertyList extends GuiListExtended
     /**
      * GuiConfigListEntry
      */
-    @SideOnly(Side.CLIENT)
     public abstract class GuiConfigListEntry implements IGuiConfigListEntry
     {
         protected final IConfigProperty prop;
@@ -1066,12 +1074,17 @@ public class GuiPropertyList extends GuiListExtended
             return parentGuiConfig.allowNonHotLoadConfigChanges || parentGuiConfig.areAllPropsHotLoadable || prop.isHotLoadable();
         }
         
+        @Override
+        public int getEntryRightBound()
+        {
+            return resetX + 40;
+        }
+        
     }
     
     /**
      * GuiConfigListEntry
      */
-    @SideOnly(Side.CLIENT)
     public class GuiConfigCategoryListEntry implements IGuiConfigListEntry
     {
         protected final IConfigProperty prop;
@@ -1092,7 +1105,7 @@ public class GuiPropertyList extends GuiListExtended
         {
             this.prop = prop;
             
-            subGuiConfig = new GuiConfig(GuiPropertyList.this.parentGuiConfig, prop.getConfigProperties(), prop.isHotLoadable(), parentGuiConfig.modID,
+            subGuiConfig = new GuiConfig(GuiPropertyList.this.parentGuiConfig, prop.getConfigPropertiesList(), prop.isHotLoadable(), parentGuiConfig.modID,
                     parentGuiConfig.allowNonHotLoadConfigChanges, parentGuiConfig.title, prop.getQualifiedName());
             
             if (I18n.format(prop.getLanguageKey()).equals(prop.getLanguageKey()))
@@ -1202,7 +1215,7 @@ public class GuiPropertyList extends GuiListExtended
         public boolean isDefault()
         {
             if (this.subGuiConfig.propertyList != null)
-                return this.subGuiConfig.propertyList.areAllPropsDefault();
+                return this.subGuiConfig.propertyList.areAllPropsDefault(true);
             else
                 return true;
         }
@@ -1254,29 +1267,79 @@ public class GuiPropertyList extends GuiListExtended
         {
             return parentGuiConfig.allowNonHotLoadConfigChanges || parentGuiConfig.areAllPropsHotLoadable || prop.isHotLoadable();
         }
+        
+        @Override
+        public int getEntryRightBound()
+        {
+            return GuiPropertyList.this.width / 2 + 155 + 22 + 18;
+        }
     }
     
-    @SideOnly(Side.CLIENT)
     public interface IGuiConfigListEntry extends GuiListExtended.IGuiListEntry
     {
+        /**
+         * Is this list entry enabled?
+         * 
+         * @return true if this entry's controls should be enabled, false otherwise.
+         */
         public boolean enabled();
         
+        /**
+         * Handles user keystrokes for any GuiTextField objects in this entry. Call {@code GuiTextField.keyTyped()} for any GuiTextField
+         * objects that should receive the input provided.
+         */
         public void keyTyped(char eventChar, int eventKey);
         
+        /**
+         * Call {@code GuiTextField.updateCursorCounter()} for any GuiTextField objects in this entry.
+         */
         public void updateCursorCounter();
         
+        /**
+         * Call {@code GuiTextField.mouseClicked()} for and GuiTextField objects in this entry.
+         */
         public void mouseClicked(int x, int y, int mouseEvent);
         
+        /**
+         * Is this entry's value equal to the default value? Generally true should be returned if this entry is not a property or category
+         * entry.
+         * 
+         * @return true if this entry's value is equal to this entry's default value.
+         */
         public boolean isDefault();
         
+        /**
+         * Sets this entry's value to the default value.
+         */
         public void setToDefault();
         
+        /**
+         * Handles reverting any changes that have occurred to this entry.
+         */
         public void undoChanges();
         
+        /**
+         * Has the value of this entry changed?
+         * 
+         * @return true if changes have been made to this entry's value, false otherwise.
+         */
         public boolean isChanged();
         
+        /**
+         * Handles saving any changes that have been made to this entry back to the underlying object. It is a good practice to check
+         * isChanged() before performing the save action.
+         */
         public void saveProperty();
         
+        /**
+         * Handles drawing any tooltips that apply to this entry. This method is called after all other GUI elements have been drawn to the
+         * screen, so it could also be used to draw any GUI element that needs to be drawn after all entries have had drawEntry() called.
+         */
         public void drawToolTip(int mouseX, int mouseY);
+        
+        /**
+         * Gets this entry's right-hand x boundary. This value is used to control where the scroll bar is placed.
+         */
+        public int getEntryRightBound();
     }
 }

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import bspkrs.util.config.gui.GuiPropertyList.IGuiConfigListEntry;
+
 public class Property
 {
     public enum Type
@@ -57,25 +59,27 @@ public class Property
         }
     }
     
-    private String        name;
-    private String        value;
-    private String        defaultValue;
-    public String         comment;
-    private String[]      values;
-    private String[]      defaultValues;
-    private String[]      validValues;
-    private String        langKey;
-    private String        minValue;
-    private String        maxValue;
+    private String                               name;
+    private String                               value;
+    private String                               defaultValue;
+    public String                                comment;
+    private String[]                             values;
+    private String[]                             defaultValues;
+    private String[]                             validValues;
+    private String                               langKey;
+    private String                               minValue;
+    private String                               maxValue;
     
-    private boolean       isHotLoadable;
-    private Pattern       stringValidationPattern;
-    private final boolean wasRead;
-    private final boolean isList;
-    private boolean       isListLengthFixed = false;
-    private int           maxListLength     = -1;
-    private final Type    type;
-    private boolean       changed           = false;
+    private Class<? extends IGuiConfigListEntry> customEntryClass;
+    
+    private boolean                              isHotLoadable;
+    private Pattern                              stringValidationPattern;
+    private final boolean                        wasRead;
+    private final boolean                        isList;
+    private boolean                              isListLengthFixed = false;
+    private int                                  maxListLength     = -1;
+    private final Type                           type;
+    private boolean                              changed           = false;
     
     public Property(String name, String value, Type type)
     {
@@ -353,6 +357,30 @@ public class Property
     public boolean isHotLoadable()
     {
         return this.isHotLoadable;
+    }
+    
+    /**
+     * Sets a custom IGuiConfigListEntry class that should be used in place of the standard entry class for this Property type. This class
+     * MUST provide a constructor with the following parameter types: {@code GuiConfig} (the parent GuiConfig screen will be provided),
+     * {@code IConfigProperty} (the IConfigProperty for this Property will be provided).
+     * 
+     * @param clazz a class that implements IGuiConfigListEntry
+     */
+    public Property setCustomIGuiConfigListEntryClass(Class<? extends IGuiConfigListEntry> clazz)
+    {
+        this.customEntryClass = clazz;
+        return this;
+    }
+    
+    /**
+     * Gets the custom IGuiConfigListEntry class that should be used in place of the standard entry class for this Property type, or null if
+     * none has been set.
+     * 
+     * @return a class that implements IGuiConfigListEntry
+     */
+    public Class<? extends IGuiConfigListEntry> getCustomIGuiConfigListEntryClass()
+    {
+        return this.customEntryClass;
     }
     
     /**
