@@ -26,8 +26,8 @@ public class GuiConfig extends GuiScreen
      * A reference to the screen object that created this. Used for navigating between screens.
      */
     public final GuiScreen             parentScreen;
-    protected String                   title        = "Config GUI";
-    protected String                   titleLine2;
+    public String                      title        = "Config GUI";
+    public String                      titleLine2;
     public final List<IConfigProperty> properties;
     public GuiPropertyList             propertyList;
     private GuiButtonExt               btnDefaultAll;
@@ -41,7 +41,7 @@ public class GuiConfig extends GuiScreen
     protected Method                   afterSaveAction;
     @Deprecated
     protected Object                   afterSaveObject;
-    protected final String             modID;
+    public final String                modID;
     public final boolean               allowNonHotLoadConfigChanges;
     public final boolean               areAllPropsHotLoadable;
     private boolean                    needsRefresh = true;
@@ -291,8 +291,8 @@ public class GuiConfig extends GuiScreen
         if (this.titleLine2 != null)
             this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
         
-        this.btnUndoAll.enabled = this.propertyList.areAnyPropsEnabled() && this.propertyList.areAnyPropsChanged(this.chkApplyGlobally.isChecked());
-        this.btnDefaultAll.enabled = this.propertyList.areAnyPropsEnabled() && !this.propertyList.areAllPropsDefault(this.chkApplyGlobally.isChecked());
+        this.btnUndoAll.enabled = this.propertyList.areAnyPropsEnabled(this.chkApplyGlobally.isChecked()) && this.propertyList.areAnyPropsChanged(this.chkApplyGlobally.isChecked());
+        this.btnDefaultAll.enabled = this.propertyList.areAnyPropsEnabled(this.chkApplyGlobally.isChecked()) && !this.propertyList.areAllPropsDefault(this.chkApplyGlobally.isChecked());
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.propertyList.drawScreenPost(mouseX, mouseY, partialTicks);
         if (this.checkBoxHoverChecker.checkHover(mouseX, mouseY))
