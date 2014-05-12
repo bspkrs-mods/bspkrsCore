@@ -63,7 +63,12 @@ public class GuiSelectStringEntries extends GuiListExtended
         @Override
         public int compare(Entry<String, String> o1, Entry<String, String> o2)
         {
-            return o1.getValue().toLowerCase().compareTo(o2.getValue().toLowerCase());
+            int compare = o1.getValue().toLowerCase().compareTo(o2.getValue().toLowerCase());
+            
+            if (compare == 0)
+                compare = o1.getKey().toLowerCase().compareTo(o2.getKey().toLowerCase());
+            
+            return compare;
         }
     }
     
