@@ -32,6 +32,7 @@ public class GuiConfig extends GuiScreen
     public GuiPropertyList             propertyList;
     private GuiButtonExt               btnDefaultAll;
     private GuiButtonExt               btnUndoAll;
+    private GuiCheckBox                chkApplyGlobally;
     @Deprecated
     protected Method                   saveAction;
     @Deprecated
@@ -44,6 +45,7 @@ public class GuiConfig extends GuiScreen
     public final boolean               allowNonHotLoadConfigChanges;
     public final boolean               areAllPropsHotLoadable;
     private boolean                    needsRefresh = true;
+    private HoverChecker               checkBoxHoverChecker;
     
     /**
      * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded.
@@ -181,10 +183,14 @@ public class GuiConfig extends GuiScreen
         int doneWidth = Math.max(mc.fontRenderer.getStringWidth(I18n.format("gui.done")) + 20, 100);
         int undoWidth = mc.fontRenderer.getStringWidth("↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")) + 20;
         int resetWidth = mc.fontRenderer.getStringWidth("☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")) + 20;
-        int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth) / 2;
+        int checkWidth = mc.fontRenderer.getStringWidth(I18n.format("bspkrs.configgui.applyGlobally")) + 13;
+        int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth + 5 + checkWidth) / 2;
         this.buttonList.add(new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
         this.buttonList.add(this.btnDefaultAll = new GuiButtonExt(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5, this.height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
         this.buttonList.add(btnUndoAll = new GuiButtonExt(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5, this.height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
+        this.buttonList.add(chkApplyGlobally = new GuiCheckBox(2003, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5 + resetWidth + 5, this.height - 24, I18n.format("bspkrs.configgui.applyGlobally"), false));
+        
+        this.checkBoxHoverChecker = new HoverChecker(chkApplyGlobally, 800);
         this.propertyList.initGui();
     }
     
@@ -223,11 +229,11 @@ public class GuiConfig extends GuiScreen
         }
         else if (button.id == 2001)
         {
-            this.propertyList.setAllPropsDefault();
+            this.propertyList.setAllPropsDefault(this.chkApplyGlobally.isChecked());
         }
         else if (button.id == 2002)
         {
-            this.propertyList.undoAllChanges();
+            this.propertyList.undoAllChanges(this.chkApplyGlobally.isChecked());
         }
     }
     
@@ -277,18 +283,20 @@ public class GuiConfig extends GuiScreen
      * Draws the screen and all the components in it.
      */
     @Override
-    public void drawScreen(int par1, int par2, float par3)
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        this.propertyList.drawScreen(par1, par2, par3);
+        this.propertyList.drawScreen(mouseX, mouseY, partialTicks);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
         if (this.titleLine2 != null)
             this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
         
-        this.btnUndoAll.enabled = this.propertyList.areAnyPropsEnabled() && this.propertyList.areAnyPropsChanged(false);
-        this.btnDefaultAll.enabled = this.propertyList.areAnyPropsEnabled() && !this.propertyList.areAllPropsDefault(false);
-        super.drawScreen(par1, par2, par3);
-        this.propertyList.drawScreenPost(par1, par2, par3);
+        this.btnUndoAll.enabled = this.propertyList.areAnyPropsEnabled() && this.propertyList.areAnyPropsChanged(this.chkApplyGlobally.isChecked());
+        this.btnDefaultAll.enabled = this.propertyList.areAnyPropsEnabled() && !this.propertyList.areAllPropsDefault(this.chkApplyGlobally.isChecked());
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.propertyList.drawScreenPost(mouseX, mouseY, partialTicks);
+        if (this.checkBoxHoverChecker.checkHover(mouseX, mouseY))
+            this.drawToolTip(Arrays.asList(new String[] { I18n.format("bspkrs.configgui.applyGlobally.tooltip") }), mouseX, mouseY);
     }
     
     public void drawToolTip(List stringList, int x, int y)

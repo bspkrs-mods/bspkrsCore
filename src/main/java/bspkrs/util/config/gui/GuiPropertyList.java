@@ -227,10 +227,11 @@ public class GuiPropertyList extends GuiListExtended
         return true;
     }
     
-    protected void setAllPropsDefault()
+    protected void setAllPropsDefault(boolean includeSubCategoryProps)
     {
         for (IGuiConfigListEntry entry : this.listEntries)
-            entry.setToDefault();
+            if ((includeSubCategoryProps || !(entry instanceof GuiConfigCategoryListEntry)))
+                entry.setToDefault();
     }
     
     protected boolean areAnyPropsChanged(boolean includeSubCategoryProps)
@@ -251,10 +252,11 @@ public class GuiPropertyList extends GuiListExtended
         return false;
     }
     
-    protected void undoAllChanges()
+    protected void undoAllChanges(boolean includeSubCategoryProps)
     {
         for (IGuiConfigListEntry entry : this.listEntries)
-            entry.undoChanges();
+            if ((includeSubCategoryProps || !(entry instanceof GuiConfigCategoryListEntry)))
+                entry.undoChanges();
     }
     
     protected void drawScreenPost(int mouseX, int mouseY, float f)
@@ -1223,7 +1225,7 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public void setToDefault()
         {
-            this.subGuiConfig.propertyList.setAllPropsDefault();
+            this.subGuiConfig.propertyList.setAllPropsDefault(true);
         }
         
         @Override
@@ -1259,7 +1261,7 @@ public class GuiPropertyList extends GuiListExtended
         {
             
             if (this.subGuiConfig.propertyList != null)
-                this.subGuiConfig.propertyList.undoAllChanges();
+                this.subGuiConfig.propertyList.undoAllChanges(true);
         }
         
         @Override
