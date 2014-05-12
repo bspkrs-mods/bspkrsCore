@@ -61,12 +61,12 @@ public interface IConfigProperty
     public String getComment();
     
     /**
-     * [Category] Gets this category's child categories/properties. For best results this method should return a List with the child
-     * categories ordered before the child properties.
+     * [Category] Gets this category's child categories/properties. When listCategoriesFirst is true, categories should be listed at the
+     * beginning of the list. When listCategoriesFirst is false categories should be listed at the end of the list.
      * 
      * @return This category's child categories/properties.
      */
-    public List<IConfigProperty> getConfigPropertiesList();
+    public List<IConfigProperty> getConfigPropertiesList(boolean listCategoriesFirst);
     
     /**
      * [Property, Category] Gets the ConfigGuiType value corresponding to the type of this property object, or CONFIG_CATEGORY if this is a

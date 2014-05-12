@@ -1,14 +1,18 @@
 package bspkrs.client.util;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
@@ -28,6 +32,64 @@ public class EntityUtils
     public static void resetErroredOut(boolean bol)
     {
         erroredOut = bol;
+    }
+    
+    // @formatter:off
+    /**
+     * <hipsterpig> i have some idea how to
+     * <hipsterpig> but it's too complicated for me to bother with
+     * <hipsterpig> i'll have to sketch it on a piece of paper for me to get it just right
+     * <hipsterpig> okay so first off you need to take note of the how large/squishy the renderer is scaling the model, that's done in 
+     * preRenderCallback of the renderer, protected iirc so you have to reflect in
+     * <hipsterpig> then you need to go through the list of ModelRenderer in the mainModel class and set the compiled field in all of them to false
+     * <hipsterpig> force the model to render so that pieces of the model that will actually render will set the compiled field back to true
+     * <hipsterpig> gather all these ModelRenderer vars in said list, then you hav to go through their ModelBox list, find out their 
+     * size and relative position on the ModelRenderer to find the outermost ModelBoxes in the XYZ axises
+     * <hipsterpig> then from there you have your width, height, and length.. as well as how much the renderer scales the model
+     * <hipsterpig> now the problem here is there are some unique models, in vanilla alone. one being the enderdragon, another being 
+     * the villager zombie, just off the top of my mind
+     * <hipsterpig> ender dragon only has a half of the body as a model, the other half is reflected while rendering, and the model itself is rotated 180
+     * <hipsterpig> for the villager zombie, when it's being rendered it doesn't set the mainModel as the villager zombie's model, 
+     * so if you pull the mainModel out of the RendererLivingEntity and try to render that to get the compiled ModelRenderers, it'll turn up with nothing
+     * <hipsterpig> if you ask why i do that compile check, horse models.
+     * <hipsterpig> horse models have horse, donkey, mule, armor, chest, all in one model, and in one big cluttered mess
+     * <bspkrs> would renderPassModel work?
+     * <hipsterpig> i've never looked at renderPassModel. I assumed renderPassModel would be null for a lot mod entities, especially 
+     * custom mobs with no armor equip
+     * <hipsterpig> but.. that poi also never looked how minecraft swaps villager zombies properly
+     * <hipsterpig> bspkrs: heh, <hipsterpig> but it's too complicated for me to bother with
+     * <bspkrs> yep
+     * <bspkrs> seems like it shouldn't be too hard, but then it is
+     * <hipsterpig> oh right
+     * <hipsterpig> i forgot to tell you
+     * <hipsterpig> ModelBox doesn't actually store itself as dimensions
+     * <hipsterpig> it stores x1 and x2 coords
+     * <hipsterpig> so you need to get the Math.abs the difference to get the size of each axis, then round it off to int
+     * <hipsterpig> and the texture vertex of the cubes are defined by the texture offsets of the parent ModelRenderer, which could 
+     * change in between ModelBox creation in the same ModelRenderer, so you have to calculate the texture offsets manually if you want 
+     * to do something texture related with ModelBox (this isn't related to what you're asking)
+     */
+    // @formatter:on
+    public static float getModelSize(EntityLivingBase ent)
+    {
+        Render render = RenderManager.instance.getEntityRenderObject(ent);
+        if (render instanceof RendererLivingEntity)
+        {
+            RendererLivingEntity entRender = (RendererLivingEntity) render;
+            ModelBase mainModel;
+            ModelBase renderPassModel;
+            try
+            {
+                Field mainModelField;
+                Field renderPassModelField;
+                
+            }
+            catch (Throwable e)
+            {   
+                
+            }
+        }
+        return 1.8F;
     }
     
     public static void drawEntityOnScreenAtRotation(int posX, int posY, float scale, float xAngle, float yAngle, EntityLivingBase ent)

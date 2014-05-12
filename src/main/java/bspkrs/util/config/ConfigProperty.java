@@ -35,7 +35,7 @@ public class ConfigProperty implements IConfigProperty
     }
     
     @Override
-    public List<IConfigProperty> getConfigPropertiesList()
+    public List<IConfigProperty> getConfigPropertiesList(boolean listCategoriesFirst)
     {
         if (!isProperty)
         {
@@ -43,10 +43,18 @@ public class ConfigProperty implements IConfigProperty
             Iterator<ConfigCategory> ccI = ctgy.getChildren().iterator();
             Iterator<Property> pI = ctgy.getValues().values().iterator();
             int index = 0;
-            while (ccI.hasNext())
-                props.add(new ConfigProperty(ccI.next()));
+            
+            if (listCategoriesFirst)
+                while (ccI.hasNext())
+                    props.add(new ConfigProperty(ccI.next()));
+            
             while (pI.hasNext())
                 props.add(new ConfigProperty(pI.next()));
+            
+            if (!listCategoriesFirst)
+                while (ccI.hasNext())
+                    props.add(new ConfigProperty(ccI.next()));
+            
             return props;
         }
         return null;
@@ -117,6 +125,8 @@ public class ConfigProperty implements IConfigProperty
                 return ConfigGuiType.BIOME_LIST;
             else if (type.equals(Property.Type.DIMENSION_LIST))
                 return ConfigGuiType.DIMENSION_LIST;
+            else if (type.equals(Property.Type.MOD_ID))
+                return ConfigGuiType.MOD_ID;
             else
                 return ConfigGuiType.STRING;
         }

@@ -12,5 +12,6 @@ public enum ConfigGuiType
     ITEMSTACK_LIST,
     DIMENSION_LIST,
     BIOME_LIST,
+    MOD_ID,
     CONFIG_CATEGORY;
 }

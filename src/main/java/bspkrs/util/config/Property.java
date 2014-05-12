@@ -24,7 +24,8 @@ public class Property
         BLOCK_LIST('T'),
         ITEMSTACK_LIST('O'),
         DIMENSION_LIST('W'),
-        BIOME_LIST('R');
+        BIOME_LIST('R'),
+        MOD_ID('P');
         
         private char id;
         
@@ -38,7 +39,7 @@ public class Property
             this.id = id;
         }
         
-        private static Type[] values = { STRING, INTEGER, BOOLEAN, DOUBLE, COLOR, ENTITY_LIST, BLOCK_LIST, ITEMSTACK_LIST, DIMENSION_LIST, BIOME_LIST };
+        private static Type[] values = { STRING, INTEGER, BOOLEAN, DOUBLE, COLOR, ENTITY_LIST, BLOCK_LIST, ITEMSTACK_LIST, DIMENSION_LIST, BIOME_LIST, MOD_ID };
         
         public static Type tryParse(char id)
         {

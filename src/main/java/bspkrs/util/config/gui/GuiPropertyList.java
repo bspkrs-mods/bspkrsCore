@@ -3,6 +3,8 @@ package bspkrs.util.config.gui;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -18,6 +20,8 @@ import org.lwjgl.input.Keyboard;
 import bspkrs.client.util.HUDUtils;
 import bspkrs.util.ReflectionHelper;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -147,6 +151,13 @@ public class GuiPropertyList extends GuiListExtended
                         // TODO:
                         this.listEntries.add(new GuiPropertyList.StringPropEntry(this.parentGuiConfig, this, prop));
                     }
+                    else if (prop.getType().equals(ConfigGuiType.MOD_ID))
+                    {
+                        Map<String, String> values = new TreeMap<String, String>();
+                        for (ModContainer mod : Loader.instance().getActiveModList())
+                            values.put(mod.getModId(), mod.getName());
+                        this.listEntries.add(new SelectValuePropEntry(this.parentGuiConfig, this, prop, values));
+                    }
                     else if (prop.getType().equals(ConfigGuiType.STRING))
                     {
                         if (prop.getValidValues() != null && prop.getValidValues().length > 0)
@@ -195,7 +206,7 @@ public class GuiPropertyList extends GuiListExtended
     }
     
     @Override
-    protected int getSize()
+    public int getSize()
     {
         return this.listEntries.size();
     }
@@ -210,7 +221,7 @@ public class GuiPropertyList extends GuiListExtended
     }
     
     @Override
-    protected int getScrollBarX()
+    public int getScrollBarX()
     {
         return scrollBarX;
     }
@@ -227,7 +238,7 @@ public class GuiPropertyList extends GuiListExtended
     /**
      * This method is a pass-through for IGuiConfigListEntry objects that require keystrokes. Called from the parent GuiConfig screen.
      */
-    protected void keyTyped(char eventChar, int eventKey)
+    public void keyTyped(char eventChar, int eventKey)
     {
         for (IGuiConfigListEntry entry : this.listEntries)
             entry.keyTyped(eventChar, eventKey);
@@ -237,7 +248,7 @@ public class GuiPropertyList extends GuiListExtended
      * This method is a pass-through for IGuiConfigListEntry objects that contain GuiTextField elements. Called from the parent GuiConfig
      * screen.
      */
-    protected void updateScreen()
+    public void updateScreen()
     {
         for (IGuiConfigListEntry entry : this.listEntries)
             entry.updateCursorCounter();
@@ -247,7 +258,7 @@ public class GuiPropertyList extends GuiListExtended
      * This method is a pass-through for IGuiConfigListEntry objects that contain GuiTextField elements. Called from the parent GuiConfig
      * screen.
      */
-    protected void mouseClicked(int mouseX, int mouseY, int mouseEvent)
+    public void mouseClicked(int mouseX, int mouseY, int mouseEvent)
     {
         for (IGuiConfigListEntry entry : this.listEntries)
             entry.mouseClicked(mouseX, mouseY, mouseEvent);
@@ -256,7 +267,7 @@ public class GuiPropertyList extends GuiListExtended
     /**
      * Saves all properties on this screen / child screens.
      */
-    protected void saveProperties()
+    public void saveProperties()
     {
         for (IGuiConfigListEntry entry : this.listEntries)
             entry.saveProperty();
@@ -266,7 +277,7 @@ public class GuiPropertyList extends GuiListExtended
      * Returns true if all IGuiConfigListEntry objects on this screen are set to default. If includeSubCategoryProps is true sub-category
      * objects are checked as well.
      */
-    protected boolean areAllPropsDefault(boolean includeSubCategoryProps)
+    public boolean areAllPropsDefault(boolean includeSubCategoryProps)
     {
         for (IGuiConfigListEntry entry : this.listEntries)
             if ((includeSubCategoryProps || !(entry instanceof GuiConfigCategoryListEntry)) && !entry.isDefault())
@@ -279,7 +290,7 @@ public class GuiPropertyList extends GuiListExtended
      * Sets all IGuiConfigListEntry objects on this screen to default. If includeSubCategoryProps is true sub-category objects are set as
      * well.
      */
-    protected void setAllPropsDefault(boolean includeSubCategoryProps)
+    public void setAllPropsDefault(boolean includeSubCategoryProps)
     {
         for (IGuiConfigListEntry entry : this.listEntries)
             if ((includeSubCategoryProps || !(entry instanceof GuiConfigCategoryListEntry)))
@@ -290,7 +301,7 @@ public class GuiPropertyList extends GuiListExtended
      * Returns true if any IGuiConfigListEntry objects on this screen are changed. If includeSubCategoryProps is true sub-category objects
      * are checked as well.
      */
-    protected boolean areAnyPropsChanged(boolean includeSubCategoryProps)
+    public boolean areAnyPropsChanged(boolean includeSubCategoryProps)
     {
         for (IGuiConfigListEntry entry : this.listEntries)
             if ((includeSubCategoryProps || !(entry instanceof GuiConfigCategoryListEntry)) && entry.isChanged())
@@ -303,7 +314,7 @@ public class GuiPropertyList extends GuiListExtended
      * Returns true if any IGuiConfigListEntry objects on this screen are enabled. If includeSubCategoryProps is true sub-category objects
      * are checked as well.
      */
-    protected boolean areAnyPropsEnabled(boolean includeSubCategoryProps)
+    public boolean areAnyPropsEnabled(boolean includeSubCategoryProps)
     {
         for (IGuiConfigListEntry entry : this.listEntries)
             if ((includeSubCategoryProps || !(entry instanceof GuiConfigCategoryListEntry)) && entry.enabled())
@@ -316,7 +327,7 @@ public class GuiPropertyList extends GuiListExtended
      * Reverts changes to all IGuiConfigListEntry objects on this screen. If includeSubCategoryProps is true sub-category objects are
      * reverted as well.
      */
-    protected void undoAllChanges(boolean includeSubCategoryProps)
+    public void undoAllChanges(boolean includeSubCategoryProps)
     {
         for (IGuiConfigListEntry entry : this.listEntries)
             if ((includeSubCategoryProps || !(entry instanceof GuiConfigCategoryListEntry)))
@@ -327,7 +338,7 @@ public class GuiPropertyList extends GuiListExtended
      * Calls the drawToolTip() method for all IGuiConfigListEntry objects on this screen. This is called from the parent GuiConfig screen
      * after drawing all other elements.
      */
-    protected void drawScreenPost(int mouseX, int mouseY, float partialTicks)
+    public void drawScreenPost(int mouseX, int mouseY, float partialTicks)
     {
         for (IGuiConfigListEntry entry : this.listEntries)
             entry.drawToolTip(mouseX, mouseY);
@@ -526,6 +537,89 @@ public class GuiPropertyList extends GuiListExtended
         public void updateValueButtonText()
         {
             this.btnValue.displayString = I18n.format(prop.getValidValues()[currentIndex]) + " - " + I18n.format("bspkrs.configgui.sampletext");
+        }
+    }
+    
+    /**
+     * SelectValuePropEntry
+     * 
+     * Provides a GuiButton with the current value as the displayString. Accepts a Map of selectable values with the signature <String,
+     * String> where the key is the String to be selected and the value is the String that will show on the selection list. EG: a map of Mod
+     * ID values where the key is the Mod ID and the value is the Mod Name.
+     */
+    public static class SelectValuePropEntry extends ButtonPropEntry
+    {
+        private final String        beforeValue;
+        private String              currentValue;
+        private Map<String, String> selectableValues;
+        
+        public SelectValuePropEntry(GuiConfig parentGuiConfig, GuiPropertyList parentPropertyList, IConfigProperty prop, Map<String, String> selectableValues)
+        {
+            super(parentGuiConfig, parentPropertyList, prop);
+            beforeValue = prop.getString();
+            currentValue = prop.getString();
+            this.selectableValues = selectableValues;
+            updateValueButtonText();
+        }
+        
+        @Override
+        public void updateValueButtonText()
+        {
+            this.btnValue.displayString = currentValue;
+        }
+        
+        @Override
+        public void valueButtonPressed(int slotIndex)
+        {
+            mc.displayGuiScreen(new GuiSelectString(this.parentGuiConfig, prop, slotIndex, selectableValues, currentValue, enabled()));
+        }
+        
+        public void setValueFromChildScreen(String newValue)
+        {
+            if (enabled() && !currentValue.equals(newValue))
+            {
+                currentValue = newValue;
+                updateValueButtonText();
+            }
+        }
+        
+        @Override
+        public boolean isDefault()
+        {
+            return prop.getDefault().equals(currentValue);
+        }
+        
+        @Override
+        public void setToDefault()
+        {
+            if (enabled())
+            {
+                this.currentValue = prop.getDefault();
+                updateValueButtonText();
+            }
+        }
+        
+        @Override
+        public boolean isChanged()
+        {
+            return !beforeValue.equals(currentValue);
+        }
+        
+        @Override
+        public void undoChanges()
+        {
+            if (enabled())
+            {
+                currentValue = beforeValue;
+                updateValueButtonText();
+            }
+        }
+        
+        @Override
+        public void saveProperty()
+        {
+            if (enabled() && isChanged())
+                this.prop.set(currentValue);
         }
     }
     
@@ -921,12 +1015,12 @@ public class GuiPropertyList extends GuiListExtended
             super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
             try
             {
-                if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146209_f", "xPosition", this.textFieldValue, -1) != this.parentPropertyList.controlX + 1)
-                    ReflectionHelper.setIntValue(GuiTextField.class, "field_146209_f", "xPosition", this.textFieldValue, this.parentPropertyList.controlX + 1);
+                if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146209_f", "xPosition", this.textFieldValue, -1) != this.parentPropertyList.controlX + 2)
+                    ReflectionHelper.setIntValue(GuiTextField.class, "field_146209_f", "xPosition", this.textFieldValue, this.parentPropertyList.controlX + 2);
                 if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146210_g", "yPosition", this.textFieldValue, -1) != y + 1)
                     ReflectionHelper.setIntValue(GuiTextField.class, "field_146210_g", "yPosition", this.textFieldValue, y + 1);
-                if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146218_h", "width", this.textFieldValue, -1) != this.parentPropertyList.controlWidth - 3)
-                    ReflectionHelper.setIntValue(GuiTextField.class, "field_146218_h", "width", this.textFieldValue, this.parentPropertyList.controlWidth - 3);
+                if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146218_h", "width", this.textFieldValue, -1) != this.parentPropertyList.controlWidth - 4)
+                    ReflectionHelper.setIntValue(GuiTextField.class, "field_146218_h", "width", this.textFieldValue, this.parentPropertyList.controlWidth - 4);
             }
             catch (Throwable e)
             {
@@ -1024,7 +1118,7 @@ public class GuiPropertyList extends GuiListExtended
         {
             super(parentGuiConfig, parentPropertyList, prop);
             
-            subGuiConfig = new GuiConfig(this.parentGuiConfig, this.prop.getConfigPropertiesList(), this.prop.isHotLoadable(), this.parentGuiConfig.modID,
+            subGuiConfig = new GuiConfig(this.parentGuiConfig, this.prop.getConfigPropertiesList(false), this.prop.isHotLoadable(), this.parentGuiConfig.modID,
                     this.parentGuiConfig.allowNonHotLoadConfigChanges, this.parentGuiConfig.title, this.prop.getQualifiedName());
             
             this.btnSelectCategory = new GuiButtonExt(0, 0, 0, 300, 18, I18n.format(propName));
@@ -1128,6 +1222,12 @@ public class GuiPropertyList extends GuiListExtended
         public boolean enabled()
         {
             return parentGuiConfig.allowNonHotLoadConfigChanges || parentGuiConfig.areAllPropsHotLoadable || prop.isHotLoadable();
+        }
+        
+        @Override
+        public int getLabelWidth()
+        {
+            return 0;
         }
         
         @Override
@@ -1321,6 +1421,9 @@ public class GuiPropertyList extends GuiListExtended
         
     }
     
+    /**
+     * Provides an interface for defining GuiPropertyList.listEntry objects.
+     */
     public interface IGuiConfigListEntry extends GuiListExtended.IGuiListEntry
     {
         /**
