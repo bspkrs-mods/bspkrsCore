@@ -446,7 +446,7 @@ public final class CommonUtils
         }
         catch (Throwable e)
         {
-            logger.log(Level.WARN, String.format("Error retrieving remote string value! Defaulting to %s", stringArrayToString(defaultValue)));
+            logger.log(Level.WARN, String.format("Error retrieving remote string value at URL %s! Defaulting to %s", url.toString(), stringArrayToString(defaultValue)));
             return defaultValue;
         }
         
