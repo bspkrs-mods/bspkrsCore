@@ -21,6 +21,14 @@ public class ConfigChangedEvent extends Event
         this.allowNonHotLoadConfigChanges = allowNonHotLoadConfigChanges;
     }
     
+    public static class OnConfigChangedEvent extends ConfigChangedEvent
+    {
+        public OnConfigChangedEvent(String modID, boolean allowNonHotLoadConfigChanges)
+        {
+            super(modID, allowNonHotLoadConfigChanges);
+        }
+    }
+    
     public static class PostConfigChangedEvent extends ConfigChangedEvent
     {
         public PostConfigChangedEvent(String modID, boolean allowNonHotLoadConfigChanges)

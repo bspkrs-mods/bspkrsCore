@@ -8,12 +8,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.input.Keyboard;
 
 import bspkrs.util.config.ConfigChangedEvent;
+import bspkrs.util.config.ConfigChangedEvent.OnConfigChangedEvent;
 import bspkrs.util.config.ConfigChangedEvent.PostConfigChangedEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.relauncher.Side;
@@ -214,10 +215,10 @@ public class GuiConfig extends GuiScreen
                     }
                     else if (Loader.isModLoaded(modID))
                     {
-                        ConfigChangedEvent event = new ConfigChangedEvent(modID, this.allowNonHotLoadConfigChanges);
-                        MinecraftForge.EVENT_BUS.post(event);
+                        ConfigChangedEvent event = new OnConfigChangedEvent(modID, this.allowNonHotLoadConfigChanges);
+                        FMLCommonHandler.instance().bus().post(event);
                         if (!event.getResult().equals(Result.DENY))
-                            MinecraftForge.EVENT_BUS.post(new PostConfigChangedEvent(modID, allowNonHotLoadConfigChanges));
+                            FMLCommonHandler.instance().bus().post(new PostConfigChangedEvent(modID, allowNonHotLoadConfigChanges));
                     }
                 }
             }

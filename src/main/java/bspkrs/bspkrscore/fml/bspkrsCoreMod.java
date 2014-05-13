@@ -4,15 +4,17 @@ import static bspkrs.util.config.Configuration.CATEGORY_GENERAL;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.common.MinecraftForge;
+import bspkrs.event.UnregisterTickerEvent;
+import bspkrs.util.BSLog;
 import bspkrs.util.CommonUtils;
 import bspkrs.util.Const;
 import bspkrs.util.ModVersionChecker;
 import bspkrs.util.UniqueNameListGenerator;
-import bspkrs.util.config.ConfigChangedEvent;
+import bspkrs.util.config.ConfigChangedEvent.OnConfigChangedEvent;
 import bspkrs.util.config.Configuration;
 import bspkrs.util.config.Property;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -171,16 +173,6 @@ public class bspkrsCoreMod
         Reference.config.save();
     }
     
-    @SubscribeEvent
-    public void onConfigChanged(ConfigChangedEvent event)
-    {
-        if (event.modID.equals(Reference.MODID))
-        {
-            Reference.config.save();
-            syncConfig();
-        }
-    }
-    
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
@@ -193,11 +185,18 @@ public class bspkrsCoreMod
         if (event.getSide().isClient())
         {
             FMLCommonHandler.instance().bus().register(new NetworkHandler());
-            ClientCommandHandler.instance.registerCommand(new CommandBS());
-            isCommandRegistered = true;
+            try
+            {
+                ClientCommandHandler.instance.registerCommand(new CommandBS());
+                isCommandRegistered = true;
+            }
+            catch (Throwable e)
+            {
+                isCommandRegistered = false;
+            }
         }
         
-        MinecraftForge.EVENT_BUS.register(instance);
+        FMLCommonHandler.instance().bus().register(instance);
     }
     
     @EventHandler
@@ -214,5 +213,30 @@ public class bspkrsCoreMod
     {
         if (!isCommandRegistered)
             event.registerServerCommand(new CommandBS());
+    }
+    
+    @SubscribeEvent
+    public void onConfigChanged(OnConfigChangedEvent event)
+    {
+        if (event.modID.equals(Reference.MODID))
+        {
+            Reference.config.save();
+            syncConfig();
+        }
+    }
+    
+    @SubscribeEvent
+    public void unregisterTicker(UnregisterTickerEvent event)
+    {
+        try
+        {
+            if (ModVersionChecker.getVersionCheckerMap().containsKey(event.modID.toLowerCase(Locale.US)))
+                FMLCommonHandler.instance().bus().unregister(event.ticker);
+        }
+        catch (Throwable ignore)
+        {
+            if (this.allowDebugOutput)
+                BSLog.severe("Exception caught when unregistering ticker %s for mod %s: %s", event.ticker.toString(), event.modID, ignore.toString());
+        }
     }
 }

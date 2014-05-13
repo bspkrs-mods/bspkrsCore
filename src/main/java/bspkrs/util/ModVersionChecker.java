@@ -3,6 +3,7 @@ package bspkrs.util;
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import net.minecraft.util.StatCollector;
@@ -119,7 +120,7 @@ public class ModVersionChecker
         setLoadMessage(loadMsg);
         setInGameMessage(inGameMsg);
         
-        versionCheckerMap.put(modID.toLowerCase(), this);
+        versionCheckerMap.put(modID.toLowerCase(Locale.US), this);
     }
     
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL)
@@ -207,9 +208,9 @@ public class ModVersionChecker
     {
         String[] r = { "" };
         
-        if (versionCheckerMap.containsKey(modID.toLowerCase()))
+        if (versionCheckerMap.containsKey(modID.toLowerCase(Locale.US)))
         {
-            ModVersionChecker versionChecker = versionCheckerMap.get(modID.toLowerCase());
+            ModVersionChecker versionChecker = versionCheckerMap.get(modID.toLowerCase(Locale.US));
             if (!versionChecker.errorDetected)
             {
                 if (!isCurrentVersion(versionChecker.currentVersion, versionChecker.newVersion))

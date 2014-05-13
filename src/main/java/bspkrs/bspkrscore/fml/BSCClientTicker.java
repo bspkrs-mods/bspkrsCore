@@ -2,6 +2,7 @@ package bspkrs.bspkrscore.fml;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
+import bspkrs.event.UnregisterTickerEvent;
 import bspkrs.helpers.entity.player.EntityPlayerHelper;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -16,12 +17,16 @@ public class BSCClientTicker
 {
     public static boolean allowUpdateCheck = bspkrsCoreMod.instance.allowUpdateCheck;
     private Minecraft     mcClient;
+    public static boolean isRegistered     = false;
     
     public BSCClientTicker()
     {
-        mcClient = FMLClientHandler.instance().getClient();
-        FMLCommonHandler.instance().bus().register(this);
-        
+        if (!isRegistered)
+        {
+            mcClient = FMLClientHandler.instance().getClient();
+            FMLCommonHandler.instance().bus().register(this);
+            isRegistered = true;
+        }
     }
     
     @SubscribeEvent
@@ -31,7 +36,7 @@ public class BSCClientTicker
         {
             boolean keepTicking = !(mcClient != null && mcClient.thePlayer != null && mcClient.theWorld != null);
             
-            if (allowUpdateCheck && !keepTicking)
+            if (!keepTicking && isRegistered)
             {
                 if (bspkrsCoreMod.instance.allowUpdateCheck && bspkrsCoreMod.instance.versionChecker != null)
                     if (!bspkrsCoreMod.instance.versionChecker.isCurrentVersion())
@@ -39,17 +44,27 @@ public class BSCClientTicker
                             EntityPlayerHelper.addChatMessage(mcClient.thePlayer, new ChatComponentText(msg));
                 
                 allowUpdateCheck = false;
-            }
-            
-            if (bspkrsCoreMod.instance.allowDebugOutput && !keepTicking && mcClient.theWorld.isRemote)
-            {
-                //EntityPlayerHelper.addChatMessage(mcClient.thePlayer, new ChatComponentText("\2470\2470\2471\2472\2473\2474\2475\2476\2477\247e\247f"));
-            }
-            
-            if (!keepTicking)
-            {
-                FMLCommonHandler.instance().bus().unregister(this);
+                
+                if (bspkrsCoreMod.instance.allowDebugOutput && !keepTicking && mcClient.theWorld.isRemote)
+                {
+                    //EntityPlayerHelper.addChatMessage(mcClient.thePlayer, new ChatComponentText("\2470\2470\2471\2472\2473\2474\2475\2476\2477\247e\247f"));
+                }
+                
+                try
+                {
+                    FMLCommonHandler.instance().bus().post(new UnregisterTickerEvent(Reference.MODID, this));
+                }
+                catch (Throwable e)
+                {
+                    FMLCommonHandler.instance().bus().unregister(this);
+                }
+                isRegistered = false;
             }
         }
+    }
+    
+    public static boolean isRegistered()
+    {
+        return isRegistered;
     }
 }
