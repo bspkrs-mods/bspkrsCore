@@ -4,12 +4,9 @@ import static bspkrs.util.config.Configuration.CATEGORY_GENERAL;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 import net.minecraftforge.client.ClientCommandHandler;
-import bspkrs.event.UnregisterTickerEvent;
-import bspkrs.util.BSLog;
 import bspkrs.util.CommonUtils;
 import bspkrs.util.Const;
 import bspkrs.util.ModVersionChecker;
@@ -222,21 +219,6 @@ public class bspkrsCoreMod
         {
             Reference.config.save();
             syncConfig();
-        }
-    }
-    
-    @SubscribeEvent
-    public void unregisterTicker(UnregisterTickerEvent event)
-    {
-        try
-        {
-            if (ModVersionChecker.getVersionCheckerMap().containsKey(event.modID.toLowerCase(Locale.US)))
-                FMLCommonHandler.instance().bus().unregister(event.ticker);
-        }
-        catch (Throwable ignore)
-        {
-            if (this.allowDebugOutput)
-                BSLog.severe("Exception caught when unregistering ticker %s for mod %s: %s", event.ticker.toString(), event.modID, ignore.toString());
         }
     }
 }

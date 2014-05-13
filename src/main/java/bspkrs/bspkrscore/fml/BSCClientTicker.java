@@ -2,7 +2,6 @@ package bspkrs.bspkrscore.fml;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
-import bspkrs.event.UnregisterTickerEvent;
 import bspkrs.helpers.entity.player.EntityPlayerHelper;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -50,14 +49,7 @@ public class BSCClientTicker
                     //EntityPlayerHelper.addChatMessage(mcClient.thePlayer, new ChatComponentText("\2470\2470\2471\2472\2473\2474\2475\2476\2477\247e\247f"));
                 }
                 
-                try
-                {
-                    FMLCommonHandler.instance().bus().post(new UnregisterTickerEvent(Reference.MODID, this));
-                }
-                catch (Throwable e)
-                {
-                    FMLCommonHandler.instance().bus().unregister(this);
-                }
+                FMLCommonHandler.instance().bus().unregister(this);
                 isRegistered = false;
             }
         }

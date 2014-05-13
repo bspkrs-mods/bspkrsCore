@@ -22,7 +22,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.GuiOpenEvent;
 
 import org.lwjgl.input.Mouse;
 
@@ -59,130 +58,58 @@ public class BSMainMenuRenderTicker
     private static Object[]    entStrings;
     private static int         id;
     
-    static
-    {
-        entityBlacklist = new ArrayList();
-        entityBlacklist.add("Mob");
-        entityBlacklist.add("Monster");
-        entityBlacklist.add("EnderDragon");
-        entityBlacklist.add("Squid");
-        entityBlacklist.add("Ghast");
-        entityBlacklist.add("Bat");
-        entityBlacklist.add("CaveSpider");
-        entityBlacklist.add("Giant");
-        // Millenaire entities
-        entityBlacklist.add("MillBlaze");
-        entityBlacklist.add("MillGhast");
-        entityBlacklist.add("MillWitherSkeleton");
-        entityBlacklist.add("ml_GenericAsimmFemale");
-        entityBlacklist.add("ml_GenericSimmFemale");
-        entityBlacklist.add("ml_GenericVillager");
-        
-        entityBlacklist.add("BiomesOPlenty.Phantom");
-        entityBlacklist.add("Forestry.butterflyGE");
-        entityBlacklist.add("TConstruct.Crystal");
-        entityBlacklist.add("Thaumcraft.Firebat");
-        entityBlacklist.add("Thaumcraft.TaintSpore");
-        entityBlacklist.add("Thaumcraft.TaintSwarm");
-        entityBlacklist.add("Thaumcraft.Taintacle");
-        entityBlacklist.add("Thaumcraft.TaintacleTiny");
-        entityBlacklist.add("Thaumcraft.Wisp");
-        entityBlacklist.add("TwilightForest.Boggard");
-        entityBlacklist.add("TwilightForest.Firefly");
-        entityBlacklist.add("TwilightForest.Helmet Crab");
-        entityBlacklist.add("TwilightForest.Hydra");
-        entityBlacklist.add("TwilightForest.HydraHead");
-        entityBlacklist.add("TwilightForest.Lower Goblin Knight");
-        entityBlacklist.add("TwilightForest.Mist Wolf");
-        entityBlacklist.add("TwilightForest.Mosquito Swarm");
-        entityBlacklist.add("TwilightForest.Upper Goblin Knight");
-        
-        fallBackPlayerNames = new String[] {
-            "bspkrs", "lorddusk", "Arkember", "TTFTCUTS", "WayofFlowingTime", "Grumm", "Sacheverell", "Quetzz", "Pahimar", "ZeldoKavira",
-            "sfPlayer1", "jadedcat", "RWTema", "Scottwears", "neptunepink", "Aureylian", "direwolf20", "Krystal_Raven", "notch", "Dinnerbone",
-            "Adubbz", "AlgorithmX2", "Cloudhunter", "Lunatrius"
-        };
-        
-        playerItems = new ItemStack[] {
-            new ItemStack(Items.iron_sword), new ItemStack(Items.diamond_sword), new ItemStack(Items.golden_sword),
-            new ItemStack(Items.diamond_pickaxe), new ItemStack(Items.iron_pickaxe), new ItemStack(Items.iron_axe)
-        };
-        
-        zombieItems = new ItemStack[] {
-            new ItemStack(Items.iron_sword), new ItemStack(Items.diamond_sword), new ItemStack(Items.golden_sword), new ItemStack(Items.iron_axe)
-        };
-        
-        skelItems = new ItemStack[] {
-            new ItemStack(Items.bow), new ItemStack(Items.golden_sword), new ItemStack(Items.bow),
-            new ItemStack(Items.bow), new ItemStack(Items.bow), new ItemStack(Items.bow)
-        };
-        
-        // Get a COPY dumbass!
-        entities = new TreeSet(EntityList.stringToClassMapping.keySet());
-        entities.removeAll(entityBlacklist);
-        entStrings = entities.toArray(new Object[] {});
-        id = -1;
-    }
-    
     public BSMainMenuRenderTicker()
     {
         mcClient = FMLClientHandler.instance().getClient();
     }
     
     @SubscribeEvent
-    public void onGuiOpen(GuiOpenEvent event)
-    {
-        if (bspkrsCoreMod.instance.showMainMenuMobs)
-            if (event.gui != null && event.gui instanceof GuiMainMenu)
-                register();
-            else
-                unRegister();
-    }
-    
-    @SubscribeEvent
     public void onTick(RenderTickEvent event)
     {
-        if (bspkrsCoreMod.instance.showMainMenuMobs && (world == null || player == null || randMob == null))
-            init();
-        
-        if (bspkrsCoreMod.instance.showMainMenuMobs && mcClient.currentScreen instanceof GuiMainMenu && world != null && player != null && randMob != null)
+        if (bspkrsCoreMod.instance.showMainMenuMobs)
         {
-            ScaledResolution sr = new ScaledResolution(mcClient.gameSettings, mcClient.displayWidth, mcClient.displayHeight);
-            final int mouseX = Mouse.getX() * sr.getScaledWidth() / mcClient.displayWidth;
-            final int mouseY = sr.getScaledHeight() - Mouse.getY() * sr.getScaledHeight() / mcClient.displayHeight - 1;
-            int distanceToSide = ((mcClient.currentScreen.width / 2) - 98) / 2;
-            float targetHeight = (float) (sr.getScaledHeight_double() / 5.0F) / 1.8F;
-            float scale = EntityUtils.getEntityScale(randMob, targetHeight, 1.8F);
-            EntityUtils.drawEntityOnScreen(
-                    distanceToSide,
-                    (int) (sr.getScaledHeight() / 2 + (randMob.height * scale)),
-                    scale,
-                    distanceToSide - mouseX,
-                    (sr.getScaledHeight() / 2 + (randMob.height * scale)) - (randMob.height * scale * (randMob.getEyeHeight() / randMob.height)) - mouseY,
-                    randMob);
-            EntityUtils.drawEntityOnScreen(
-                    sr.getScaledWidth() - distanceToSide,
-                    (int) (sr.getScaledHeight() / 2 + (player.height * targetHeight)),
-                    targetHeight,
-                    sr.getScaledWidth() - distanceToSide - mouseX,
-                    (sr.getScaledHeight() / 2 + (player.height * targetHeight)) - (player.height * targetHeight * (player.getEyeHeight() / player.height)) - mouseY,
-                    player);
-        }
-        else if (world != null && (savedScreen == null || !savedScreen.equals(mcClient.currentScreen)))
-        {
-            if (bspkrsCoreMod.instance.allowDebugOutput)
+            if (world == null || player == null || randMob == null)
+                init();
+            
+            if (mcClient.currentScreen instanceof GuiMainMenu && world != null && player != null && randMob != null)
             {
-                randMob = getNextEntity(world);
-                EntityUtils.resetErroredOut(false);
+                ScaledResolution sr = new ScaledResolution(mcClient.gameSettings, mcClient.displayWidth, mcClient.displayHeight);
+                final int mouseX = Mouse.getX() * sr.getScaledWidth() / mcClient.displayWidth;
+                final int mouseY = sr.getScaledHeight() - Mouse.getY() * sr.getScaledHeight() / mcClient.displayHeight - 1;
+                int distanceToSide = ((mcClient.currentScreen.width / 2) - 98) / 2;
+                float targetHeight = (float) (sr.getScaledHeight_double() / 5.0F) / 1.8F;
+                float scale = EntityUtils.getEntityScale(randMob, targetHeight, 1.8F);
+                EntityUtils.drawEntityOnScreen(
+                        distanceToSide,
+                        (int) (sr.getScaledHeight() / 2 + (randMob.height * scale)),
+                        scale,
+                        distanceToSide - mouseX,
+                        (sr.getScaledHeight() / 2 + (randMob.height * scale)) - (randMob.height * scale * (randMob.getEyeHeight() / randMob.height)) - mouseY,
+                        randMob);
+                EntityUtils.drawEntityOnScreen(
+                        sr.getScaledWidth() - distanceToSide,
+                        (int) (sr.getScaledHeight() / 2 + (player.height * targetHeight)),
+                        targetHeight,
+                        sr.getScaledWidth() - distanceToSide - mouseX,
+                        (sr.getScaledHeight() / 2 + (player.height * targetHeight)) - (player.height * targetHeight * (player.getEyeHeight() / player.height)) - mouseY,
+                        player);
             }
-            else
+            else if (world != null && (savedScreen == null || !savedScreen.equals(mcClient.currentScreen)))
             {
-                randMob = EntityUtils.getRandomLivingEntity(world, entityBlacklist, 4, fallBackPlayerNames);
-                EntityUtils.resetErroredOut(false);
+                if (bspkrsCoreMod.instance.allowDebugOutput)
+                {
+                    randMob = getNextEntity(world);
+                    EntityUtils.resetErroredOut(false);
+                }
+                else
+                {
+                    randMob = EntityUtils.getRandomLivingEntity(world, entityBlacklist, 4, fallBackPlayerNames);
+                    EntityUtils.resetErroredOut(false);
+                }
+                setRandomMobItem(player);
+                setRandomMobItem(randMob);
+                savedScreen = mcClient.currentScreen;
             }
-            setRandomMobItem(player);
-            setRandomMobItem(randMob);
-            savedScreen = mcClient.currentScreen;
         }
     }
     
@@ -279,6 +206,7 @@ public class BSMainMenuRenderTicker
         if (isRegistered)
         {
             FMLCommonHandler.instance().bus().unregister(this);
+            //FMLInterModComms.sendRuntimeMessage(Reference.MODID, Reference.MODID, Reference.UNREGISTER_TICKER, this);
             isRegistered = false;
             randMob = null;
             player = null;
@@ -289,5 +217,70 @@ public class BSMainMenuRenderTicker
     public static boolean isRegistered()
     {
         return isRegistered;
+    }
+    
+    static
+    {
+        entityBlacklist = new ArrayList();
+        entityBlacklist.add("Mob");
+        entityBlacklist.add("Monster");
+        entityBlacklist.add("EnderDragon");
+        entityBlacklist.add("Squid");
+        entityBlacklist.add("Ghast");
+        entityBlacklist.add("Bat");
+        entityBlacklist.add("CaveSpider");
+        entityBlacklist.add("Giant");
+        // Millenaire entities
+        entityBlacklist.add("MillBlaze");
+        entityBlacklist.add("MillGhast");
+        entityBlacklist.add("MillWitherSkeleton");
+        entityBlacklist.add("ml_GenericAsimmFemale");
+        entityBlacklist.add("ml_GenericSimmFemale");
+        entityBlacklist.add("ml_GenericVillager");
+        
+        entityBlacklist.add("BiomesOPlenty.Phantom");
+        entityBlacklist.add("Forestry.butterflyGE");
+        entityBlacklist.add("TConstruct.Crystal");
+        entityBlacklist.add("Thaumcraft.Firebat");
+        entityBlacklist.add("Thaumcraft.TaintSpore");
+        entityBlacklist.add("Thaumcraft.TaintSwarm");
+        entityBlacklist.add("Thaumcraft.Taintacle");
+        entityBlacklist.add("Thaumcraft.TaintacleTiny");
+        entityBlacklist.add("Thaumcraft.Wisp");
+        entityBlacklist.add("TwilightForest.Boggard");
+        entityBlacklist.add("TwilightForest.Firefly");
+        entityBlacklist.add("TwilightForest.Helmet Crab");
+        entityBlacklist.add("TwilightForest.Hydra");
+        entityBlacklist.add("TwilightForest.HydraHead");
+        entityBlacklist.add("TwilightForest.Lower Goblin Knight");
+        entityBlacklist.add("TwilightForest.Mist Wolf");
+        entityBlacklist.add("TwilightForest.Mosquito Swarm");
+        entityBlacklist.add("TwilightForest.Upper Goblin Knight");
+        
+        fallBackPlayerNames = new String[] {
+            "bspkrs", "lorddusk", "Arkember", "TTFTCUTS", "WayofFlowingTime", "Grumm", "Sacheverell", "Quetzz", "Pahimar", "ZeldoKavira",
+            "sfPlayer1", "jadedcat", "RWTema", "Scottwears", "neptunepink", "Aureylian", "direwolf20", "Krystal_Raven", "notch", "Dinnerbone",
+            "Adubbz", "AlgorithmX2", "Cloudhunter", "Lunatrius"
+        };
+        
+        playerItems = new ItemStack[] {
+            new ItemStack(Items.iron_sword), new ItemStack(Items.diamond_sword), new ItemStack(Items.golden_sword),
+            new ItemStack(Items.diamond_pickaxe), new ItemStack(Items.iron_pickaxe), new ItemStack(Items.iron_axe)
+        };
+        
+        zombieItems = new ItemStack[] {
+            new ItemStack(Items.iron_sword), new ItemStack(Items.diamond_sword), new ItemStack(Items.golden_sword), new ItemStack(Items.iron_axe)
+        };
+        
+        skelItems = new ItemStack[] {
+            new ItemStack(Items.bow), new ItemStack(Items.golden_sword), new ItemStack(Items.bow),
+            new ItemStack(Items.bow), new ItemStack(Items.bow), new ItemStack(Items.bow)
+        };
+        
+        // Get a COPY dumbass!
+        entities = new TreeSet(EntityList.stringToClassMapping.keySet());
+        entities.removeAll(entityBlacklist);
+        entStrings = entities.toArray(new Object[] {});
+        id = -1;
     }
 }
