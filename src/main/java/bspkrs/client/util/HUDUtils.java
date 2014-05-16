@@ -255,7 +255,7 @@ public final class HUDUtils
     {
         int count = 0;
         for (int i = 0; i < player.inventory.mainInventory.length; i++)
-            if (player.inventory.mainInventory[i] != null && player.inventory.mainInventory[i].getItem().equals(item) && (md == -1 || player.inventory.mainInventory[i].getItemDamage() == md))
+            if (player.inventory.mainInventory[i] != null && item.equals(player.inventory.mainInventory[i].getItem()) && (md == -1 || player.inventory.mainInventory[i].getItemDamage() == md))
                 count += player.inventory.mainInventory[i].stackSize;
         return count;
     }
