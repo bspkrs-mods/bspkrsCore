@@ -81,10 +81,22 @@ public class ModVersionChecker
             trackerFile = new File(trackerDir, "bspkrs_ModVersionCheckerTracking.txt");
         }
         
-        if (versionCheckTracker == null)
+        try
+        {
+            if (versionCheckTracker == null)
+                versionCheckTracker = new Configuration(trackerFile);
+            else
+                versionCheckTracker.load();
+        }
+        catch (Throwable e)
+        {
+            BSLog.severe("An exception occurred while loading bspkrs_ModVersionCheckerTracking.txt. This file will be deleted and a new config file will be generated.");
+            e.printStackTrace();
+            
+            trackerFile.delete();
             versionCheckTracker = new Configuration(trackerFile);
+        }
         
-        versionCheckTracker.load();
         ConfigCategory cc = versionCheckTracker.getCategory("version_check_tracker");
         
         if (!cc.containsKey(modID))
