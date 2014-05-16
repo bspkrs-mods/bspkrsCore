@@ -259,8 +259,11 @@ public class BSMainMenuRenderTicker
         
         fallBackPlayerNames = new String[] {
             "bspkrs", "lorddusk", "Arkember", "TTFTCUTS", "WayofFlowingTime", "Grumm", "Sacheverell", "Quetzz", "Pahimar", "ZeldoKavira",
-            "sfPlayer1", "jadedcat", "RWTema", "Scottwears", "neptunepink", "Aureylian", "direwolf20", "Krystal_Raven", "notch", "Dinnerbone",
-            "Adubbz", "AlgorithmX2", "Cloudhunter", "Lunatrius"
+            "sfPlayer1", "jadedcat", "RWTema", "Scottwears", "neptunepink", "Aureylian", "direwolf20", "Krystal_Raven", "Notch", "Dinnerbone",
+            "Adubbz", "AlgorithmX2", "Cloudhunter", "Lunatrius", "_Sunstrike", "sdkillen", "Minalien", "RWTema", "futureamnet", "AbrarSyed",
+            "TDWP_FTW", "LexManos", "Vaht", "EddieRuckus", "progwml6", "ohaiiChun", "fuj1n", "Mikeemoo", "boq42", "Toby",
+            "dan200", "ecutruin", "nikstick22", "Mr_okushama", "sk89q", "ShadwDrgn", "chicken_bones", "azanor", "Soaryn", "pillbox",
+            "mDiyo", "IceBladeRage", "Thunderdark", "Myrathi", "XCompWiz"
         };
         
         playerItems = new ItemStack[] {
