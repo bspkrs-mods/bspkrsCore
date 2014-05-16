@@ -22,21 +22,20 @@ import java.lang.reflect.Array;
  * }
  * </pre>
  */
+@Deprecated
 public final class HashCodeUtil
 {
-    
     /**
-     * An initial value for a <code>hashCode</code>, to which is added contributions from fields. Using a non-zero value decreases collisons
-     * of <code>hashCode</code> values.
+     * An initial value for a <code>hashCode</code>, to which is added contributions from fields. Using a non-zero value decreases
+     * collisions of <code>hashCode</code> values.
      */
-    public static final int SEED = 23;
+    public static final int SEED = 41;
     
     /**
      * booleans.
      */
     public static int hash(int aSeed, boolean aBoolean)
     {
-        System.out.println("boolean...");
         return firstTerm(aSeed) + (aBoolean ? 1 : 0);
     }
     
@@ -45,7 +44,6 @@ public final class HashCodeUtil
      */
     public static int hash(int aSeed, char aChar)
     {
-        System.out.println("char...");
         return firstTerm(aSeed) + aChar;
     }
     
@@ -57,7 +55,6 @@ public final class HashCodeUtil
         /*
          * Implementation Note Note that byte and short are handled by this method, through implicit conversion.
          */
-        // System.out.println("int...");
         return firstTerm(aSeed) + aInt;
     }
     
@@ -66,7 +63,6 @@ public final class HashCodeUtil
      */
     public static int hash(int aSeed, long aLong)
     {
-        System.out.println("long...");
         return firstTerm(aSeed) + (int) (aLong ^ (aLong >>> 32));
     }
     
@@ -116,7 +112,7 @@ public final class HashCodeUtil
     }
     
     // / PRIVATE ///
-    private static final int fODD_PRIME_NUMBER = 37;
+    private static final int fODD_PRIME_NUMBER = 73;
     
     private static int firstTerm(int aSeed)
     {
