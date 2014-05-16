@@ -31,20 +31,29 @@ public class BlockID
         this(BlockHelper.getUniqueID(block), -1);
     }
     
+    @Deprecated
     public BlockID(String format, String delimiter)
     {
-        String[] parts = format.split(delimiter);
+        int comma = format.indexOf(",");
+        int tilde = format.indexOf("~");
         
-        if (parts.length > 1)
-        {
-            id = parts[0].trim();
-            metadata = CommonUtils.parseInt(parts[1], -1);
-        }
+        if (comma == -1 && tilde != -1)
+            throw new AssertionError("ModulusBlockID format error: a \"~\" was found, but no \",\". " +
+                    "Expected format is \"<blockidstring>, <integer metadata> ~ <integer modulus>\". EG: \"minecraft:log, 0 ~ 4\".");
+        
+        if (tilde != -1 && comma > tilde)
+            throw new AssertionError("ModulusBlockID format error: a \"~\" was found before a \",\". " +
+                    "Expected format is \"<blockidstring>, <integer metadata> ~ <integer modulus>\". EG: \"minecraft:log, 0 ~ 4\".");
+        
+        if (tilde == -1)
+            tilde = format.length();
+        
+        if (comma != -1)
+            this.id = format.substring(0, comma).trim();
         else
-        {
-            id = parts[0].trim();
-            metadata = -1;
-        }
+            this.id = format.trim();
+        
+        this.metadata = CommonUtils.parseInt(format.substring(comma + 1, tilde).trim(), -1);
     }
     
     public BlockID(World world, int x, int y, int z)
@@ -67,6 +76,41 @@ public class BlockID
         return BlockHelper.getBlock(id);
     }
     
+    public static BlockID parse(String format)
+    {
+        String id;
+        int metadata;
+        int metadataModulus = 0;
+        format = format.trim();
+        int comma = format.indexOf(",");
+        int tilde = format.indexOf("~");
+        
+        if (comma == -1 && tilde != -1)
+            throw new AssertionError("ModulusBlockID format error: a \"~\" was found, but no \",\". " +
+                    "Expected format is \"<blockidstring>, <integer metadata> ~ <integer modulus>\". EG: \"minecraft:log, 0 ~ 4\".");
+        
+        if (tilde != -1 && comma > tilde)
+            throw new AssertionError("ModulusBlockID format error: a \"~\" was found before a \",\". " +
+                    "Expected format is \"<blockidstring>, <integer metadata> ~ <integer modulus>\". EG: \"minecraft:log, 0 ~ 4\".");
+        
+        if (tilde == -1)
+            tilde = format.length();
+        
+        if (comma != -1)
+            id = format.substring(0, comma).trim();
+        else
+            id = format.trim();
+        
+        metadata = CommonUtils.parseInt(format.substring(comma + 1, tilde).trim(), -1);
+        if (tilde != format.length())
+            metadataModulus = CommonUtils.parseInt(format.substring(tilde + 1, format.length()).trim(), 0);
+        
+        if (metadata != -1 && metadataModulus > 0)
+            return new ModulusBlockID(id, metadata, metadataModulus);
+        else
+            return new BlockID(id, metadata);
+    }
+    
     @Override
     public BlockID clone()
     {
@@ -82,19 +126,28 @@ public class BlockID
         if (!(obj instanceof BlockID))
             return false;
         
-        BlockID o = (BlockID) obj;
-        if (o.metadata == -1 || metadata == -1)
-            return id.equals(o.id);
+        if (!((BlockID) obj).id.equals(this.id))
+            return false;
+        
+        if (obj instanceof ModulusBlockID)
+        {
+            ModulusBlockID o = (ModulusBlockID) obj;
+            return metadata % o.metadataModulus == o.metadata % o.metadataModulus;
+        }
         else
-            return id.equals(o.id) && metadata == o.metadata;
+        {
+            BlockID o = (BlockID) obj;
+            if (o.metadata == -1 || metadata == -1)
+                return true;
+            else
+                return metadata == o.metadata;
+        }
     }
     
     @Override
     public int hashCode()
     {
-        int result = 23;
-        result = HashCodeUtil.hash(result, id);
-        return result;
+        return id.hashCode() * 37;
     }
     
     @Override

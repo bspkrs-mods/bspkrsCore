@@ -6,7 +6,9 @@ import bspkrs.helpers.item.ItemHelper;
 
 public class ItemID
 {
-    // Unique ID of the item from the namespace registry
+    /**
+     * Unique ID of the item from the namespace registry
+     */
     public String id;
     public int    damage;
     
@@ -82,9 +84,7 @@ public class ItemID
     @Override
     public int hashCode()
     {
-        int result = 31;
-        result = HashCodeUtil.hash(result, id);
-        return result;
+        return id.hashCode() * 31;
     }
     
     @Override
