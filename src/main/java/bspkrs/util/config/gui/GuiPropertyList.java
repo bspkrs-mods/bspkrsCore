@@ -17,6 +17,7 @@ import net.minecraft.util.EnumChatFormatting;
 
 import org.lwjgl.input.Keyboard;
 
+import bspkrs.bspkrscore.fml.Reference;
 import bspkrs.client.util.HUDUtils;
 import bspkrs.util.ReflectionHelper;
 import cpw.mods.fml.common.FMLLog;
@@ -156,6 +157,7 @@ public class GuiPropertyList extends GuiListExtended
                         Map<String, String> values = new TreeMap<String, String>();
                         for (ModContainer mod : Loader.instance().getActiveModList())
                             values.put(mod.getModId(), mod.getName());
+                        values.put(Reference.MINECRAFT, "Minecraft");
                         this.listEntries.add(new SelectValuePropEntry(this.parentGuiConfig, this, prop, values));
                     }
                     else if (prop.getType().equals(ConfigGuiType.STRING))
@@ -586,7 +588,10 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public boolean isDefault()
         {
-            return prop.getDefault().equals(currentValue);
+            if (prop.getDefault() != null)
+                return prop.getDefault().equals(currentValue);
+            else
+                return true;
         }
         
         @Override
@@ -1061,7 +1066,10 @@ public class GuiPropertyList extends GuiListExtended
         @Override
         public boolean isDefault()
         {
-            return this.prop.getDefault().equals(this.textFieldValue.getText());
+            if (prop.getDefault() != null)
+                return prop.getDefault().equals(this.textFieldValue.getText());
+            else
+                return true;
         }
         
         @Override

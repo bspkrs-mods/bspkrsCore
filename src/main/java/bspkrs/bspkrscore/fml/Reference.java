@@ -24,11 +24,12 @@ public class Reference
             Throwables.propagate(e);
         }
         
-        MINECRAFT = prop.getProperty("version.minecraft");
+        MC_VERSION = prop.getProperty("version.minecraft");
     }
     public static final String  MODID        = "bspkrsCore";
     public static final String  NAME         = "bspkrsCore";
-    public static final String  MINECRAFT;
+    public static final String  MC_VERSION;
+    public static final String  MINECRAFT    = "minecraft";
     public static final String  PROXY_COMMON = "bspkrs.bspkrscore.fml.CommonProxy";
     public static final String  PROXY_CLIENT = "bspkrs.bspkrscore.fml.ClientProxy";
     public static final String  GUI_FACTORY  = "bspkrs.bspkrscore.fml.gui.ModGuiFactoryHandler";
