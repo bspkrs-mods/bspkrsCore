@@ -42,27 +42,30 @@ import cpw.mods.fml.relauncher.FMLInjectionData;
  */
 public class Configuration
 {
-    public static final String          CATEGORY_GENERAL  = "general";
-    public static final String          ALLOWED_CHARS     = "._-";
-    public static final String          DEFAULT_ENCODING  = "UTF-8";
-    public static final String          CATEGORY_SPLITTER = ".";
+    public static final String          CATEGORY_GENERAL      = "general";
+    public static final String          ALLOWED_CHARS         = "._-";
+    public static final String          DEFAULT_ENCODING      = "UTF-8";
+    public static final String          CATEGORY_SPLITTER     = ".";
     public static final String          NEW_LINE;
-    public static final String          COMMENT_SEPARATOR = "##########################################################################################################";
-    private static final Pattern        CONFIG_START      = Pattern.compile("START: \"([^\\\"]+)\"");
-    private static final Pattern        CONFIG_END        = Pattern.compile("END: \"([^\\\"]+)\"");
-    public static final CharMatcher     allowedProperties = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
-    private static Configuration        PARENT            = null;
+    public static final String          COMMENT_SEPARATOR     = "##########################################################################################################";
+    private static final String         CONFIG_VERSION_MARKER = "~CONFIG_VERSION";
+    private static final Pattern        CONFIG_START          = Pattern.compile("START: \"([^\\\"]+)\"");
+    private static final Pattern        CONFIG_END            = Pattern.compile("END: \"([^\\\"]+)\"");
+    public static final CharMatcher     allowedProperties     = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
+    private static Configuration        PARENT                = null;
     
     File                                file;
     
-    private Map<String, ConfigCategory> categories        = new TreeMap<String, ConfigCategory>();
-    private Map<String, Configuration>  children          = new TreeMap<String, Configuration>();
+    private Map<String, ConfigCategory> categories            = new TreeMap<String, ConfigCategory>();
+    private Map<String, Configuration>  children              = new TreeMap<String, Configuration>();
     
     private boolean                     caseSensitiveCustomCategories;
-    public String                       defaultEncoding   = DEFAULT_ENCODING;
-    private String                      fileName          = null;
-    public boolean                      isChild           = false;
-    private boolean                     changed           = false;
+    public String                       defaultEncoding       = DEFAULT_ENCODING;
+    private String                      fileName              = null;
+    public boolean                      isChild               = false;
+    private boolean                     changed               = false;
+    private String                      definedConfigVersion  = null;
+    private String                      loadedConfigVersion   = null;
     
     static
     {
@@ -77,7 +80,16 @@ public class Configuration
      */
     public Configuration(File file)
     {
+        this(file, null);
+    }
+    
+    /**
+     * Create a configuration file for the file given in parameter with the provided config version number.
+     */
+    public Configuration(File file, String configVersion)
+    {
         this.file = file;
+        this.definedConfigVersion = configVersion;
         String basePath = ((File) (FMLInjectionData.data()[6])).getAbsolutePath().replace(File.separatorChar, '/').replace("/.", "");
         String path = file.getAbsolutePath().replace(File.separatorChar, '/').replace("/./", "/").replace(basePath, "");
         if (PARENT != null)
@@ -92,16 +104,31 @@ public class Configuration
         }
     }
     
+    public Configuration(File file, String configVersion, boolean caseSensitiveCustomCategories)
+    {
+        this(file, configVersion);
+        this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
+    }
+    
     public Configuration(File file, boolean caseSensitiveCustomCategories)
     {
-        this(file);
-        this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
+        this(file, null, caseSensitiveCustomCategories);
     }
     
     @Override
     public String toString()
     {
         return file.getAbsolutePath();
+    }
+    
+    public String getDefinedConfigVersion()
+    {
+        return this.definedConfigVersion;
+    }
+    
+    public String getLoadedConfigVersion()
+    {
+        return this.loadedConfigVersion;
     }
     
     /******************************************************************************************************************
@@ -832,11 +859,11 @@ public class Configuration
         }
     }
     
-    /******************************************************************************************************************
+    /* ****************************************************************************************************************
      * 
      * Other methods
      * 
-     *****************************************************************************************************************/
+     *************************************************************************************************************** */
     
     public boolean hasCategory(String category)
     {
@@ -882,6 +909,7 @@ public class Configuration
                 ArrayList<String> tmpList = null;
                 int lineNum = 0;
                 String name = null;
+                loadedConfigVersion = null;
                 
                 while (true)
                 {
@@ -890,6 +918,8 @@ public class Configuration
                     
                     if (line == null)
                     {
+                        if (lineNum == 1)
+                            loadedConfigVersion = definedConfigVersion;
                         break;
                     }
                     
@@ -1038,6 +1068,21 @@ public class Configuration
                                     type = null;
                                     break;
                                 
+                                case '~':
+                                    if (tmpList != null)
+                                        break;
+                                    
+                                    if (line.startsWith(CONFIG_VERSION_MARKER))
+                                    {
+                                        int colon = line.indexOf(':');
+                                        if (colon != -1)
+                                            loadedConfigVersion = line.substring(colon + 1).trim();
+                                    }
+                                    
+                                    skip = true;
+                                    
+                                    break;
+                                
                                 default:
                                     if (tmpList != null)
                                         break;
@@ -1112,6 +1157,9 @@ public class Configuration
                 BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(fos, defaultEncoding));
                 
                 buffer.write("# Configuration file" + NEW_LINE + NEW_LINE);
+                
+                if (this.definedConfigVersion != null)
+                    buffer.write(CONFIG_VERSION_MARKER + ": " + this.definedConfigVersion + NEW_LINE + NEW_LINE);
                 
                 if (children.isEmpty())
                 {
