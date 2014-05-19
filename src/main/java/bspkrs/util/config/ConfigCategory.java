@@ -13,6 +13,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -30,10 +32,12 @@ public class ConfigCategory implements Map<String, Property>
     private String                               languagekey;
     private ArrayList<ConfigCategory>            children         = new ArrayList<ConfigCategory>();
     private Map<String, Property>                properties       = new TreeMap<String, Property>();
+    private int                                  propNumber       = 0;
     public final ConfigCategory                  parent;
     private boolean                              changed          = false;
     private boolean                              isHotLoadable    = false;
     private Class<? extends IGuiConfigListEntry> customEntryClass = null;
+    private LinkedHashSet<String>                propertyOrder    = null;
     
     public ConfigCategory(String name)
     {
@@ -92,6 +96,36 @@ public class ConfigCategory implements Map<String, Property>
         return ImmutableMap.copyOf(properties);
     }
     
+    public Property[] getOrderedValuesArray()
+    {
+        if (this.propertyOrder != null)
+        {
+            List<Property> list = new ArrayList<Property>();
+            for (String s : this.propertyOrder)
+                if (properties.containsKey(s))
+                    list.add(properties.get(s));
+            
+            return list.toArray(new Property[list.size()]);
+        }
+        else
+            return properties.values().toArray(new Property[properties.size()]);
+    }
+    
+    public Set<Property> getOrderedValuesSet()
+    {
+        if (this.propertyOrder != null)
+        {
+            LinkedHashSet<Property> set = new LinkedHashSet<Property>();
+            for (String key : this.propertyOrder)
+                if (properties.containsKey(key))
+                    set.add(properties.get(key));
+            
+            return ImmutableSet.copyOf(set);
+        }
+        else
+            return ImmutableSet.copyOf(properties.values());
+    }
+    
     public ConfigCategory setCustomIGuiConfigListEntryClass(Class<? extends IGuiConfigListEntry> clazz)
     {
         this.customEntryClass = clazz;
@@ -137,6 +171,23 @@ public class ConfigCategory implements Map<String, Property>
     public boolean isHotLoadable()
     {
         return this.isHotLoadable;
+    }
+    
+    public ConfigCategory setPropertyOrder(LinkedHashSet<String> propertyOrder)
+    {
+        this.propertyOrder = propertyOrder;
+        for (String s : properties.keySet())
+            if (!propertyOrder.contains(s))
+                propertyOrder.add(s);
+        return this;
+    }
+    
+    public Set<String> getPropertyOrder()
+    {
+        if (this.propertyOrder != null)
+            return ImmutableSet.copyOf(this.propertyOrder);
+        else
+            return ImmutableSet.copyOf(properties.keySet());
     }
     
     public boolean containsKey(String key)
@@ -192,7 +243,7 @@ public class ConfigCategory implements Map<String, Property>
         
         write(out, pad0, name, " {");
         
-        Property[] props = properties.values().toArray(new Property[properties.size()]);
+        Property[] props = getOrderedValuesArray();
         
         for (int x = 0; x < props.length; x++)
         {
@@ -320,6 +371,9 @@ public class ConfigCategory implements Map<String, Property>
     public Property put(String key, Property value)
     {
         changed = true;
+        if (this.propertyOrder != null)
+            if (!this.propertyOrder.contains(key))
+                this.propertyOrder.add(key);
         return properties.put(key, value);
     }
     
@@ -334,7 +388,12 @@ public class ConfigCategory implements Map<String, Property>
     public void putAll(Map<? extends String, ? extends Property> m)
     {
         changed = true;
+        if (this.propertyOrder != null)
+            for (String key : m.keySet())
+                if (!this.propertyOrder.contains(key))
+                    this.propertyOrder.add(key);
         properties.putAll(m);
+        
     }
     
     @Override

@@ -41,7 +41,7 @@ public class ConfigProperty implements IConfigProperty
         {
             List<IConfigProperty> props = new ArrayList<IConfigProperty>();
             Iterator<ConfigCategory> ccI = ctgy.getChildren().iterator();
-            Iterator<Property> pI = ctgy.getValues().values().iterator();
+            Iterator<Property> pI = ctgy.getOrderedValuesSet().iterator();
             int index = 0;
             
             if (listCategoriesFirst)

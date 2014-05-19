@@ -22,6 +22,7 @@ import java.io.OutputStreamWriter;
 import java.io.PushbackInputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -1321,6 +1322,22 @@ public class Configuration
         if (!caseSensitiveCustomCategories)
             category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setIsHotLoadable(isHotLoadable);
+        return this;
+    }
+    
+    /**
+     * Sets the order that direct child properties of this config category will be written to the config file and will be displayed in
+     * config GUIs.
+     * 
+     * @param category
+     * @param propOrder
+     * @return
+     */
+    public Configuration setCategoryPropertyOrder(String category, LinkedHashSet<String> propOrder)
+    {
+        if (!caseSensitiveCustomCategories)
+            category = category.toLowerCase(Locale.ENGLISH);
+        getCategory(category).setPropertyOrder(propOrder);
         return this;
     }
     
