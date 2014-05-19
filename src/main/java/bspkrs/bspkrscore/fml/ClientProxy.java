@@ -30,9 +30,9 @@ public class ClientProxy extends CommonProxy
     public void onGuiOpen(GuiOpenEvent event)
     {
         if (bspkrsCoreMod.instance.showMainMenuMobs)
-            if (event.gui instanceof GuiMainMenu)
+            if (event.gui instanceof GuiMainMenu && !mainMenuTicker.isRegistered())
                 mainMenuTicker.register();
-            else
+            else if (mainMenuTicker.isRegistered())
                 mainMenuTicker.unRegister();
     }
 }
