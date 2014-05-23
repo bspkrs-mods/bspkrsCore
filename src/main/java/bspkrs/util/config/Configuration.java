@@ -22,9 +22,10 @@ import java.io.OutputStreamWriter;
 import java.io.PushbackInputStream;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -184,7 +185,7 @@ public class Configuration
         
         if (!prop.isBooleanValue())
         {
-            prop.set(defaultValue);
+            prop.setValue(defaultValue);
         }
         return prop;
     }
@@ -264,7 +265,7 @@ public class Configuration
         
         if (!prop.isBooleanList())
         {
-            prop.set(values);
+            prop.setValues(values);
         }
         
         return prop;
@@ -325,7 +326,7 @@ public class Configuration
         
         if (!prop.isIntValue())
         {
-            prop.set(defaultValue);
+            prop.setValue(defaultValue);
         }
         return prop;
     }
@@ -411,7 +412,7 @@ public class Configuration
         
         if (!prop.isIntList())
         {
-            prop.set(values);
+            prop.setValues(values);
         }
         
         return prop;
@@ -472,7 +473,7 @@ public class Configuration
         
         if (!prop.isDoubleValue())
         {
-            prop.set(defaultValue);
+            prop.setValue(defaultValue);
         }
         return prop;
     }
@@ -558,7 +559,7 @@ public class Configuration
         
         if (!prop.isDoubleList())
         {
-            prop.set(values);
+            prop.setValues(values);
         }
         
         return prop;
@@ -800,7 +801,7 @@ public class Configuration
         else if (defaultValue != null)
         {
             Property prop = new Property(key, defaultValue, type);
-            prop.set(defaultValue); //Set and mark as dirty to signify it should save 
+            prop.setValue(defaultValue); //Set and mark as dirty to signify it should save 
             cat.put(key, prop);
             prop.setDefaultValue(defaultValue);
             prop.comment = comment;
@@ -945,6 +946,7 @@ public class Configuration
                     int nameStart = -1, nameEnd = -1;
                     boolean skip = false;
                     boolean quoted = false;
+                    boolean isFirstNonWhitespaceCharOnLine = true;
                     
                     for (int i = 0; i < line.length() && !skip; ++i)
                     {
@@ -956,6 +958,7 @@ public class Configuration
                             }
                             
                             nameEnd = i;
+                            isFirstNonWhitespaceCharOnLine = false;
                         }
                         else if (Character.isWhitespace(line.charAt(i)))
                         {
@@ -1039,21 +1042,24 @@ public class Configuration
                                     break;
                                 
                                 case '<':
-                                    if (tmpList != null)
+                                    if ((tmpList != null && i + 1 == line.length()) || (tmpList == null && i + 1 != line.length()))
                                     {
                                         throw new RuntimeException(String.format("Malformed list property \"%s:%d\"", fileName, lineNum));
                                     }
-                                    
-                                    name = line.substring(nameStart, nameEnd + 1);
-                                    
-                                    if (currentCat == null)
+                                    else if (i + 1 == line.length())
                                     {
-                                        throw new RuntimeException(String.format("'%s' has no scope in '%s:%d'", name, fileName, lineNum));
+                                        
+                                        name = line.substring(nameStart, nameEnd + 1);
+                                        
+                                        if (currentCat == null)
+                                        {
+                                            throw new RuntimeException(String.format("'%s' has no scope in '%s:%d'", name, fileName, lineNum));
+                                        }
+                                        
+                                        tmpList = new ArrayList<String>();
+                                        
+                                        skip = true;
                                     }
-                                    
-                                    tmpList = new ArrayList<String>();
-                                    
-                                    skip = true;
                                     
                                     break;
                                 
@@ -1063,10 +1069,13 @@ public class Configuration
                                         throw new RuntimeException(String.format("Malformed list property \"%s:%d\"", fileName, lineNum));
                                     }
                                     
-                                    currentCat.put(name, new Property(name, tmpList.toArray(new String[tmpList.size()]), type));
-                                    name = null;
-                                    tmpList = null;
-                                    type = null;
+                                    if (isFirstNonWhitespaceCharOnLine)
+                                    {
+                                        currentCat.put(name, new Property(name, tmpList.toArray(new String[tmpList.size()]), type));
+                                        name = null;
+                                        tmpList = null;
+                                        type = null;
+                                    }
                                     break;
                                 
                                 case '~':
@@ -1078,10 +1087,9 @@ public class Configuration
                                         int colon = line.indexOf(':');
                                         if (colon != -1)
                                             loadedConfigVersion = line.substring(colon + 1).trim();
+                                        
+                                        skip = true;
                                     }
-                                    
-                                    skip = true;
-                                    
                                     break;
                                 
                                 default:
@@ -1089,6 +1097,7 @@ public class Configuration
                                         break;
                                     throw new RuntimeException(String.format("Unknown character '%s' in '%s:%d'", line.charAt(i), fileName, lineNum));
                             }
+                            isFirstNonWhitespaceCharOnLine = false;
                         }
                     }
                     
@@ -1271,12 +1280,18 @@ public class Configuration
      * @param category the config category
      * @param comment a String comment
      */
-    public Configuration addCustomCategoryComment(String category, String comment)
+    public Configuration setCategoryComment(String category, String comment)
     {
         if (!caseSensitiveCustomCategories)
             category = category.toLowerCase(Locale.ENGLISH);
         getCategory(category).setComment(comment);
         return this;
+    }
+    
+    @Deprecated
+    public void addCustomCategoryComment(String category, String comment)
+    {
+        this.setCategoryComment(category, comment);
     }
     
     /**
@@ -1285,7 +1300,7 @@ public class Configuration
      * @param category the config category
      * @param langKey a language key string such as configcategory.general
      */
-    public Configuration addCustomCategoryLanguageKey(String category, String langKey)
+    public Configuration setCategoryLanguageKey(String category, String langKey)
     {
         if (!caseSensitiveCustomCategories)
             category = category.toLowerCase(Locale.ENGLISH);
@@ -1293,14 +1308,17 @@ public class Configuration
         return this;
     }
     
+    @Deprecated
+    public void addCustomCategoryLanguageKey(String category, String langKey)
+    {
+        this.setCategoryLanguageKey(category, langKey);
+    }
+    
     /**
      * Sets the custom IGuiConfigListEntry class that should be used in place of the standard entry class (which is just a button that
      * navigates into the category). This class MUST provide a constructor with the following parameter types: {@code GuiConfig} (the parent
      * GuiConfig screen will be provided), {@code GuiPropertyList} (the parent GuiPropertyList will be provided), {@code IConfigProperty}
      * (the IConfigProperty for this Property will be provided).
-     * 
-     * @param category the config category
-     * @param clazz a class that implements IGuiConfigListEntry
      */
     public Configuration setCategoryCustomIGuiConfigListEntryClass(String category, Class<? extends IGuiConfigListEntry> clazz)
     {
@@ -1313,9 +1331,6 @@ public class Configuration
     
     /**
      * Sets the ConfigCategory.isHotLoadable flag to the specified value.
-     * 
-     * @param category
-     * @param isHotLoadable
      */
     public Configuration setCategoryIsHotLoadable(String category, boolean isHotLoadable)
     {
@@ -1328,12 +1343,8 @@ public class Configuration
     /**
      * Sets the order that direct child properties of this config category will be written to the config file and will be displayed in
      * config GUIs.
-     * 
-     * @param category
-     * @param propOrder
-     * @return
      */
-    public Configuration setCategoryPropertyOrder(String category, LinkedHashSet<String> propOrder)
+    public Configuration setCategoryPropertyOrder(String category, List<String> propOrder)
     {
         if (!caseSensitiveCustomCategories)
             category = category.toLowerCase(Locale.ENGLISH);
@@ -1505,15 +1516,34 @@ public class Configuration
      */
     public boolean moveProperty(String oldCategory, String propName, String newCategory)
     {
-        if (hasCategory(oldCategory))
-        {
-            if (getCategory(oldCategory).containsKey(propName))
-            {
-                getCategory(newCategory).put(propName, getCategory(oldCategory).remove(propName));
-                return true;
-            }
-        }
+        if (!oldCategory.equals(newCategory))
+            if (hasCategory(oldCategory))
+                if (getCategory(oldCategory).containsKey(propName))
+                {
+                    getCategory(newCategory).put(propName, getCategory(oldCategory).remove(propName));
+                    return true;
+                }
         return false;
+    }
+    
+    /**
+     * Copies property objects from one Configuration object to this one using the list of category names. Properties that only exist in the
+     * "from" object are ignored. Pass null for the ctgys array to include all categories.
+     */
+    public void copyCategoryProps(Configuration fromConfig, String[] ctgys)
+    {
+        if (ctgys == null)
+            ctgys = this.getCategoryNames().toArray(new String[this.getCategoryNames().size()]);
+        
+        for (String ctgy : ctgys)
+            if (fromConfig.hasCategory(ctgy) && this.hasCategory(ctgy))
+            {
+                ConfigCategory thiscc = this.getCategory(ctgy);
+                ConfigCategory fromcc = fromConfig.getCategory(ctgy);
+                for (Entry<String, Property> entry : thiscc.getValues().entrySet())
+                    if (fromcc.containsKey(entry.getKey()))
+                        thiscc.put(entry.getKey(), fromcc.get(entry.getKey()));
+            }
     }
     
     //    public static void renameCtgy(Configuration config, String oldCtgy, String newCtgy)
@@ -1599,7 +1629,7 @@ public class Configuration
     public String getString(String name, String category, String defaultValue, String comment, String langKey, Pattern pattern)
     {
         Property prop = this.get(category, name, defaultValue);
-        prop.setLanguageKey(langKey);
+        prop.setPropLanguageKey(langKey);
         prop.setValidStringPattern(pattern);
         prop.comment = comment + " [default: " + defaultValue + "]";
         return prop.getString();
@@ -1635,7 +1665,7 @@ public class Configuration
     {
         Property prop = this.get(category, name, defaultValue);
         prop.setValidValues(validValues);
-        prop.setLanguageKey(langKey);
+        prop.setPropLanguageKey(langKey);
         prop.comment = comment + " [default: " + defaultValue + "]";
         return prop.getString();
     }
@@ -1680,7 +1710,7 @@ public class Configuration
     public String[] getStringList(String name, String category, String[] defaultValue, String comment, String[] validValues, String langKey)
     {
         Property prop = this.get(category, name, defaultValue);
-        prop.setLanguageKey(langKey);
+        prop.setPropLanguageKey(langKey);
         prop.setValidValues(validValues);
         prop.comment = comment + " [default: " + defaultValue + "]";
         return prop.getStringList();
@@ -1713,7 +1743,7 @@ public class Configuration
     public boolean getBoolean(String name, String category, boolean defaultValue, String comment, String langKey)
     {
         Property prop = this.get(category, name, defaultValue);
-        prop.setLanguageKey(langKey);
+        prop.setPropLanguageKey(langKey);
         prop.comment = comment + " [default: " + defaultValue + "]";
         return prop.getBoolean(defaultValue);
     }
@@ -1749,7 +1779,7 @@ public class Configuration
     public int getInt(String name, String category, int defaultValue, int minValue, int maxValue, String comment, String langKey)
     {
         Property prop = this.get(category, name, defaultValue);
-        prop.setLanguageKey(langKey);
+        prop.setPropLanguageKey(langKey);
         prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);
@@ -1787,7 +1817,7 @@ public class Configuration
     public float getFloat(String name, String category, float defaultValue, float minValue, float maxValue, String comment, String langKey)
     {
         Property prop = this.get(category, name, Float.toString(defaultValue), name);
-        prop.setLanguageKey(langKey);
+        prop.setPropLanguageKey(langKey);
         prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
         prop.setMinValue(minValue);
         prop.setMaxValue(maxValue);

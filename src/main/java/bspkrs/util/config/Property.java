@@ -414,10 +414,16 @@ public class Property
      * 
      * @param langKey a string language key such as myawesomemod.config.myPropName
      */
-    public Property setLanguageKey(String langKey)
+    public Property setPropLanguageKey(String langKey)
     {
         this.langKey = langKey;
         return this;
+    }
+    
+    @Deprecated
+    public void setLanguageKey(String langKey)
+    {
+        this.langKey = langKey;
     }
     
     /**
@@ -1028,11 +1034,16 @@ public class Property
      * 
      * @param value
      */
-    public Property set(String value)
+    public Property setValue(String value)
     {
         this.value = value;
         changed = true;
         return this;
+    }
+    
+    public void set(String value)
+    {
+        this.setValue(value);
     }
     
     /**
@@ -1040,11 +1051,17 @@ public class Property
      * 
      * @param values
      */
-    public Property set(String[] values)
+    public Property setValues(String[] values)
     {
         this.values = Arrays.copyOf(values, values.length);
         changed = true;
         return this;
+    }
+    
+    @Deprecated
+    public void set(String[] values)
+    {
+        this.setValues(values);
     }
     
     /**
@@ -1052,10 +1069,16 @@ public class Property
      * 
      * @param value
      */
-    public Property set(int value)
+    public Property setValue(int value)
     {
-        set(Integer.toString(value));
+        setValue(Integer.toString(value));
         return this;
+    }
+    
+    @Deprecated
+    public void set(int value)
+    {
+        this.setValue(value);
     }
     
     /**
@@ -1063,10 +1086,16 @@ public class Property
      * 
      * @param value
      */
-    public Property set(boolean value)
+    public Property setValue(boolean value)
     {
-        set(Boolean.toString(value));
+        setValue(Boolean.toString(value));
         return this;
+    }
+    
+    @Deprecated
+    public void set(boolean value)
+    {
+        this.setValue(value);
     }
     
     /**
@@ -1074,10 +1103,16 @@ public class Property
      * 
      * @param value
      */
-    public Property set(double value)
+    public Property setValue(double value)
     {
-        set(Double.toString(value));
+        setValue(Double.toString(value));
         return this;
+    }
+    
+    @Deprecated
+    public void set(double value)
+    {
+        this.setValue(value);
     }
     
     /**
@@ -1085,13 +1120,19 @@ public class Property
      * 
      * @param values
      */
-    public Property set(boolean[] values)
+    public Property setValues(boolean[] values)
     {
         this.values = new String[values.length];
         for (int i = 0; i < values.length; i++)
             this.values[i] = String.valueOf(values[i]);
         changed = true;
         return this;
+    }
+    
+    @Deprecated
+    public void set(boolean[] values)
+    {
+        this.setValues(values);
     }
     
     /**
@@ -1099,7 +1140,7 @@ public class Property
      * 
      * @param values
      */
-    public Property set(int[] values)
+    public Property setValues(int[] values)
     {
         this.values = new String[values.length];
         for (int i = 0; i < values.length; i++)
@@ -1108,17 +1149,29 @@ public class Property
         return this;
     }
     
+    @Deprecated
+    public void set(int[] values)
+    {
+        this.setValues(values);
+    }
+    
     /**
      * Sets the values of this Property to the provided double[] values.
      * 
      * @param values
      */
-    public Property set(double[] values)
+    public Property setValues(double[] values)
     {
         this.values = new String[values.length];
         for (int i = 0; i < values.length; i++)
             this.values[i] = String.valueOf(values[i]);
         changed = true;
         return this;
+    }
+    
+    @Deprecated
+    public void set(double[] values)
+    {
+        this.setValues(values);
     }
 }

@@ -104,7 +104,7 @@ public class ModVersionChecker
         
         Property count = versionCheckTracker.get("version_check_tracker.runs_since_last_message", modID, 0);
         runsSinceLastMessage = count.getInt() % 10;
-        count.set(runsSinceLastMessage + 1);
+        count.setValue(runsSinceLastMessage + 1);
         
         if (!newVersion.equals(CHECK_ERROR) && isCurrentVersion(curVer, newVersion))
             lastNewVersionFound = newVersion;
@@ -113,7 +113,7 @@ public class ModVersionChecker
         
         if (!newVersion.equals(CHECK_ERROR))
         {
-            cc.get(modID).set(newVersion);
+            cc.get(modID).setValue(newVersion);
             errorDetected = false;
         }
         else

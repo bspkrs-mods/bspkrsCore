@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import bspkrs.util.config.gui.GuiPropertyList.IGuiConfigListEntry;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -37,7 +38,7 @@ public class ConfigCategory implements Map<String, Property>
     private boolean                              changed          = false;
     private boolean                              isHotLoadable    = false;
     private Class<? extends IGuiConfigListEntry> customEntryClass = null;
-    private LinkedHashSet<String>                propertyOrder    = null;
+    private List<String>                         propertyOrder    = null;
     
     public ConfigCategory(String name)
     {
@@ -173,7 +174,7 @@ public class ConfigCategory implements Map<String, Property>
         return this.isHotLoadable;
     }
     
-    public ConfigCategory setPropertyOrder(LinkedHashSet<String> propertyOrder)
+    public ConfigCategory setPropertyOrder(List<String> propertyOrder)
     {
         this.propertyOrder = propertyOrder;
         for (String s : properties.keySet())
@@ -182,12 +183,12 @@ public class ConfigCategory implements Map<String, Property>
         return this;
     }
     
-    public Set<String> getPropertyOrder()
+    public List<String> getPropertyOrder()
     {
         if (this.propertyOrder != null)
-            return ImmutableSet.copyOf(this.propertyOrder);
+            return ImmutableList.copyOf(this.propertyOrder);
         else
-            return ImmutableSet.copyOf(properties.keySet());
+            return ImmutableList.copyOf(properties.keySet());
     }
     
     public boolean containsKey(String key)

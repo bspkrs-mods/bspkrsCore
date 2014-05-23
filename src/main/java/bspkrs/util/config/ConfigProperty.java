@@ -271,56 +271,56 @@ public class ConfigProperty implements IConfigProperty
     public void set(boolean bol)
     {
         if (isProperty)
-            prop.set(bol);
+            prop.setValue(bol);
     }
     
     @Override
     public void set(int i)
     {
         if (isProperty)
-            prop.set(i);
+            prop.setValue(i);
     }
     
     @Override
     public void set(String s)
     {
         if (isProperty)
-            prop.set(s);
+            prop.setValue(s);
     }
     
     @Override
     public void set(double d)
     {
         if (isProperty)
-            prop.set(d);
+            prop.setValue(d);
     }
     
     @Override
     public void set(boolean[] bol)
     {
         if (isProperty)
-            prop.set(bol);
+            prop.setValues(bol);
     }
     
     @Override
     public void set(int[] i)
     {
         if (isProperty)
-            prop.set(i);
+            prop.setValues(i);
     }
     
     @Override
     public void set(String[] s)
     {
         if (isProperty)
-            prop.set(s);
+            prop.setValues(s);
     }
     
     @Override
     public void set(double[] d)
     {
         if (isProperty)
-            prop.set(d);
+            prop.setValues(d);
     }
     
     @Override
