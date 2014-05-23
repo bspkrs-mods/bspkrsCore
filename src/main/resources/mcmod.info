@@ -13,8 +13,8 @@
     "logoFile": "",
     "screenshots": [],
     "parent": "",
-    "requiredMods": [],
-    "dependencies": [],
+    "requiredMods": ["FML@[${fml_version},)"],
+    "dependencies": ["FML@[${fml_version},)"],
     "dependants": [],
     "useDependencyInformation": "true"
   }]
