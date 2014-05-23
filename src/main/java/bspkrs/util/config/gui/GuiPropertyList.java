@@ -1127,7 +1127,8 @@ public class GuiPropertyList extends GuiListExtended
             super(parentGuiConfig, parentPropertyList, prop);
             
             subGuiConfig = new GuiConfig(this.parentGuiConfig, this.prop.getConfigPropertiesList(false), this.prop.isHotLoadable(), this.parentGuiConfig.modID,
-                    this.parentGuiConfig.allowNonHotLoadConfigChanges, this.parentGuiConfig.title, this.prop.getQualifiedName());
+                    this.parentGuiConfig.allowNonHotLoadConfigChanges, this.parentGuiConfig.title,
+                    ((this.parentGuiConfig.titleLine2 == null ? "" : this.parentGuiConfig.titleLine2) + " > " + this.propName));
             
             this.btnSelectCategory = new GuiButtonExt(0, 0, 0, 300, 18, I18n.format(propName));
             this.tooltipHoverChecker = new HoverChecker(this.btnSelectCategory, 800);

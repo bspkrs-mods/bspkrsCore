@@ -48,18 +48,6 @@ public class GuiConfig extends GuiScreen
     private boolean                    needsRefresh = true;
     private HoverChecker               checkBoxHoverChecker;
     
-    /**
-     * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded.
-     * 
-     * @param parentScreen the parent GuiScreen object
-     * @param properties an array of IConfigProperty objects
-     * @param areAllPropsHotLoadable send true if every property on this screen is able to be modified on the fly while a world is running
-     * @param modID the mod ID for the mod whose config settings will be edited
-     * @param allowNonHotLoadConfigChanges send true if all config properties can be modified, send false when only isHotLoadable() == true
-     *            properties can be edited
-     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
-     *            edited.
-     */
     @Deprecated
     public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, boolean areAllPropsHotLoadable, String modID,
             boolean allowNonHotLoadConfigChanges, String title)
@@ -85,19 +73,6 @@ public class GuiConfig extends GuiScreen
         this(parentScreen, properties, areAllPropsHotLoadable, modID, allowNonHotLoadConfigChanges, title, null);
     }
     
-    /**
-     * GuiConfig constructor that will use ConfigChangedEvent when editing is concluded.
-     * 
-     * @param parentScreen the parent GuiScreen object
-     * @param properties an array of IConfigProperty objects
-     * @param modID the mod ID for the mod whose config settings will be edited
-     * @param allowNonHotLoadConfigChanges send true if all config properties can be modified, send false when only isHotLoadable() == true
-     *            properties can be edited
-     * @param title the desired title for this screen. For consistency it is recommended that you pass the path of the config file being
-     *            edited.
-     * @param titleLine2 the desired title second line for this screen. Typically this is used to send the category path of the category
-     *            currently being edited.
-     */
     @Deprecated
     public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, boolean areAllPropsHotLoadable, String modID,
             boolean allowNonHotLoadConfigChanges, String title, String titleLine2)
@@ -128,8 +103,11 @@ public class GuiConfig extends GuiScreen
         this.areAllPropsHotLoadable = areAllPropsHotLoadable;
         this.modID = modID;
         this.allowNonHotLoadConfigChanges = allowNonHotLoadConfigChanges;
-        this.title = title;
+        if (title != null)
+            this.title = title;
         this.titleLine2 = titleLine2;
+        if (this.titleLine2 != null && this.titleLine2.startsWith(" > "))
+            this.titleLine2 = this.titleLine2.replaceFirst(" > ", "");
     }
     
     @Deprecated
@@ -175,6 +153,8 @@ public class GuiConfig extends GuiScreen
     @Override
     public void initGui()
     {
+        Keyboard.enableRepeatEvents(true);
+        
         if (this.propertyList == null || this.needsRefresh)
         {
             this.propertyList = new GuiPropertyList(this, mc);
@@ -193,6 +173,12 @@ public class GuiConfig extends GuiScreen
         
         this.checkBoxHoverChecker = new HoverChecker(chkApplyGlobally, 800);
         this.propertyList.initGui();
+    }
+    
+    @Override
+    public void onGuiClosed()
+    {
+        Keyboard.enableRepeatEvents(false);
     }
     
     @Override
@@ -289,8 +275,14 @@ public class GuiConfig extends GuiScreen
         this.drawDefaultBackground();
         this.propertyList.drawScreen(mouseX, mouseY, partialTicks);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
-        if (this.titleLine2 != null)
-            this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
+        String title2 = this.titleLine2;
+        
+        int strWidth = mc.fontRenderer.getStringWidth(title2);
+        int elipsisWidth = mc.fontRenderer.getStringWidth("...");
+        if (strWidth > width - 6 && strWidth > elipsisWidth)
+            title2 = mc.fontRenderer.trimStringToWidth(title2, width - 6 - elipsisWidth).trim() + "...";
+        if (title2 != null)
+            this.drawCenteredString(this.fontRendererObj, title2, this.width / 2, 18, 16777215);
         
         this.btnUndoAll.enabled = this.propertyList.areAnyPropsEnabled(this.chkApplyGlobally.isChecked()) && this.propertyList.areAnyPropsChanged(this.chkApplyGlobally.isChecked());
         this.btnDefaultAll.enabled = this.propertyList.areAnyPropsEnabled(this.chkApplyGlobally.isChecked()) && !this.propertyList.areAllPropsDefault(this.chkApplyGlobally.isChecked());
