@@ -2,7 +2,6 @@ package bspkrs.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
-import bspkrs.helpers.world.WorldHelper;
 
 public class ModulusBlockID extends BlockID
 {
@@ -27,7 +26,7 @@ public class ModulusBlockID extends BlockID
     
     public ModulusBlockID(World world, int x, int y, int z, int metadata, int metadataModulus)
     {
-        this(WorldHelper.getBlock(world, x, y, z), Math.max(metadata, 0), metadataModulus);
+        this(world.getBlock(x, y, z), Math.max(metadata, 0), metadataModulus);
     }
     
     @Override

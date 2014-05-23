@@ -6,8 +6,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
-import bspkrs.helpers.tileentity.TileEntityHelper;
-import bspkrs.helpers.world.WorldHelper;
 
 public class Coord
 {
@@ -172,7 +170,7 @@ public class Coord
     
     public boolean isAirBlock(World world)
     {
-        return WorldHelper.isAirBlock(world, x, y, z);
+        return world.isAirBlock(x, y, z);
     }
     
     public boolean chunkExists(World world)
@@ -182,27 +180,27 @@ public class Coord
     
     public boolean isBlockNormalCube(World world)
     {
-        return WorldHelper.isBlockNormalCube(world, x, y, z, false);
+        return world.isBlockNormalCubeDefault(x, y, z, false);
     }
     
     public boolean isBlockOpaqueCube(World world)
     {
-        return WorldHelper.isBlockOpaqueCube(world, x, y, z);
+        return getBlock(world).isOpaqueCube();
     }
     
     public boolean isWood(World world)
     {
-        return WorldHelper.getBlock(world, x, y, z).isWood(world, x, y, z);
+        return world.getBlock(x, y, z).isWood(world, x, y, z);
     }
     
     public boolean isLeaves(World world)
     {
-        return WorldHelper.getBlock(world, x, y, z).isLeaves(world, x, y, z);
+        return world.getBlock(x, y, z).isLeaves(world, x, y, z);
     }
     
     public Block getBlock(World world)
     {
-        return WorldHelper.getBlock(world, x, y, z);
+        return world.getBlock(x, y, z);
     }
     
     public int getBlockMetadata(World world)
@@ -227,21 +225,23 @@ public class Coord
             Block blockID = src.getBlock(world);
             int metadata = src.getBlockMetadata(world);
             
-            WorldHelper.setBlock(world, tgt.x, tgt.y, tgt.z, blockID, metadata, notifyFlag);
+            world.setBlock(tgt.x, tgt.y, tgt.z, blockID, metadata, notifyFlag);
             
-            TileEntity te = WorldHelper.getBlockTileEntity(world, src.x, src.y, src.z);
+            TileEntity te = world.getTileEntity(src.x, src.y, src.z);
             if (te != null)
             {
                 NBTTagCompound nbt = new NBTTagCompound();
-                TileEntityHelper.writeToNBT(te, nbt);
+                te.writeToNBT(nbt);
                 
                 nbt.setInteger("x", tgt.x);
                 nbt.setInteger("y", tgt.y);
                 nbt.setInteger("z", tgt.z);
                 
-                te = WorldHelper.getBlockTileEntity(world, tgt.x, tgt.y, tgt.z);
+                te = world.getTileEntity(tgt.x, tgt.y, tgt.z);
                 if (te != null)
-                    TileEntityHelper.readFromNBT(te, nbt);
+                    te.readFromNBT(nbt);
+                
+                world.removeTileEntity(src.x, src.y, src.z);
             }
             
             world.setBlockToAir(src.x, src.y, src.z);

@@ -2,8 +2,7 @@ package bspkrs.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
-import bspkrs.helpers.block.BlockHelper;
-import bspkrs.helpers.world.WorldHelper;
+import cpw.mods.fml.common.registry.GameData;
 
 public class BlockID
 {
@@ -23,12 +22,12 @@ public class BlockID
     
     public BlockID(Block block, int metadata)
     {
-        this(BlockHelper.getUniqueID(block), metadata);
+        this(GameData.blockRegistry.getNameForObject(block), metadata);
     }
     
     public BlockID(Block block)
     {
-        this(BlockHelper.getUniqueID(block), -1);
+        this(GameData.blockRegistry.getNameForObject(block), -1);
     }
     
     @Deprecated
@@ -63,7 +62,7 @@ public class BlockID
     
     public BlockID(World world, int x, int y, int z, int metadata)
     {
-        this(WorldHelper.getBlock(world, x, y, z), metadata);
+        this(world.getBlock(x, y, z), metadata);
     }
     
     public boolean isValid()
@@ -73,7 +72,7 @@ public class BlockID
     
     public Block getBlock()
     {
-        return BlockHelper.getBlock(id);
+        return GameData.blockRegistry.getObject(id);
     }
     
     public static BlockID parse(String format)

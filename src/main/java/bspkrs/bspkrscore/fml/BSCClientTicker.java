@@ -2,7 +2,6 @@ package bspkrs.bspkrscore.fml;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
-import bspkrs.helpers.entity.player.EntityPlayerHelper;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -40,7 +39,7 @@ public class BSCClientTicker
                 if (bspkrsCoreMod.instance.allowUpdateCheck && bspkrsCoreMod.instance.versionChecker != null)
                     if (!bspkrsCoreMod.instance.versionChecker.isCurrentVersion())
                         for (String msg : bspkrsCoreMod.instance.versionChecker.getInGameMessage())
-                            EntityPlayerHelper.addChatMessage(mcClient.thePlayer, new ChatComponentText(msg));
+                            mcClient.thePlayer.addChatMessage(new ChatComponentText(msg));
                 
                 allowUpdateCheck = false;
                 

@@ -2,7 +2,7 @@ package bspkrs.util;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import bspkrs.helpers.item.ItemHelper;
+import cpw.mods.fml.common.registry.GameData;
 
 public class ItemID
 {
@@ -35,12 +35,12 @@ public class ItemID
     
     public ItemID(Item item, int damage)
     {
-        this(ItemHelper.getUniqueID(item), damage);
+        this(GameData.itemRegistry.getNameForObject(item), damage);
     }
     
     public ItemID(Item item)
     {
-        this(ItemHelper.getUniqueID(item), -1);
+        this(GameData.itemRegistry.getNameForObject(item), -1);
     }
     
     public ItemID(String format, String delimiter)

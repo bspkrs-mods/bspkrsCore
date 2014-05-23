@@ -24,8 +24,6 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
-import bspkrs.helpers.world.WorldHelper;
-
 /*
  * @Authors: DaftPVF, bspkrs
  * @Desc: Helpers from original Treecapitator, ConnectedDestruction, and FloatingRuins mod code and new utility methods
@@ -273,8 +271,8 @@ public final class CommonUtils
     
     public static int getHighestGroundBlock(World world, int x, int y, int z)
     {
-        for (; y > 0 && (WorldHelper.isAirBlock(world, x, y, z) || !WorldHelper.isBlockNormalCube(world, x, y, z, true)
-                || WorldHelper.getBlock(world, x, y, z).isWood(world, x, y, z)); y--)
+        for (; y > 0 && (world.isAirBlock(x, y, z) || !world.isBlockNormalCubeDefault(x, y, z, true)
+                || world.getBlock(x, y, z).isWood(world, x, y, z)); y--)
         {}
         return y;
     }
@@ -282,7 +280,7 @@ public final class CommonUtils
     public static int getFirstNonAirBlockFromTop(World world, int x, int z)
     {
         int y;
-        for (y = world.getActualHeight(); WorldHelper.isAirBlock(world, x, y - 1, z) && y > 0; y--)
+        for (y = world.getActualHeight(); world.isAirBlock(x, y - 1, z) && y > 0; y--)
         {}
         return y;
     }
@@ -331,7 +329,7 @@ public final class CommonUtils
         for (int x = x1; x <= x2; x++)
             for (int y = y1; y <= y2; y++)
                 for (int z = z1; z <= z2; z++)
-                    WorldHelper.setBlock(world, x, y, z, block, metadata, 3);
+                    world.setBlock(x, y, z, block, metadata, 3);
     }
     
     public static void fillWithBlocksRounded(World world, int x1, int y1, int z1, int x2, int y2, int z2, Block block, int metadata)
@@ -344,7 +342,7 @@ public final class CommonUtils
                     double yd = getDistanceRatioToCenter(y1, y2, y);
                     double zd = getDistanceRatioToCenter(z1, z2, z);
                     if (xd * xd + yd * yd + zd * zd <= 1.5D)
-                        WorldHelper.setBlock(world, x, y, z, block, metadata, 3);
+                        world.setBlock(x, y, z, block, metadata, 3);
                 }
     }
     

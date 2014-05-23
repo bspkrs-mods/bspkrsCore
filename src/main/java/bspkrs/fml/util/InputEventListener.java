@@ -7,7 +7,6 @@ import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import bspkrs.helpers.client.settings.KeyBindingHelper;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -54,7 +53,7 @@ public abstract class InputEventListener
     
     private void onInputEvent(InputEvent event)
     {
-        int keyCode = KeyBindingHelper.getKeyCode(keyBinding);
+        int keyCode = keyBinding.getKeyCode();
         boolean state = (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
         if (state != isKeyDown || (state && allowRepeats))
         {
