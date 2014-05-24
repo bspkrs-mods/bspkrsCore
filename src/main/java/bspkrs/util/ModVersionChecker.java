@@ -8,7 +8,6 @@ import java.util.Map;
 
 import net.minecraft.util.StatCollector;
 import bspkrs.bspkrscore.fml.bspkrsCoreMod;
-import bspkrs.util.config.ConfigCategory;
 import bspkrs.util.config.Configuration;
 import bspkrs.util.config.Property;
 
@@ -34,10 +33,10 @@ public class ModVersionChecker
     private File                                        trackerFile;
     private File                                        trackerDir;
     private static Configuration                        versionCheckTracker;
-    private final String                                lastNewVersionFound;
+    private String                                      lastNewVersionFound;
     private final String                                CHECK_ERROR       = "check_error";
     private final boolean                               errorDetected;
-    private final int                                   runsSinceLastMessage;
+    private int                                         runsSinceLastMessage;
     
     public ModVersionChecker(String modID, String curVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg)
     {
@@ -65,6 +64,7 @@ public class ModVersionChecker
         String[] versionLines = CommonUtils.loadTextFromURL(this.versionURL, BSLog.INSTANCE.getLogger(), new String[] { CHECK_ERROR }, timeoutMS);
         
         newVersion = versionLines[0].trim();
+        errorDetected = newVersion.equals(CHECK_ERROR);
         
         // Keep track of the versions we've seen to keep from nagging players with new version notifications beyond the first one
         if (trackerDir == null)
@@ -90,42 +90,35 @@ public class ModVersionChecker
         }
         catch (Throwable e)
         {
-            BSLog.severe("An exception occurred while loading bspkrs_ModVersionCheckerTracking.txt. This file will be deleted and a new config file will be generated.");
+            BSLog.severe("An exception occurred while loading bspkrs_ModVersionCheckerTracking.txt. This file will be deleted and a new file will be generated.");
             e.printStackTrace();
             
             trackerFile.delete();
             versionCheckTracker = new Configuration(trackerFile);
         }
         
-        ConfigCategory cc = versionCheckTracker.getCategory("version_check_tracker");
+        Property lastVerFoundProp = versionCheckTracker.get("version_check_tracker", modID, currentVersion);
+        Property countProp = versionCheckTracker.get("version_check_tracker.runs_since_last_message", modID, 0);
         
-        if (!cc.containsKey(modID))
-            versionCheckTracker.get("version_check_tracker", modID, curVer);
+        lastNewVersionFound = lastVerFoundProp.getString();
         
-        Property count = versionCheckTracker.get("version_check_tracker.runs_since_last_message", modID, 0);
-        runsSinceLastMessage = count.getInt() % 10;
-        count.setValue(runsSinceLastMessage + 1);
-        
-        if (!newVersion.equals(CHECK_ERROR) && isCurrentVersion(curVer, newVersion))
-            lastNewVersionFound = newVersion;
-        else
-            lastNewVersionFound = cc.get(modID).getString();
-        
-        if (!newVersion.equals(CHECK_ERROR))
-        {
-            cc.get(modID).setValue(newVersion);
-            errorDetected = false;
-        }
-        else
-        {
+        if (errorDetected)
             newVersion = lastNewVersionFound;
-            errorDetected = true;
+        
+        if (!errorDetected && !isCurrentVersion(lastNewVersionFound, newVersion))
+        {
+            runsSinceLastMessage = 0;
+            lastNewVersionFound = newVersion;
         }
+        else
+            runsSinceLastMessage = countProp.getInt() % 10;
+        
+        countProp.setValue(runsSinceLastMessage + 1);
+        lastVerFoundProp.setValue(lastNewVersionFound);
         
         versionCheckTracker.save();
         
-        // Override instantiated updateURL with second line of version file if
-        // it exists and is non-blank
+        // Override instantiated updateURL with second line of version file if it exists and is non-blank
         if (versionLines.length > 1 && versionLines[1].trim().length() != 0)
             this.updateURL = versionLines[1];
         
