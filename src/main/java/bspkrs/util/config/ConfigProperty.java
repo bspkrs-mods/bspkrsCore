@@ -107,25 +107,25 @@ public class ConfigProperty implements IConfigProperty
     {
         if (isProperty)
         {
-            if (type.equals(Property.Type.BOOLEAN))
+            if (type == Property.Type.BOOLEAN)
                 return ConfigGuiType.BOOLEAN;
-            else if (type.equals(Property.Type.DOUBLE))
+            else if (type == Property.Type.DOUBLE)
                 return ConfigGuiType.DOUBLE;
-            else if (type.equals(Property.Type.INTEGER))
+            else if (type == Property.Type.INTEGER)
                 return ConfigGuiType.INTEGER;
-            else if (type.equals(Property.Type.COLOR))
+            else if (type == Property.Type.COLOR)
                 return ConfigGuiType.COLOR;
-            else if (type.equals(Property.Type.BLOCK_LIST))
+            else if (type == Property.Type.BLOCK_LIST)
                 return ConfigGuiType.BLOCK_LIST;
-            else if (type.equals(Property.Type.ITEMSTACK_LIST))
+            else if (type == Property.Type.ITEMSTACK_LIST)
                 return ConfigGuiType.ITEMSTACK_LIST;
-            else if (type.equals(Property.Type.ENTITY_LIST))
+            else if (type == Property.Type.ENTITY_LIST)
                 return ConfigGuiType.ENTITY_LIST;
-            else if (type.equals(Property.Type.BIOME_LIST))
+            else if (type == Property.Type.BIOME_LIST)
                 return ConfigGuiType.BIOME_LIST;
-            else if (type.equals(Property.Type.DIMENSION_LIST))
+            else if (type == Property.Type.DIMENSION_LIST)
                 return ConfigGuiType.DIMENSION_LIST;
-            else if (type.equals(Property.Type.MOD_ID))
+            else if (type == Property.Type.MOD_ID)
                 return ConfigGuiType.MOD_ID;
             else
                 return ConfigGuiType.STRING;
