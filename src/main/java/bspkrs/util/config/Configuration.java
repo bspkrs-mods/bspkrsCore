@@ -448,7 +448,7 @@ public class Configuration
      */
     public Property get(String category, String key, double defaultValue, String comment)
     {
-        return get(category, key, defaultValue, comment, Double.MIN_VALUE, Double.MAX_VALUE, false);
+        return get(category, key, defaultValue, comment, -Double.MAX_VALUE, Double.MAX_VALUE, false);
     }
     
     /**
@@ -504,7 +504,7 @@ public class Configuration
      */
     public Property get(String category, String key, double[] defaultValues, String comment)
     {
-        return get(category, key, defaultValues, comment, Double.MIN_VALUE, Double.MAX_VALUE, false, -1, false);
+        return get(category, key, defaultValues, comment, -Double.MAX_VALUE, Double.MAX_VALUE, false, -1, false);
     }
     
     /**

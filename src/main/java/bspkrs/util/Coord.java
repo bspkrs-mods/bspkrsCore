@@ -123,6 +123,26 @@ public class Coord
         return adjacents;
     }
     
+    public int get3DDistance(Coord pos)
+    {
+        return (int) Math.round(Math.sqrt(Math.pow(pos.x - x, 2) + Math.pow(pos.z - z, 2) + Math.pow(pos.y - y, 2)));
+    }
+    
+    public int getCubicDistance(Coord pos)
+    {
+        return Math.abs(pos.x - x) + Math.abs(pos.y - y) + Math.abs(pos.z - z);
+    }
+    
+    public int getSquaredDistance(Coord pos)
+    {
+        return Math.abs(pos.x - x) + Math.abs(pos.z - z);
+    }
+    
+    public int getVerDistance(Coord pos)
+    {
+        return Math.abs(pos.y - y);
+    }
+    
     public boolean isAbove(Coord pos)
     {
         return pos != null ? y > pos.y : false;
