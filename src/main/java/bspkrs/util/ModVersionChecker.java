@@ -63,7 +63,11 @@ public class ModVersionChecker
         
         String[] versionLines = CommonUtils.loadTextFromURL(this.versionURL, BSLog.INSTANCE.getLogger(), new String[] { CHECK_ERROR }, timeoutMS);
         
-        newVersion = versionLines[0].trim();
+        if (versionLines.length == 0)
+            newVersion = CHECK_ERROR;
+        else
+            newVersion = versionLines[0].trim();
+        
         errorDetected = newVersion.equals(CHECK_ERROR);
         
         // Keep track of the versions we've seen to keep from nagging players with new version notifications beyond the first one
