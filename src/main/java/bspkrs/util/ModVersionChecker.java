@@ -5,11 +5,10 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.prefs.Preferences;
 
 import net.minecraft.util.StatCollector;
 import bspkrs.bspkrscore.fml.bspkrsCoreMod;
-import bspkrs.util.config.Configuration;
-import bspkrs.util.config.Property;
 
 import com.google.common.collect.Ordering;
 
@@ -32,7 +31,7 @@ public class ModVersionChecker
     private String[]                                    inGameMsg;
     private File                                        trackerFile;
     private File                                        trackerDir;
-    private static Configuration                        versionCheckTracker;
+    private static Preferences                          versionCheckTracker;
     private String                                      lastNewVersionFound;
     private final String                                CHECK_ERROR       = "check_error";
     private final boolean                               errorDetected;
@@ -83,44 +82,32 @@ public class ModVersionChecker
             
             trackerDir = new File(CommonUtils.getConfigDir());
             trackerFile = new File(trackerDir, "bspkrs_ModVersionCheckerTracking.txt");
+            if ((trackerFile.exists()))
+                trackerFile.delete();
         }
         
-        try
+        if (versionCheckTracker == null)
+            versionCheckTracker = Preferences.userNodeForPackage(this.getClass()).node("modversiontracker");
+        
+        if (!(new StringBuilder("@").append("MOD_VERSION@")).toString().equals(currentVersion) && !"${mod_version}".equals(currentVersion))
         {
-            if (versionCheckTracker == null)
-                versionCheckTracker = new Configuration(trackerFile);
-            else
-                versionCheckTracker.load();
-        }
-        catch (Throwable e)
-        {
-            BSLog.severe("An exception occurred while loading bspkrs_ModVersionCheckerTracking.txt. This file will be deleted and a new file will be generated.");
-            e.printStackTrace();
+            lastNewVersionFound = versionCheckTracker.get(modID, currentVersion);
+            runsSinceLastMessage = versionCheckTracker.node("runs_since_last_message").getInt(modID, 0);
             
-            trackerFile.delete();
-            versionCheckTracker = new Configuration(trackerFile);
+            if (errorDetected)
+                newVersion = lastNewVersionFound;
+            
+            if (!errorDetected && !isCurrentVersion(lastNewVersionFound, newVersion))
+            {
+                runsSinceLastMessage = 0;
+                lastNewVersionFound = newVersion;
+            }
+            else
+                runsSinceLastMessage = runsSinceLastMessage % 10;
+            
+            versionCheckTracker.node("runs_since_last_message").putInt(modID, runsSinceLastMessage + 1);
+            versionCheckTracker.put(modID, lastNewVersionFound);
         }
-        
-        Property lastVerFoundProp = versionCheckTracker.get("version_check_tracker", modID, currentVersion);
-        Property countProp = versionCheckTracker.get("version_check_tracker.runs_since_last_message", modID, 0);
-        
-        lastNewVersionFound = lastVerFoundProp.getString();
-        
-        if (errorDetected)
-            newVersion = lastNewVersionFound;
-        
-        if (!errorDetected && !isCurrentVersion(lastNewVersionFound, newVersion))
-        {
-            runsSinceLastMessage = 0;
-            lastNewVersionFound = newVersion;
-        }
-        else
-            runsSinceLastMessage = countProp.getInt() % 10;
-        
-        countProp.setValue(runsSinceLastMessage + 1);
-        lastVerFoundProp.setValue(lastNewVersionFound);
-        
-        versionCheckTracker.save();
         
         // Override instantiated updateURL with second line of version file if it exists and is non-blank
         if (versionLines.length > 1 && versionLines[1].trim().length() != 0)
