@@ -1,4 +1,9 @@
-6.9 - ???
+6.10 - 8-Jun-2014
+- fixed logic flaw in update checker
+- changed update checker to use user prefs instead of config file
+- fixed Double.MAX_VALUE stuff
+- fixed FML version number dependency
+6.9 - 23-May-2014
 - added better prop state handling
 - added undo buttons
 - added example props to regular config

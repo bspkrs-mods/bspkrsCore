@@ -3,8 +3,6 @@ package bspkrs.testmod.block;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLeavesBase;
-import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -64,9 +62,6 @@ public class BlockTreeBranch extends Block
             super.addCollisionBoxesToList(world, x, y, z, aabb, collisionBoxes, entity);
         }
         
-        minZ = 0.375F;
-        maxZ = 0.625F;
-        
         if (canConnectWest)
         {
             minX = 0.0F;
@@ -83,12 +78,12 @@ public class BlockTreeBranch extends Block
             super.addCollisionBoxesToList(world, x, y, z, aabb, collisionBoxes, entity);
         }
         
-        if (canConnectNorth)
+        if (canConnectDown)
         {
             minZ = 0.0F;
         }
         
-        if (canConnectSouth)
+        if (canConnectUp)
         {
             maxZ = 1.0F;
         }
@@ -174,7 +169,7 @@ public class BlockTreeBranch extends Block
     public boolean canConnectBranchTo(IBlockAccess world, int x, int y, int z)
     {
         Block block = world.getBlock(x, y, z);
-        return block == this || block instanceof BlockLog || block instanceof BlockLeavesBase;
+        return block == this || block.isWood(world, x, y, z) || block.isLeaves(world, x, y, z);
     }
     
     /**
