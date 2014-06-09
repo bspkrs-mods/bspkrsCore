@@ -1,6 +1,6 @@
-6.11 - ???
+6.11 - 08-Jun-2014
 - fixed potential NPEs in BlockID, ModulusBlockID, and ItemID
-6.10 - 8-Jun-2014
+6.10 - 08-Jun-2014
 - fixed logic flaw in update checker
 - changed update checker to use user prefs instead of config file
 - fixed Double.MAX_VALUE stuff
