@@ -9,8 +9,8 @@ public class ItemID
     /**
      * Unique ID of the item from the namespace registry
      */
-    public String id;
-    public int    damage;
+    public final String id;
+    public final int    damage;
     
     public ItemID(String id, int damage)
     {
@@ -76,9 +76,9 @@ public class ItemID
         
         ItemID o = (ItemID) obj;
         if (o.damage == -1 || damage == -1)
-            return id.equals(o.id);
+            return id != null ? id.equals(o.id) : o.id == null;
         else
-            return id.equals(o.id) && damage == o.damage;
+            return id != null ? id.equals(o.id) && damage == o.damage : o.id == null && damage == o.damage;
     }
     
     @Override

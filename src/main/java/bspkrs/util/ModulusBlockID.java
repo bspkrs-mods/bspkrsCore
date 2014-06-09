@@ -44,7 +44,9 @@ public class ModulusBlockID extends BlockID
         if (!(obj instanceof BlockID))
             return false;
         
-        if (!((BlockID) obj).id.equals(this.id))
+        if (((BlockID) obj).id != null && !((BlockID) obj).id.equals(this.id))
+            return false;
+        else if (((BlockID) obj).id == null && this.id != null)
             return false;
         
         if (obj instanceof ModulusBlockID)
