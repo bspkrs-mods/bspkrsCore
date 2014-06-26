@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.renderer.Tessellator;
 import bspkrs.util.config.gui.GuiPropertyList.SelectValuePropEntry;
 
+@Deprecated
 public class GuiSelectStringEntries extends GuiListExtended
 {
     private GuiSelectString                 parentGuiSelectString;

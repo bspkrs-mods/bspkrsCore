@@ -25,7 +25,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-
+@Deprecated
 public class ConfigCategory implements Map<String, Property>
 {
     private String                               name;

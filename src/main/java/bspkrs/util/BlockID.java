@@ -34,25 +34,13 @@ public class BlockID
     public BlockID(String format, String delimiter)
     {
         int comma = format.indexOf(",");
-        int tilde = format.indexOf("~");
-        
-        if (comma == -1 && tilde != -1)
-            throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" was found, but no \",\" in format \"%s\". " +
-                    "Expected format is \"<blockidstring>, <integer metadata> ~ <integer modulus>\". EG: \"minecraft:log, 0 ~ 4\".", format));
-        
-        if (tilde != -1 && comma > tilde)
-            throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" was found before a \",\" in format \"%s\". " +
-                    "Expected format is \"<blockidstring>, <integer metadata> ~ <integer modulus>\". EG: \"minecraft:log, 0 ~ 4\".", format));
-        
-        if (tilde == -1)
-            tilde = format.length();
         
         if (comma != -1)
             this.id = format.substring(0, comma).trim();
         else
             this.id = format.trim();
         
-        this.metadata = CommonUtils.parseInt(format.substring(comma + 1, tilde).trim(), -1);
+        this.metadata = CommonUtils.parseInt(format.substring(comma + 1, format.length()).trim(), -1);
     }
     
     public BlockID(World world, int x, int y, int z)
@@ -83,14 +71,16 @@ public class BlockID
         format = format.trim();
         int comma = format.indexOf(",");
         int tilde = format.indexOf("~");
+        if (tilde == -1)
+            tilde = format.indexOf("%");
         
         if (comma == -1 && tilde != -1)
-            throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" was found, but no \",\" in format \"%s\". " +
-                    "Expected format is \"<blockidstring>, <integer metadata> ~ <integer modulus>\". EG: \"minecraft:log, 0 ~ 4\".", format));
+            throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" or \"%1$s\" was found, but no \",\" in format \"%2$s\". " +
+                    "Expected format is \"<blockidstring>, <integer metadata> %1$s <integer modulus>\". EG: \"minecraft:log, 0 %1$s 4\".", "%", format));
         
         if (tilde != -1 && comma > tilde)
-            throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" was found before a \",\" in format \"%s\". " +
-                    "Expected format is \"<blockidstring>, <integer metadata> ~ <integer modulus>\". EG: \"minecraft:log, 0 ~ 4\".", format));
+            throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" or \"%1$s\" was found before a \",\" in format \"%2$s\". " +
+                    "Expected format is \"<blockidstring>, <integer metadata> %1$s <integer modulus>\". EG: \"minecraft:log, 0 %1$s 4\".", "%", format));
         
         if (tilde == -1)
             tilde = format.length();

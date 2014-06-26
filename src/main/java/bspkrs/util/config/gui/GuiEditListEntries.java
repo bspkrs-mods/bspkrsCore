@@ -17,6 +17,7 @@ import bspkrs.client.util.HUDUtils;
 import bspkrs.util.ReflectionHelper;
 import bspkrs.util.config.gui.GuiPropertyList.EditListPropEntry;
 
+@Deprecated
 public class GuiEditListEntries extends GuiListExtended
 {
     private GuiEditList             parentGuiEditList;

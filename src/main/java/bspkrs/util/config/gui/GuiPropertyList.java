@@ -27,6 +27,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
+@Deprecated
 public class GuiPropertyList extends GuiListExtended
 {
     public final GuiConfig           parentGuiConfig;

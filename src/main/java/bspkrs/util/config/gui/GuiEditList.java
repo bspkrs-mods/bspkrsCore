@@ -12,6 +12,7 @@ import net.minecraft.util.EnumChatFormatting;
 
 import org.lwjgl.input.Keyboard;
 
+@Deprecated
 public class GuiEditList extends GuiScreen
 {
     protected GuiScreen        parentScreen;

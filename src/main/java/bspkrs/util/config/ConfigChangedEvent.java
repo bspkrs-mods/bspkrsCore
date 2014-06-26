@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.Event.HasResult;
 
 @HasResult
+@Deprecated
 public class ConfigChangedEvent extends Event
 {
     /**

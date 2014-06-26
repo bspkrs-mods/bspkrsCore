@@ -3,6 +3,7 @@ package bspkrs.util.config.gui;
 import net.minecraft.client.gui.GuiButton;
 import bspkrs.util.ReflectionHelper;
 
+@Deprecated
 public class HoverChecker
 {
     private int       top, bottom, left, right, threshold;

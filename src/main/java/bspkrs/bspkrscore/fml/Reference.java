@@ -3,7 +3,7 @@ package bspkrs.bspkrscore.fml;
 import java.io.InputStream;
 import java.util.Properties;
 
-import bspkrs.util.config.Configuration;
+import net.minecraftforge.common.config.Configuration;
 
 import com.google.common.base.Throwables;
 

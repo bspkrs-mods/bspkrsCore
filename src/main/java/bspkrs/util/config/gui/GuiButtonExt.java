@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import bspkrs.client.util.HUDUtils;
 
+@Deprecated
 public class GuiButtonExt extends GuiButton
 {
     public GuiButtonExt(int id, int xPos, int yPos, String displayString)

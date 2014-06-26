@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import bspkrs.client.util.HUDUtils;
 
+@Deprecated
 public class GuiCheckBox extends GuiButton
 {
     private boolean isChecked;

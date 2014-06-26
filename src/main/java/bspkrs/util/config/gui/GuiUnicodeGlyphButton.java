@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import bspkrs.client.util.HUDUtils;
 
+@Deprecated
 public class GuiUnicodeGlyphButton extends GuiButtonExt
 {
     public String glyph;

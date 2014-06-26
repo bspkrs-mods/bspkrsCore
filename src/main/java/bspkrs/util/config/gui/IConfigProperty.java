@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import bspkrs.util.config.gui.GuiPropertyList.IGuiConfigListEntry;
 
+@Deprecated
 public interface IConfigProperty
 {
     /**

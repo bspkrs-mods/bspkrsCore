@@ -67,6 +67,6 @@ public class ModulusBlockID extends BlockID
     @Override
     public String toString()
     {
-        return id + ", " + metadata + " ~ " + metadataModulus;
+        return id + ", " + metadata + " % " + metadataModulus;
     }
 }

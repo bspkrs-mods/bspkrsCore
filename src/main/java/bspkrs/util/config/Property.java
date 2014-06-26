@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import bspkrs.util.config.gui.GuiPropertyList.IGuiConfigListEntry;
 
+@Deprecated
 public class Property
 {
     public enum Type

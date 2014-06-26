@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
 
+@Deprecated
 public class GuiSelectString extends GuiScreen
 {
     protected GuiScreen               parentScreen;

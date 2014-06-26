@@ -1,5 +1,6 @@
 package bspkrs.util.config.gui;
 
+@Deprecated
 public enum ConfigGuiType
 {
     STRING,

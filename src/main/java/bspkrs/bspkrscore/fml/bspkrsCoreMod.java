@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import bspkrs.util.CommonUtils;
 import bspkrs.util.Const;
 import bspkrs.util.ModVersionChecker;
 import bspkrs.util.UniqueNameListGenerator;
-import bspkrs.util.config.ConfigChangedEvent.OnConfigChangedEvent;
-import bspkrs.util.config.Configuration;
-import bspkrs.util.config.Property;
+import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -141,47 +141,8 @@ public class bspkrsCoreMod
         
         Reference.config.setCategoryPropertyOrder(ctgyGen, orderedKeys);
         
-        // example stuff
-        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "fixedBooleanList", fixedBooleanListDefault, "This is a Boolean list that has a fixed length of 6.", true, -1, true);
-        temp.setPropLanguageKey("bspkrs.configgui.example." + temp.getName());
-        temp.setIsHotLoadable(true);
-        fixedBooleanList = temp.getBooleanList();
-        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "variablePatternStringList", variablePatternStringListDefault, "This is a String List that is validated using a Pattern object. 27 entries are allowed.", false, 27, variablePatternStringListPattern, true);
-        temp.setPropLanguageKey("bspkrs.configgui.example." + temp.getName());
-        variablePatternStringList = temp.getStringList();
-        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "regularString", regularStringDefault, "Just a regular String... no requirements.");
-        temp.setPropLanguageKey("bspkrs.configgui.example." + temp.getName());
-        temp.setIsHotLoadable(true);
-        regularString = temp.getString();
-        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "patternString", patternStringDefault, "This comma-separated String is validated using a Pattern object.", patternStringPattern, true);
-        temp.setPropLanguageKey("bspkrs.configgui.example." + temp.getName());
-        patternString = temp.getString();
-        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "selectString", selectStringDefault, "If a String[] of valid values is given to a String property, the GUI control is a cycle button.", selectStringValues, true);
-        temp.setPropLanguageKey("bspkrs.configgui.example." + temp.getName());
-        temp.setIsHotLoadable(true);
-        selectString = temp.getString();
-        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "unboundedInteger", unboundedIntegerDefault, "Integer prop without bounds.", Integer.MIN_VALUE, Integer.MAX_VALUE, true);
-        temp.setPropLanguageKey("bspkrs.configgui.example." + temp.getName());
-        temp.setIsHotLoadable(true);
-        unboundedInteger = temp.getInt();
-        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "boundedInteger", boundedIntegerDefault, "Integer prop with bounds.", -1, 200, true);
-        temp.setPropLanguageKey("bspkrs.configgui.example." + temp.getName());
-        boundedInteger = temp.getInt();
-        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "unboundedFloat", unboundedFloatDefault, "Float prop without bounds.", Float.MIN_VALUE, Float.MAX_VALUE, true);
-        temp.setPropLanguageKey("bspkrs.configgui.example." + temp.getName());
-        temp.setIsHotLoadable(true);
-        unboundedFloat = (float) temp.getDouble();
-        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "boundedFloat", boundedFloatDefault, "Float prop with bounds.", -1.1F, 225.25F, true);
-        temp.setPropLanguageKey("bspkrs.configgui.example." + temp.getName());
-        boundedFloat = (float) temp.getDouble();
-        temp = Reference.config.get(CATEGORY_GENERAL + ".example_properties", "chatColorPicker", chatColorPickerDefault, "This property selects a color code for chat formatting.", Property.Type.COLOR);
-        temp.setValidValues(chatColorPickerValues);
-        temp.setIsHotLoadable(true);
-        temp.setPropLanguageKey("bspkrs.configgui.example." + temp.getName());
-        chatColorPicker = temp.getString();
-        
-        Reference.config.setCategoryComment(ctgyGen + ".example_properties", "This section contains example properties to demo the config GUI controls.");
-        Reference.config.setCategoryLanguageKey(ctgyGen + ".example_properties", "bspkrs.configgui.ctgy.example_properties");
+        if (Reference.config.hasCategory(CATEGORY_GENERAL + ".example_properties"))
+            Reference.config.removeCategory(Reference.config.getCategory(CATEGORY_GENERAL + ".example_properties"));
         
         Reference.config.save();
     }

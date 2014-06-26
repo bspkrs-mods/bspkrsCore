@@ -42,6 +42,7 @@ import cpw.mods.fml.relauncher.FMLInjectionData;
 /**
  * This class offers advanced configurations capabilities, allowing to provide various categories for configuration variables.
  */
+@Deprecated
 public class Configuration
 {
     public static final String          CATEGORY_GENERAL      = "general";

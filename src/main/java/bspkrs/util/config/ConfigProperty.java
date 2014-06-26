@@ -9,6 +9,7 @@ import bspkrs.util.config.gui.ConfigGuiType;
 import bspkrs.util.config.gui.GuiPropertyList.IGuiConfigListEntry;
 import bspkrs.util.config.gui.IConfigProperty;
 
+@Deprecated
 public class ConfigProperty implements IConfigProperty
 {
     private Property       prop;
