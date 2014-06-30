@@ -65,7 +65,7 @@ public class ModVersionChecker
         
         String[] versionLines = CommonUtils.loadTextFromURL(this.versionURL, BSLog.INSTANCE.getLogger(), new String[] { CHECK_ERROR }, timeoutMS);
         
-        if (versionLines.length == 0)
+        if (versionLines.length == 0 || versionLines[0].trim().equals("<html>"))
             newVersion = CHECK_ERROR;
         else
             newVersion = versionLines[0].trim();
@@ -95,6 +95,8 @@ public class ModVersionChecker
         if (!(new StringBuilder("@").append("MOD_VERSION@")).toString().equals(currentVersion) && !"${mod_version}".equals(currentVersion))
         {
             lastNewVersionFound = versionCheckTracker.get(modID, currentVersion);
+            if (lastNewVersionFound.equals("<html>"))
+                lastNewVersionFound = currentVersion;
             runsSinceLastMessage = versionCheckTracker.node("runs_since_last_message").getInt(modID, 0);
             
             if (errorDetected)
