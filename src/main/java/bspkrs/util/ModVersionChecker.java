@@ -95,8 +95,10 @@ public class ModVersionChecker
         if (!(new StringBuilder("@").append("MOD_VERSION@")).toString().equals(currentVersion) && !"${mod_version}".equals(currentVersion))
         {
             lastNewVersionFound = versionCheckTracker.get(modID, currentVersion);
+            
             if (lastNewVersionFound.equals("<html>"))
                 lastNewVersionFound = currentVersion;
+            
             runsSinceLastMessage = versionCheckTracker.node("runs_since_last_message").getInt(modID, 0);
             
             if (errorDetected)
