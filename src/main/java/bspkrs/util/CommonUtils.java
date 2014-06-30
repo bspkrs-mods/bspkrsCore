@@ -508,7 +508,7 @@ public final class CommonUtils
         double x = player.prevPosX + (player.posX - player.prevPosX) * scale;
         double y = player.prevPosY + (player.posY - player.prevPosY) * scale + 1.62D - player.yOffset;
         double z = player.prevPosZ + (player.posZ - player.prevPosZ) * scale;
-        Vec3 vector1 = player.worldObj.getWorldVec3Pool().getVecFromPool(x, y, z);
+        Vec3 vector1 = Vec3.createVectorHelper(x, y, z);
         float cosYaw = MathHelper.cos(-yaw * 0.017453292F - (float) Math.PI);
         float sinYaw = MathHelper.sin(-yaw * 0.017453292F - (float) Math.PI);
         float cosPitch = -MathHelper.cos(-pitch * 0.017453292F);

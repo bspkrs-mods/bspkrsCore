@@ -1,10 +1,12 @@
 package bspkrs.client.util;
 
 import java.lang.reflect.Field;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.model.ModelBase;
@@ -217,7 +219,7 @@ public class EntityUtils
         return getRandomLivingEntity(world, null, 5, null);
     }
     
-    public static EntityLivingBase getRandomLivingEntity(World world, List blacklist, int numberOfAttempts, String[] fallBackPlayerNames)
+    public static EntityLivingBase getRandomLivingEntity(World world, List blacklist, int numberOfAttempts, List<SimpleEntry<UUID, String>> fallbackPlayerNames)
     {
         Random random = new Random();
         // Get a COPY dumbass!
@@ -240,8 +242,11 @@ public class EntityUtils
         
         if (!EntityLivingBase.class.isAssignableFrom(clazz))
         {
-            if (fallBackPlayerNames != null)
-                return new EntityOtherPlayerMP(world, new GameProfile("", fallBackPlayerNames[random.nextInt(fallBackPlayerNames.length)]));
+            if (fallbackPlayerNames != null)
+            {
+                SimpleEntry<UUID, String> entry = fallbackPlayerNames.get(random.nextInt(fallbackPlayerNames.size()));
+                return new EntityOtherPlayerMP(world, new GameProfile(entry.getKey(), entry.getValue()));
+            }
             else
                 return (EntityLivingBase) EntityList.createEntityByName("Chicken", world);
         }

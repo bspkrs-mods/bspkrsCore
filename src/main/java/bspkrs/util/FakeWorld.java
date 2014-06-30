@@ -27,7 +27,6 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3Pool;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.EnumDifficulty;
@@ -1089,12 +1088,6 @@ public class FakeWorld extends World
     {}
     
     @Override
-    public Vec3Pool getWorldVec3Pool()
-    {
-        return super.getWorldVec3Pool();
-    }
-    
-    @Override
     public Calendar getCurrentDate()
     {
         return super.getCurrentDate();
@@ -1199,6 +1192,13 @@ public class FakeWorld extends World
     public Block getBlock(int x, int y, int z)
     {
         return y > 63 ? Blocks.air : Blocks.grass;
+    }
+    
+    // TODO: renderDistanceChunks
+    @Override
+    protected int func_152379_p()
+    {
+        return 4;
     }
     
     protected static class FakeWorldProvider extends WorldProvider

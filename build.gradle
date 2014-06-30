@@ -49,7 +49,6 @@ processResources {
         // replaces
         expand ([
             'mod_version': config.mod_version,
-            'fml_version': config.fml_version,
             'forge_version': config.forge_version,
             'minecraft_version': config.minecraft_version,
         ])
