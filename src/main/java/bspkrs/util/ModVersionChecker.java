@@ -87,7 +87,7 @@ public class ModVersionChecker
         }
         
         if (versionCheckTracker == null)
-            versionCheckTracker = Preferences.userNodeForPackage(this.getClass()).node("modversiontracker");
+            versionCheckTracker = Preferences.userNodeForPackage(this.getClass()).node("modversiontracker" + Const.MCVERSION);
         
         if (!(new StringBuilder("@").append("MOD_VERSION@")).toString().equals(currentVersion) && !"${mod_version}".equals(currentVersion))
         {
