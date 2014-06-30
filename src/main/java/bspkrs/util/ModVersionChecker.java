@@ -52,6 +52,8 @@ public class ModVersionChecker
         
         try
         {
+            if (versionURL.startsWith("http://dl.dropboxusercontent.com"))
+                versionURL = versionURL.replaceFirst("http", "https");
             this.versionURL = new URL(versionURL);
             BSLog.info("Initializing ModVersionChecker for mod %s", modID);
         }
