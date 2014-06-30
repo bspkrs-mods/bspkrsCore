@@ -24,6 +24,8 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
+import bspkrs.bspkrscore.fml.bspkrsCoreMod;
+
 /*
  * @Authors: DaftPVF, bspkrs
  * @Desc: Helpers from original Treecapitator, ConnectedDestruction, and FloatingRuins mod code and new utility methods
@@ -440,12 +442,14 @@ public final class CommonUtils
             URLConnection uc = url.openConnection();
             uc.setReadTimeout(timeoutMS);
             uc.setConnectTimeout(timeoutMS);
+            uc.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US;     rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 (.NET CLR 3.5.30729)");
             scanner = new Scanner(uc.getInputStream(), "UTF-8");
         }
         catch (Throwable e)
         {
             logger.log(Level.WARN, String.format("Error retrieving remote string value at URL %s! Defaulting to %s", url.toString(), stringArrayToString(defaultValue)));
-            e.printStackTrace();
+            if (bspkrsCoreMod.instance.allowDebugOutput)
+                e.printStackTrace();
             return defaultValue;
         }
         
