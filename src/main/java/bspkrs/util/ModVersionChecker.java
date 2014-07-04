@@ -194,7 +194,7 @@ public class ModVersionChecker
     
     public boolean isCurrentVersion()
     {
-        return isCurrentVersion(runsSinceLastMessage == 0 ? currentVersion : lastNewVersionFound, newVersion);
+        return errorDetected || isCurrentVersion(runsSinceLastMessage == 0 ? currentVersion : lastNewVersionFound, newVersion);
     }
     
     public static boolean isCurrentVersion(String oldVer, String newVer)
