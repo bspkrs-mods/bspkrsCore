@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -245,7 +246,7 @@ public class EntityUtils
             if (fallbackPlayerNames != null)
             {
                 SimpleEntry<UUID, String> entry = fallbackPlayerNames.get(random.nextInt(fallbackPlayerNames.size()));
-                return new EntityOtherPlayerMP(world, new GameProfile(entry.getKey(), entry.getValue()));
+                return new EntityOtherPlayerMP(world, Minecraft.getMinecraft().func_152347_ac().fillProfileProperties(new GameProfile(entry.getKey(), entry.getValue()), true));
             }
             else
                 return (EntityLivingBase) EntityList.createEntityByName("Chicken", world);

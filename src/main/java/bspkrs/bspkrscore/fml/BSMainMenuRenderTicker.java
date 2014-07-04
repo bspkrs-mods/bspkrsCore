@@ -44,7 +44,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class BSMainMenuRenderTicker
 {
-    private Minecraft                              mcClient;
+    private static Minecraft                       mcClient;
     private static boolean                         isRegistered = false;
     private World                                  world;
     private EntityLivingBase                       player;
@@ -121,7 +121,10 @@ public class BSMainMenuRenderTicker
         try
         {
             world = new FakeWorld();
-            player = new EntityOtherPlayerMP(world, new GameProfile(null, mcClient.getSession().getUsername()));
+            UUID playerID = null;
+            if (!"NotValid".equals(mcClient.getSession().getPlayerID()))
+                playerID = UUIDTypeAdapter.fromString(mcClient.getSession().getPlayerID());
+            player = new EntityOtherPlayerMP(world, mcClient.func_152347_ac().fillProfileProperties(new GameProfile(playerID, mcClient.getSession().getUsername()), false));
             setRandomMobItem(player);
             if (bspkrsCoreMod.instance.allowDebugOutput)
             {
@@ -160,7 +163,7 @@ public class BSMainMenuRenderTicker
         if (!EntityLivingBase.class.isAssignableFrom(clazz))
         {
             SimpleEntry<UUID, String> entry = fallbackPlayerNames.get(random.nextInt(fallbackPlayerNames.size()));
-            return new EntityOtherPlayerMP(world, new GameProfile(entry.getKey(), entry.getValue()));
+            return new EntityOtherPlayerMP(world, mcClient.func_152347_ac().fillProfileProperties(new GameProfile(entry.getKey(), entry.getValue()), true));
         }
         
         if (bspkrsCoreMod.instance.allowDebugOutput)
@@ -263,6 +266,7 @@ public class BSMainMenuRenderTicker
         entityBlacklist.add("TwilightForest.Upper Goblin Knight");
         
         fallbackPlayerNames = new ArrayList<SimpleEntry<UUID, String>>();
+        // UUIDs gotten using http://connorlinfoot.com/uuid/
         fallbackPlayerNames.add(new SimpleEntry<UUID, String>(UUIDTypeAdapter.fromString("92d459067a50474285b6b079db9dc189"), "bspkrs"));
         fallbackPlayerNames.add(new SimpleEntry<UUID, String>(UUIDTypeAdapter.fromString("2efa46fa29484d98b822fa182d254870"), "lorddusk"));
         fallbackPlayerNames.add(new SimpleEntry<UUID, String>(UUIDTypeAdapter.fromString("b9a89002b3924545ab4d5b1ff60c88a6"), "Arkember"));
