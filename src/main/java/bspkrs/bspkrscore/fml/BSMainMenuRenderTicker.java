@@ -61,6 +61,8 @@ public class BSMainMenuRenderTicker
     private static Object[]                        entStrings;
     private static int                             id;
     
+    private static boolean                         erroredOut   = false;
+    
     public BSMainMenuRenderTicker()
     {
         mcClient = FMLClientHandler.instance().getClient();
@@ -69,35 +71,84 @@ public class BSMainMenuRenderTicker
     @SubscribeEvent
     public void onTick(RenderTickEvent event)
     {
-        if (bspkrsCoreMod.instance.showMainMenuMobs)
+        if (bspkrsCoreMod.instance.showMainMenuMobs && !erroredOut && mcClient.currentScreen instanceof GuiMainMenu)
         {
-            if (world == null || player == null || randMob == null)
-                init();
-            
-            if (mcClient.currentScreen instanceof GuiMainMenu && world != null && player != null && randMob != null)
+            try
             {
-                ScaledResolution sr = new ScaledResolution(mcClient, mcClient.displayWidth, mcClient.displayHeight);
-                final int mouseX = Mouse.getX() * sr.getScaledWidth() / mcClient.displayWidth;
-                final int mouseY = sr.getScaledHeight() - Mouse.getY() * sr.getScaledHeight() / mcClient.displayHeight - 1;
-                int distanceToSide = ((mcClient.currentScreen.width / 2) - 98) / 2;
-                float targetHeight = (float) (sr.getScaledHeight_double() / 5.0F) / 1.8F;
-                float scale = EntityUtils.getEntityScale(randMob, targetHeight, 1.8F);
-                EntityUtils.drawEntityOnScreen(
-                        distanceToSide,
-                        (int) (sr.getScaledHeight() / 2 + (randMob.height * scale)),
-                        scale,
-                        distanceToSide - mouseX,
-                        (sr.getScaledHeight() / 2 + (randMob.height * scale)) - (randMob.height * scale * (randMob.getEyeHeight() / randMob.height)) - mouseY,
-                        randMob);
-                EntityUtils.drawEntityOnScreen(
-                        sr.getScaledWidth() - distanceToSide,
-                        (int) (sr.getScaledHeight() / 2 + (player.height * targetHeight)),
-                        targetHeight,
-                        sr.getScaledWidth() - distanceToSide - mouseX,
-                        (sr.getScaledHeight() / 2 + (player.height * targetHeight)) - (player.height * targetHeight * (player.getEyeHeight() / player.height)) - mouseY,
-                        player);
+                if (world == null || player == null || randMob == null)
+                    init();
+                
+                if (world != null && player != null && randMob != null)
+                {
+                    ScaledResolution sr = new ScaledResolution(mcClient, mcClient.displayWidth, mcClient.displayHeight);
+                    final int mouseX = Mouse.getX() * sr.getScaledWidth() / mcClient.displayWidth;
+                    final int mouseY = sr.getScaledHeight() - Mouse.getY() * sr.getScaledHeight() / mcClient.displayHeight - 1;
+                    int distanceToSide = ((mcClient.currentScreen.width / 2) - 98) / 2;
+                    float targetHeight = (float) (sr.getScaledHeight_double() / 5.0F) / 1.8F;
+                    float scale = EntityUtils.getEntityScale(randMob, targetHeight, 1.8F);
+                    EntityUtils.drawEntityOnScreen(
+                            distanceToSide,
+                            (int) (sr.getScaledHeight() / 2 + (randMob.height * scale)),
+                            scale,
+                            distanceToSide - mouseX,
+                            (sr.getScaledHeight() / 2 + (randMob.height * scale)) - (randMob.height * scale * (randMob.getEyeHeight() / randMob.height)) - mouseY,
+                            randMob);
+                    EntityUtils.drawEntityOnScreen(
+                            sr.getScaledWidth() - distanceToSide,
+                            (int) (sr.getScaledHeight() / 2 + (player.height * targetHeight)),
+                            targetHeight,
+                            sr.getScaledWidth() - distanceToSide - mouseX,
+                            (sr.getScaledHeight() / 2 + (player.height * targetHeight)) - (player.height * targetHeight * (player.getEyeHeight() / player.height)) - mouseY,
+                            player);
+                }
+                else if (world != null && (savedScreen == null || !savedScreen.equals(mcClient.currentScreen)))
+                {
+                    if (bspkrsCoreMod.instance.allowDebugOutput)
+                    {
+                        randMob = getNextEntity(world);
+                        EntityUtils.resetErroredOut(false);
+                    }
+                    else
+                    {
+                        randMob = EntityUtils.getRandomLivingEntity(world, entityBlacklist, 4, fallbackPlayerNames);
+                        EntityUtils.resetErroredOut(false);
+                    }
+                    setRandomMobItem(player);
+                    setRandomMobItem(randMob);
+                    savedScreen = mcClient.currentScreen;
+                }
             }
-            else if (world != null && (savedScreen == null || !savedScreen.equals(mcClient.currentScreen)))
+            catch (Throwable e)
+            {
+                BSLog.severe("Main menu mob rendering encountered a serious error and has been disabled for the remainder of this session.");
+                e.printStackTrace();
+                erroredOut = true;
+                player = null;
+                randMob = null;
+                world = null;
+            }
+        }
+    }
+    
+    private void init()
+    {
+        try
+        {
+            boolean createNewWorld = world == null;
+            
+            if (createNewWorld)
+                world = new FakeWorld();
+            
+            if (createNewWorld || player == null)
+            {
+                UUID playerID = null;
+                if (!"NotValid".equals(mcClient.getSession().getPlayerID()))
+                    playerID = UUIDTypeAdapter.fromString(mcClient.getSession().getPlayerID());
+                player = new EntityOtherPlayerMP(world, /*mcClient.func_152347_ac().fillProfileProperties(*/new GameProfile(playerID, mcClient.getSession().getUsername())/*, false)*/);
+                setRandomMobItem(player);
+            }
+            
+            if (createNewWorld || randMob == null)
             {
                 if (bspkrsCoreMod.instance.allowDebugOutput)
                 {
@@ -109,42 +160,20 @@ public class BSMainMenuRenderTicker
                     randMob = EntityUtils.getRandomLivingEntity(world, entityBlacklist, 4, fallbackPlayerNames);
                     EntityUtils.resetErroredOut(false);
                 }
-                setRandomMobItem(player);
                 setRandomMobItem(randMob);
-                savedScreen = mcClient.currentScreen;
             }
-        }
-    }
-    
-    private void init()
-    {
-        try
-        {
-            world = new FakeWorld();
-            UUID playerID = null;
-            if (!"NotValid".equals(mcClient.getSession().getPlayerID()))
-                playerID = UUIDTypeAdapter.fromString(mcClient.getSession().getPlayerID());
-            player = new EntityOtherPlayerMP(world, mcClient.func_152347_ac().fillProfileProperties(new GameProfile(playerID, mcClient.getSession().getUsername()), false));
-            setRandomMobItem(player);
-            if (bspkrsCoreMod.instance.allowDebugOutput)
-            {
-                randMob = getNextEntity(world);
-                EntityUtils.resetErroredOut(false);
-            }
-            else
-            {
-                randMob = EntityUtils.getRandomLivingEntity(world, entityBlacklist, 4, fallbackPlayerNames);
-                EntityUtils.resetErroredOut(false);
-            }
-            setRandomMobItem(randMob);
+            
             RenderManager.instance.cacheActiveRenderInfo(world, mcClient.renderEngine, mcClient.fontRenderer, player, player, mcClient.gameSettings, 0.0F);
             savedScreen = mcClient.currentScreen;
         }
         catch (Throwable e)
         {
+            BSLog.severe("Main menu mob rendering encountered a serious error and has been disabled for the remainder of this session.");
             e.printStackTrace();
-            world = null;
+            erroredOut = true;
             player = null;
+            randMob = null;
+            world = null;
         }
     }
     
@@ -163,7 +192,7 @@ public class BSMainMenuRenderTicker
         if (!EntityLivingBase.class.isAssignableFrom(clazz))
         {
             SimpleEntry<UUID, String> entry = fallbackPlayerNames.get(random.nextInt(fallbackPlayerNames.size()));
-            return new EntityOtherPlayerMP(world, mcClient.func_152347_ac().fillProfileProperties(new GameProfile(entry.getKey(), entry.getValue()), true));
+            return new EntityOtherPlayerMP(world, mcClient.func_152347_ac().fillProfileProperties(new GameProfile(entry.getKey(), entry.getValue()), false));
         }
         
         if (bspkrsCoreMod.instance.allowDebugOutput)
@@ -205,6 +234,7 @@ public class BSMainMenuRenderTicker
     {
         if (!isRegistered)
         {
+            BSLog.info("Enabling Main Menu Mob render ticker");
             FMLCommonHandler.instance().bus().register(this);
             isRegistered = true;
         }
@@ -217,7 +247,6 @@ public class BSMainMenuRenderTicker
             FMLCommonHandler.instance().bus().unregister(this);
             isRegistered = false;
             randMob = null;
-            player = null;
             world = null;
         }
     }
