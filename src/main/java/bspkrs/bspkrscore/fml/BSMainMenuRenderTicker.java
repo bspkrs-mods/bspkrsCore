@@ -9,6 +9,8 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
@@ -23,6 +25,7 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovementInputFromOptions;
 import net.minecraft.world.World;
 
 import org.lwjgl.input.Mouse;
@@ -47,7 +50,6 @@ public class BSMainMenuRenderTicker
     private static Minecraft                       mcClient;
     private static boolean                         isRegistered = false;
     private World                                  world;
-    private EntityLivingBase                       player;
     private EntityLivingBase                       randMob;
     private GuiScreen                              savedScreen;
     private static List                            entityBlacklist;
@@ -75,10 +77,10 @@ public class BSMainMenuRenderTicker
         {
             try
             {
-                if (world == null || player == null || randMob == null)
+                if (world == null || mcClient.thePlayer == null || randMob == null)
                     init();
                 
-                if (world != null && player != null && randMob != null)
+                if (world != null && mcClient.thePlayer != null && randMob != null)
                 {
                     ScaledResolution sr = new ScaledResolution(mcClient, mcClient.displayWidth, mcClient.displayHeight);
                     final int mouseX = Mouse.getX() * sr.getScaledWidth() / mcClient.displayWidth;
@@ -95,27 +97,11 @@ public class BSMainMenuRenderTicker
                             randMob);
                     EntityUtils.drawEntityOnScreen(
                             sr.getScaledWidth() - distanceToSide,
-                            (int) (sr.getScaledHeight() / 2 + (player.height * targetHeight)),
+                            (int) (sr.getScaledHeight() / 2 + (mcClient.thePlayer.height * targetHeight)),
                             targetHeight,
                             sr.getScaledWidth() - distanceToSide - mouseX,
-                            (sr.getScaledHeight() / 2 + (player.height * targetHeight)) - (player.height * targetHeight * (player.getEyeHeight() / player.height)) - mouseY,
-                            player);
-                }
-                else if (world != null && (savedScreen == null || !savedScreen.equals(mcClient.currentScreen)))
-                {
-                    if (bspkrsCoreMod.instance.allowDebugOutput)
-                    {
-                        randMob = getNextEntity(world);
-                        EntityUtils.resetErroredOut(false);
-                    }
-                    else
-                    {
-                        randMob = EntityUtils.getRandomLivingEntity(world, entityBlacklist, 4, fallbackPlayerNames);
-                        EntityUtils.resetErroredOut(false);
-                    }
-                    setRandomMobItem(player);
-                    setRandomMobItem(randMob);
-                    savedScreen = mcClient.currentScreen;
+                            (sr.getScaledHeight() / 2 + (mcClient.thePlayer.height * targetHeight)) - (mcClient.thePlayer.height * targetHeight * (mcClient.thePlayer.getEyeHeight() / mcClient.thePlayer.height)) - mouseY,
+                            mcClient.thePlayer);
                 }
             }
             catch (Throwable e)
@@ -123,7 +109,7 @@ public class BSMainMenuRenderTicker
                 BSLog.severe("Main menu mob rendering encountered a serious error and has been disabled for the remainder of this session.");
                 e.printStackTrace();
                 erroredOut = true;
-                player = null;
+                mcClient.thePlayer = null;
                 randMob = null;
                 world = null;
             }
@@ -139,13 +125,13 @@ public class BSMainMenuRenderTicker
             if (createNewWorld)
                 world = new FakeWorld();
             
-            if (createNewWorld || player == null)
+            if (createNewWorld || mcClient.thePlayer == null)
             {
-                UUID playerID = null;
-                if (!"NotValid".equals(mcClient.getSession().getPlayerID()))
-                    playerID = UUIDTypeAdapter.fromString(mcClient.getSession().getPlayerID());
-                player = new EntityOtherPlayerMP(world, /*mcClient.func_152347_ac().fillProfileProperties(*/new GameProfile(playerID, mcClient.getSession().getUsername())/*, false)*/);
-                setRandomMobItem(player);
+                mcClient.thePlayer = new EntityClientPlayerMP(mcClient, world, mcClient.getSession(), null, null);
+                mcClient.thePlayer.dimension = 0;
+                mcClient.thePlayer.movementInput = new MovementInputFromOptions(mcClient.gameSettings);
+                mcClient.thePlayer.eyeHeight = 1.82F;
+                setRandomMobItem(mcClient.thePlayer);
             }
             
             if (createNewWorld || randMob == null)
@@ -153,17 +139,15 @@ public class BSMainMenuRenderTicker
                 if (bspkrsCoreMod.instance.allowDebugOutput)
                 {
                     randMob = getNextEntity(world);
-                    EntityUtils.resetErroredOut(false);
                 }
                 else
                 {
                     randMob = EntityUtils.getRandomLivingEntity(world, entityBlacklist, 4, fallbackPlayerNames);
-                    EntityUtils.resetErroredOut(false);
                 }
                 setRandomMobItem(randMob);
             }
             
-            RenderManager.instance.cacheActiveRenderInfo(world, mcClient.renderEngine, mcClient.fontRenderer, player, player, mcClient.gameSettings, 0.0F);
+            RenderManager.instance.cacheActiveRenderInfo(world, mcClient.renderEngine, mcClient.fontRenderer, mcClient.thePlayer, mcClient.thePlayer, mcClient.gameSettings, 0.0F);
             savedScreen = mcClient.currentScreen;
         }
         catch (Throwable e)
@@ -171,7 +155,7 @@ public class BSMainMenuRenderTicker
             BSLog.severe("Main menu mob rendering encountered a serious error and has been disabled for the remainder of this session.");
             e.printStackTrace();
             erroredOut = true;
-            player = null;
+            mcClient.thePlayer = null;
             randMob = null;
             world = null;
         }
@@ -205,7 +189,7 @@ public class BSMainMenuRenderTicker
     {
         try
         {
-            if (ent instanceof EntityOtherPlayerMP)
+            if (ent instanceof AbstractClientPlayer)
                 ent.setCurrentItemOrArmor(0, playerItems[random.nextInt(playerItems.length)]);
             else if (ent instanceof EntityZombie)
                 ent.setCurrentItemOrArmor(0, zombieItems[random.nextInt(zombieItems.length)]);
@@ -247,6 +231,7 @@ public class BSMainMenuRenderTicker
             FMLCommonHandler.instance().bus().unregister(this);
             isRegistered = false;
             randMob = null;
+            mcClient.thePlayer = null;
             world = null;
         }
     }

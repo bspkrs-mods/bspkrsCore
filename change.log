@@ -1,3 +1,6 @@
+6.14 - 05-Aug-2014
+- better error handling for main menu entity rendering
+- better entity render support for mods
 6.13 - 04-Jul-2014
 - fixed main menu player skins
 - fixed small bug in version checker
