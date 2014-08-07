@@ -20,12 +20,12 @@ public class ItemHelper
 {
     public static String getUniqueID(Item item)
     {
-        return GameData.itemRegistry.getNameForObject(item);
+        return GameData.getItemRegistry().getNameForObject(item);
     }
     
     public static Item getItem(String uniqueID)
     {
-        return GameData.itemRegistry.getObject(uniqueID);
+        return GameData.getItemRegistry().getObject(uniqueID);
     }
     
     public static boolean onBlockDestroyed(ItemStack itemStack, World world, Block block, int x, int y, int z, EntityLivingBase elb)

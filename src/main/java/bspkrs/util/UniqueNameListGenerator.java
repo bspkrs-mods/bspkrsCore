@@ -28,13 +28,13 @@ public class UniqueNameListGenerator
         
         try
         {
-            ArrayList<String> blockList = new ArrayList();
-            ArrayList<String> itemList = new ArrayList();
+            ArrayList<String> blockList = new ArrayList<String>();
+            ArrayList<String> itemList = new ArrayList<String>();
             
-            for (Object obj : GameData.blockRegistry.getKeys())
+            for (Object obj : GameData.getBlockRegistry().getKeys())
                 blockList.add((String) obj);
             
-            for (Object obj : GameData.itemRegistry.getKeys())
+            for (Object obj : GameData.getItemRegistry().getKeys())
                 itemList.add((String) obj);
             
             Collections.sort(blockList);

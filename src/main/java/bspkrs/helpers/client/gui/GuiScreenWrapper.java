@@ -15,6 +15,7 @@ import net.minecraft.client.gui.GuiScreen;
 
 public class GuiScreenWrapper extends GuiScreen
 {
+    @SuppressWarnings("rawtypes")
     public List buttonList()
     {
         return buttonList;

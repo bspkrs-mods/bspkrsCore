@@ -1,7 +1,5 @@
 package bspkrs.bspkrscore.fml;
 
-import static bspkrs.util.config.Configuration.CATEGORY_GENERAL;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +8,6 @@ import java.util.regex.Pattern;
 
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import bspkrs.util.CommonUtils;
 import bspkrs.util.Const;
 import bspkrs.util.ModVersionChecker;
@@ -114,7 +111,6 @@ public class bspkrsCoreMod
     
     public void syncConfig()
     {
-        Property temp;
         String ctgyGen = Configuration.CATEGORY_GENERAL;
         Reference.config.load();
         
@@ -141,8 +137,8 @@ public class bspkrsCoreMod
         
         Reference.config.setCategoryPropertyOrder(ctgyGen, orderedKeys);
         
-        if (Reference.config.hasCategory(CATEGORY_GENERAL + ".example_properties"))
-            Reference.config.removeCategory(Reference.config.getCategory(CATEGORY_GENERAL + ".example_properties"));
+        if (Reference.config.hasCategory(ctgyGen + ".example_properties"))
+            Reference.config.removeCategory(Reference.config.getCategory(ctgyGen + ".example_properties"));
         
         Reference.config.save();
     }

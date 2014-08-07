@@ -66,6 +66,7 @@ public class EntityUtils
      * to do something texture related with ModelBox (this isn't related to what you're asking)
      */
     // @formatter:on
+    @SuppressWarnings("unused")
     public static float getModelSize(EntityLivingBase ent)
     {
         Render render = RenderManager.instance.getEntityRenderObject(ent);
@@ -197,6 +198,7 @@ public class EntityUtils
         return getRandomLivingEntity(world, null, 5, null);
     }
     
+    @SuppressWarnings("rawtypes")
     public static EntityLivingBase getRandomLivingEntity(World world, List blacklist, int numberOfAttempts, List<SimpleEntry<UUID, String>> fallbackPlayerNames)
     {
         Random random = new Random();

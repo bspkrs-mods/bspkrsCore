@@ -19,7 +19,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public abstract class InputEventListener
 {
-    private static HashMap<KeyBinding, InputEventListener> instances = new HashMap();
+    private static HashMap<KeyBinding, InputEventListener> instances = new HashMap<KeyBinding, InputEventListener>();
     
     protected KeyBinding                                   keyBinding;
     protected boolean                                      isKeyDown;

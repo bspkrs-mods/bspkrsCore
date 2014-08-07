@@ -15,6 +15,7 @@ public class ListUtils
         return r.replaceFirst(delimiter, "");
     }
     
+    @SuppressWarnings("rawtypes")
     public static String getListAsUniqueDelimitedString(List<?> list, String delimiter)
     {
         String r = "";

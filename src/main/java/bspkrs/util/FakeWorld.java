@@ -360,12 +360,14 @@ public class FakeWorld extends World
         super.addWorldAccess(par1iWorldAccess);
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     public List getCollidingBoundingBoxes(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
     {
         return super.getCollidingBoundingBoxes(par1Entity, par2AxisAlignedBB);
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     public List func_147461_a(AxisAlignedBB p_147461_1_)
     {
@@ -491,6 +493,7 @@ public class FakeWorld extends World
     public void updateEntities()
     {}
     
+    @SuppressWarnings("rawtypes")
     @Override
     public void func_147448_a(Collection p_147448_1_)
     {}
@@ -717,42 +720,49 @@ public class FakeWorld extends World
         return false;
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     public List getPendingBlockUpdates(Chunk par1Chunk, boolean par2)
     {
         return null;
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
     {
         return super.getEntitiesWithinAABBExcludingEntity(par1Entity, par2AxisAlignedBB);
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3iEntitySelector)
     {
         return super.getEntitiesWithinAABBExcludingEntity(par1Entity, par2AxisAlignedBB, par3iEntitySelector);
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     public List getEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB)
     {
         return super.getEntitiesWithinAABB(par1Class, par2AxisAlignedBB);
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     public List selectEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3iEntitySelector)
     {
         return super.selectEntitiesWithinAABB(par1Class, par2AxisAlignedBB, par3iEntitySelector);
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     public Entity findNearestEntityWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, Entity par3Entity)
     {
         return null;
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     @SideOnly(Side.CLIENT)
     public List getLoadedEntityList()
@@ -764,16 +774,19 @@ public class FakeWorld extends World
     public void markTileEntityChunkModified(int p_147476_1_, int p_147476_2_, int p_147476_3_, TileEntity p_147476_4_)
     {}
     
+    @SuppressWarnings("rawtypes")
     @Override
     public int countEntities(Class par1Class)
     {
         return 0;
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     public void addLoadedEntities(List par1List)
     {}
     
+    @SuppressWarnings("rawtypes")
     @Override
     public void unloadEntities(List par1List)
     {}
@@ -1015,6 +1028,7 @@ public class FakeWorld extends World
     public void setItemData(String par1Str, WorldSavedData par2WorldSavedData)
     {}
     
+    @SuppressWarnings("rawtypes")
     @Override
     public WorldSavedData loadItemData(Class par1Class, String par2Str)
     {
@@ -1639,6 +1653,7 @@ public class FakeWorld extends World
             return null;
         }
         
+        @SuppressWarnings("rawtypes")
         @Override
         public List getPossibleCreatures(EnumCreatureType var1, int var2, int var3, int var4)
         {

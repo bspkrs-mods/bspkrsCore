@@ -19,6 +19,7 @@ public class BSConfiguration extends Configuration
         fileRef = file;
     }
     
+    @Override
     public File getConfigFile()
     {
         return fileRef;
@@ -32,6 +33,7 @@ public class BSConfiguration extends Configuration
      * @param newPropName the
      * @return true if the category and property exist, false otherwise
      */
+    @Override
     public boolean renameProperty(String category, String oldPropName, String newPropName)
     {
         if (hasCategory(category))
@@ -54,6 +56,7 @@ public class BSConfiguration extends Configuration
      * @param newCategory the category the property should be moved to
      * @return true if the old category and property exist, false otherwise
      */
+    @Override
     public boolean moveProperty(String oldCategory, String propName, String newCategory)
     {
         if (hasCategory(oldCategory))
@@ -103,6 +106,7 @@ public class BSConfiguration extends Configuration
      * @param comment A brief description what the property does.
      * @return The value of the new string property.
      */
+    @Override
     public String getString(String name, String category, String defaultValue, String comment)
     {
         return getString(name, category, defaultValue, comment, new String[0]);
@@ -118,6 +122,7 @@ public class BSConfiguration extends Configuration
      * @param validValues A list of valid values that this property can be set to.
      * @return The value of the new string property.
      */
+    @Override
     public String getString(String name, String category, String defaultValue, String comment, String[] validValues)
     {
         Property prop = this.get(category, name, defaultValue);
@@ -134,6 +139,7 @@ public class BSConfiguration extends Configuration
      * @param comment A brief description what the property does.
      * @return The value of the new string property.
      */
+    @Override
     public String[] getStringList(String name, String category, String[] defaultValues, String comment)
     {
         return getStringList(name, category, defaultValues, comment, new String[0]);
@@ -148,6 +154,7 @@ public class BSConfiguration extends Configuration
      * @param comment A brief description what the property does.
      * @return The value of the new string property.
      */
+    @Override
     public String[] getStringList(String name, String category, String[] defaultValue, String comment, String[] validValues)
     {
         Property prop = this.get(category, name, defaultValue);
@@ -164,6 +171,7 @@ public class BSConfiguration extends Configuration
      * @param comment A brief description what the property does.
      * @return The value of the new boolean property.
      */
+    @Override
     public boolean getBoolean(String name, String category, boolean defaultValue, String comment)
     {
         Property prop = this.get(category, name, defaultValue);
@@ -182,6 +190,7 @@ public class BSConfiguration extends Configuration
      * @param comment A brief description what the property does.
      * @return The value of the new integer property.
      */
+    @Override
     public int getInt(String name, String category, int defaultValue, int minValue, int maxValue, String comment)
     {
         Property prop = this.get(category, name, defaultValue);
@@ -200,6 +209,7 @@ public class BSConfiguration extends Configuration
      * @param comment A brief description what the property does.
      * @return The value of the new float property.
      */
+    @Override
     public float getFloat(String name, String category, float defaultValue, float minValue, float maxValue, String comment)
     {
         Property prop = this.get(category, name, Float.toString(defaultValue));

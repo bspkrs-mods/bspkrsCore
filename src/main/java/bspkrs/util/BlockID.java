@@ -22,12 +22,12 @@ public class BlockID
     
     public BlockID(Block block, int metadata)
     {
-        this(GameData.blockRegistry.getNameForObject(block), metadata);
+        this(GameData.getBlockRegistry().getNameForObject(block), metadata);
     }
     
     public BlockID(Block block)
     {
-        this(GameData.blockRegistry.getNameForObject(block), -1);
+        this(GameData.getBlockRegistry().getNameForObject(block), -1);
     }
     
     @Deprecated
@@ -60,7 +60,7 @@ public class BlockID
     
     public Block getBlock()
     {
-        return GameData.blockRegistry.getObject(id);
+        return GameData.getBlockRegistry().getObject(id);
     }
     
     public static BlockID parse(String format)

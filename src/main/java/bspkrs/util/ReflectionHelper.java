@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ReflectionHelper
 {
+    @SuppressWarnings("rawtypes")
     public static List getListObject(Class clazz, String srgFieldName, String mcpFieldName, Object instance)
     {
         try
@@ -25,6 +26,7 @@ public class ReflectionHelper
         }
     }
     
+    @SuppressWarnings("rawtypes")
     public static void setBooleanValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, boolean newValue) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException
     {
         Field privateField;
@@ -37,6 +39,7 @@ public class ReflectionHelper
         privateField.setBoolean(instance, newValue);
     }
     
+    @SuppressWarnings("rawtypes")
     public static boolean getBooleanValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, boolean defaultValue)
     {
         try
@@ -57,6 +60,7 @@ public class ReflectionHelper
         }
     }
     
+    @SuppressWarnings("rawtypes")
     public static void setIntValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, int newValue) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException
     {
         Field privateField;
@@ -69,6 +73,7 @@ public class ReflectionHelper
         privateField.setInt(instance, newValue);
     }
     
+    @SuppressWarnings("rawtypes")
     public static int getIntValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, int defaultValue)
     {
         try
@@ -89,6 +94,7 @@ public class ReflectionHelper
         }
     }
     
+    @SuppressWarnings("rawtypes")
     public static void setFloatValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, float newValue) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException
     {
         Field privateField;
@@ -101,6 +107,7 @@ public class ReflectionHelper
         privateField.setFloat(instance, newValue);
     }
     
+    @SuppressWarnings("rawtypes")
     public static float getFloatValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, float defaultValue)
     {
         try

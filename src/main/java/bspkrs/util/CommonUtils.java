@@ -450,6 +450,8 @@ public final class CommonUtils
             logger.log(Level.WARN, String.format("Error retrieving remote string value at URL %s! Defaulting to %s", url.toString(), stringArrayToString(defaultValue)));
             if (bspkrsCoreMod.instance.allowDebugOutput)
                 e.printStackTrace();
+            if (scanner != null)
+                scanner.close();
             return defaultValue;
         }
         

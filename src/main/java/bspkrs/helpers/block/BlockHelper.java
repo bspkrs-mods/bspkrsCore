@@ -23,12 +23,12 @@ public class BlockHelper
     
     public static String getUniqueID(Block block)
     {
-        return GameData.blockRegistry.getNameForObject(block);
+        return GameData.getBlockRegistry().getNameForObject(block);
     }
     
     public static Block getBlock(String uniqueID)
     {
-        return GameData.blockRegistry.getObject(uniqueID);
+        return GameData.getBlockRegistry().getObject(uniqueID);
     }
     
     public static int damageDropped(Block block, int metadata)

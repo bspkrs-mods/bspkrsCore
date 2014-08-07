@@ -44,6 +44,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+@SuppressWarnings("rawtypes")
 @SideOnly(Side.CLIENT)
 public class BSMainMenuRenderTicker
 {
