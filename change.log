@@ -1,3 +1,5 @@
+6.15 - 07-Aug-2014
+- fixed tooltip messages
 6.14 - 05-Aug-2014
 - better error handling for main menu entity rendering
 - better entity render support for mods
