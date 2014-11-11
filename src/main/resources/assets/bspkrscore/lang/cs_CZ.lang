@@ -1,0 +1,16 @@
+bspkrs.configgui.allowDebugOutput.tooltip=Nebyla definována žádná nápověda.
+bspkrs.configgui.allowDebugOutput=Povolit ladící výstup
+bspkrs.configgui.allowUpdateCheck.tooltip=Nastav na true pro povolení kontroly aktualizací pro VŠECHNY módy, false pro zakázání.
+bspkrs.configgui.allowUpdateCheck=Povolit kontrolu aktualizací
+bspkrs.configgui.applyGlobally.tooltip=Zruší provedené změny nebo vyresetuje do přednastaveného stavu.
+bspkrs.configgui.applyGlobally=Použít globálně
+bspkrs.configgui.generateUniqueNamesFile.tooltip=Pokud je true, soubor jménem UniqueNames.txt bude vygenerován pro přehled v konfigurační složce. Jména v souboru jsou řetězce reprezentující bloky a předměty v Minecraftu. Módy jako je Treecapitator a StartingInventory je používají ve svých konfiguračních souborech, vzhledem k nedostupnosti IDček.
+bspkrs.configgui.generateUniqueNamesFile=Generovat soubor UniqueNames.txt
+bspkrs.configgui.showMainMenuMobs.tooltip=Nastav na true pro zobrazení přihlášeného hráče a náhodnou příšeru v hlavním menu, false pro zakázání.
+bspkrs.configgui.showMainMenuMobs=Zobrazit příšery v hlavním menu
+bspkrs.configgui.updateTimeoutMilliseconds.tooltip=Čas v milisekundách pro kontrolu nové verze.
+bspkrs.configgui.updateTimeoutMilliseconds=Časovat kontroly aktualizací (ms)
+bspkrs.modversionchecker.error=Nastala chyba při kontrole nové verze pro mód %s.
+bspkrs.modversionchecker.invalidmodid=Nastaveno nesprávné ID módu pro kontrolu nové verze.
+bspkrs.modversionchecker.uptodate=Mód %s je aktuální.
+commands.bs.disabled=Kontrola nové verze zakázána v souboru bspkrsCore.cfg. Nastav allowUpdateCheck=true pro použití tohoto příkazu.
