@@ -42,7 +42,7 @@ public class bspkrsCoreMod
     public boolean              generateUniqueNamesFile          = generateUniqueNamesFileDefault;
     private final boolean       showMainMenuMobsDefault          = true;
     public boolean              showMainMenuMobs                 = showMainMenuMobsDefault;
-    
+
     // Example config stuff
     private final boolean[]     fixedBooleanListDefault          = new boolean[] { true, true, true, false, false, false };
     public boolean[]            fixedBooleanList                 = Arrays.copyOf(fixedBooleanListDefault, fixedBooleanListDefault.length);
@@ -73,52 +73,52 @@ public class bspkrsCoreMod
     private final String        chatColorPickerDefault           = "c";
     public String               chatColorPicker                  = chatColorPickerDefault;
     private final String[]      chatColorPickerValues            = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
-    
+
     @Metadata(value = Reference.MODID)
     public static ModMetadata   metadata;
-    
+
     @Instance(value = Reference.MODID)
     public static bspkrsCoreMod instance;
-    
+
     @SidedProxy(clientSide = Reference.PROXY_CLIENT, serverSide = Reference.PROXY_COMMON)
     public static CommonProxy   proxy;
-    
+
     protected ModVersionChecker versionChecker;
     protected final String      versionURL                       = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
     protected final String      mcfTopic                         = "http://www.minecraftforum.net/topic/1114612-";
-    
+
     @SideOnly(Side.CLIENT)
     protected BSCClientTicker   ticker;
     private boolean             isCommandRegistered;
-    
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         metadata = event.getModMetadata();
-        
+
         File file = event.getSuggestedConfigurationFile();
-        
+
         if (!CommonUtils.isObfuscatedEnv())
         { // debug settings for deobfuscated execution
           //            if (file.exists())
           //                file.delete();
         }
-        
+
         Reference.config = new Configuration(file);
-        
+
         syncConfig();
     }
-    
+
     public void syncConfig()
     {
         String ctgyGen = Configuration.CATEGORY_GENERAL;
         Reference.config.load();
-        
+
         Reference.config.setCategoryComment(ctgyGen, "ATTENTION: Editing this file manually is no longer necessary. \n" +
                 "On the Mods list screen select the entry for bspkrsCore, then click the Config button to modify these settings.");
-        
+
         List<String> orderedKeys = new ArrayList<String>(ConfigElement.values().length);
-        
+
         allowUpdateCheck = Reference.config.getBoolean(ConfigElement.ALLOW_UPDATE_CHECK.key(), ctgyGen, allowUpdateCheckDefault,
                 ConfigElement.ALLOW_UPDATE_CHECK.desc(), ConfigElement.ALLOW_UPDATE_CHECK.languageKey());
         orderedKeys.add(ConfigElement.ALLOW_UPDATE_CHECK.key());
@@ -134,15 +134,15 @@ public class bspkrsCoreMod
         showMainMenuMobs = Reference.config.getBoolean(ConfigElement.SHOW_MAIN_MENU_MOBS.key(), ctgyGen, showMainMenuMobsDefault,
                 ConfigElement.SHOW_MAIN_MENU_MOBS.desc(), ConfigElement.SHOW_MAIN_MENU_MOBS.languageKey());
         orderedKeys.add(ConfigElement.SHOW_MAIN_MENU_MOBS.key());
-        
+
         Reference.config.setCategoryPropertyOrder(ctgyGen, orderedKeys);
-        
+
         if (Reference.config.hasCategory(ctgyGen + ".example_properties"))
             Reference.config.removeCategory(Reference.config.getCategory(ctgyGen + ".example_properties"));
-        
+
         Reference.config.save();
     }
-    
+
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
@@ -151,7 +151,7 @@ public class bspkrsCoreMod
             versionChecker = new ModVersionChecker(Reference.MODID, metadata.version, versionURL, mcfTopic);
             versionChecker.checkVersionWithLogging();
         }
-        
+
         if (event.getSide().isClient())
         {
             FMLCommonHandler.instance().bus().register(new NetworkHandler());
@@ -165,26 +165,26 @@ public class bspkrsCoreMod
                 isCommandRegistered = false;
             }
         }
-        
+
         FMLCommonHandler.instance().bus().register(instance);
     }
-    
+
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
         if (generateUniqueNamesFile)
             UniqueNameListGenerator.instance().run();
-        
+
         proxy.registerMainMenuTickHandler();
     }
-    
+
     @EventHandler
     public void serverStarting(FMLServerStartingEvent event)
     {
         if (!isCommandRegistered)
             event.registerServerCommand(new CommandBS());
     }
-    
+
     @SubscribeEvent
     public void onConfigChanged(OnConfigChangedEvent event)
     {

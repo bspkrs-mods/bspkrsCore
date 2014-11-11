@@ -20,7 +20,7 @@ public class PacketBufferHelper
     {
         data.writeNBTTagCompoundToBuffer(ntc);
     }
-    
+
     public static NBTTagCompound readNBTTagCompound(PacketBuffer data) throws IOException
     {
         return data.readNBTTagCompoundFromBuffer();

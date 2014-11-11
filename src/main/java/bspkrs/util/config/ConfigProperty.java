@@ -16,25 +16,25 @@ public class ConfigProperty implements IConfigProperty
     private Property.Type  type;
     private boolean        isProperty;
     private ConfigCategory ctgy;
-    
+
     public ConfigProperty(ConfigCategory ctgy)
     {
         this.ctgy = ctgy;
         isProperty = false;
     }
-    
+
     public ConfigProperty(Property prop)
     {
         this(prop, prop.getType());
     }
-    
+
     public ConfigProperty(Property prop, Property.Type type)
     {
         this.prop = prop;
         this.type = type;
         this.isProperty = true;
     }
-    
+
     @Override
     public List<IConfigProperty> getConfigPropertiesList(boolean listCategoriesFirst)
     {
@@ -44,23 +44,23 @@ public class ConfigProperty implements IConfigProperty
             Iterator<ConfigCategory> ccI = ctgy.getChildren().iterator();
             Iterator<Property> pI = ctgy.getOrderedValuesSet().iterator();
             int index = 0;
-            
+
             if (listCategoriesFirst)
                 while (ccI.hasNext())
                     props.add(new ConfigProperty(ccI.next()));
-            
+
             while (pI.hasNext())
                 props.add(new ConfigProperty(pI.next()));
-            
+
             if (!listCategoriesFirst)
                 while (ccI.hasNext())
                     props.add(new ConfigProperty(ccI.next()));
-            
+
             return props;
         }
         return null;
     }
-    
+
     @Override
     public String getName()
     {
@@ -69,13 +69,13 @@ public class ConfigProperty implements IConfigProperty
         else
             return ctgy.getName();
     }
-    
+
     @Override
     public boolean isProperty()
     {
         return isProperty;
     }
-    
+
     @Override
     public boolean hasCustomIGuiConfigListEntry()
     {
@@ -84,7 +84,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return ctgy.getCustomIGuiConfigListEntryClass() != null;
     }
-    
+
     @Override
     public Class<? extends IGuiConfigListEntry> getCustomIGuiConfigListEntryClass()
     {
@@ -93,7 +93,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return ctgy.getCustomIGuiConfigListEntryClass();
     }
-    
+
     @Override
     public String getQualifiedName()
     {
@@ -102,7 +102,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return ctgy.getQualifiedName();
     }
-    
+
     @Override
     public ConfigGuiType getType()
     {
@@ -134,7 +134,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return ConfigGuiType.CONFIG_CATEGORY;
     }
-    
+
     @Override
     public boolean isList()
     {
@@ -143,7 +143,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return false;
     }
-    
+
     @Override
     public boolean isListLengthFixed()
     {
@@ -152,7 +152,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return false;
     }
-    
+
     @Override
     public int getMaxListLength()
     {
@@ -161,7 +161,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return -1;
     }
-    
+
     @Override
     public String getComment()
     {
@@ -170,7 +170,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return ctgy.getComment();
     }
-    
+
     @Override
     public boolean isDefault()
     {
@@ -179,14 +179,14 @@ public class ConfigProperty implements IConfigProperty
         else
             return true;
     }
-    
+
     @Override
     public void setToDefault()
     {
         if (isProperty)
             prop.setToDefault();
     }
-    
+
     @Override
     public boolean isHotLoadable()
     {
@@ -195,7 +195,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return ctgy.isHotLoadable();
     }
-    
+
     @Override
     public boolean getBoolean()
     {
@@ -204,7 +204,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return false;
     }
-    
+
     @Override
     public int getInt()
     {
@@ -213,7 +213,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return 0;
     }
-    
+
     @Override
     public String getString()
     {
@@ -222,7 +222,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return ctgy.getQualifiedName();
     }
-    
+
     @Override
     public double getDouble()
     {
@@ -231,7 +231,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return 0.0F;
     }
-    
+
     @Override
     public boolean[] getBooleanList()
     {
@@ -240,7 +240,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return new boolean[0];
     }
-    
+
     @Override
     public int[] getIntList()
     {
@@ -249,7 +249,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return new int[0];
     }
-    
+
     @Override
     public String[] getStringList()
     {
@@ -258,7 +258,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return new String[0];
     }
-    
+
     @Override
     public double[] getDoubleList()
     {
@@ -267,63 +267,63 @@ public class ConfigProperty implements IConfigProperty
         else
             return new double[0];
     }
-    
+
     @Override
     public void set(boolean bol)
     {
         if (isProperty)
             prop.setValue(bol);
     }
-    
+
     @Override
     public void set(int i)
     {
         if (isProperty)
             prop.setValue(i);
     }
-    
+
     @Override
     public void set(String s)
     {
         if (isProperty)
             prop.setValue(s);
     }
-    
+
     @Override
     public void set(double d)
     {
         if (isProperty)
             prop.setValue(d);
     }
-    
+
     @Override
     public void set(boolean[] bol)
     {
         if (isProperty)
             prop.setValues(bol);
     }
-    
+
     @Override
     public void set(int[] i)
     {
         if (isProperty)
             prop.setValues(i);
     }
-    
+
     @Override
     public void set(String[] s)
     {
         if (isProperty)
             prop.setValues(s);
     }
-    
+
     @Override
     public void set(double[] d)
     {
         if (isProperty)
             prop.setValues(d);
     }
-    
+
     @Override
     public String[] getValidValues()
     {
@@ -332,7 +332,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return new String[] {};
     }
-    
+
     @Override
     public String getLanguageKey()
     {
@@ -341,7 +341,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return ctgy.getLanguagekey();
     }
-    
+
     @Override
     public String getDefault()
     {
@@ -350,7 +350,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return null;
     }
-    
+
     @Override
     public String[] getDefaults()
     {
@@ -359,7 +359,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return null;
     }
-    
+
     @Override
     public int getMinIntValue()
     {
@@ -368,7 +368,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return 0;
     }
-    
+
     @Override
     public int getMaxIntValue()
     {
@@ -377,7 +377,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return 0;
     }
-    
+
     @Override
     public double getMinDoubleValue()
     {
@@ -386,7 +386,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return 0.0F;
     }
-    
+
     @Override
     public double getMaxDoubleValue()
     {
@@ -395,7 +395,7 @@ public class ConfigProperty implements IConfigProperty
         else
             return 0.0F;
     }
-    
+
     @Override
     public Pattern getValidStringPattern()
     {

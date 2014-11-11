@@ -27,7 +27,7 @@ public class GuiSelectString extends GuiScreen
     private HoverChecker              tooltipHoverChecker;
     private List                      toolTip;
     protected boolean                 enabled;
-    
+
     public GuiSelectString(GuiScreen parentScreen, IConfigProperty prop, int slotIndex, Map<String, String> selectableValues, String currentValues, boolean enabled)
     {
         this.mc = Minecraft.getMinecraft();
@@ -41,31 +41,31 @@ public class GuiSelectString extends GuiScreen
         this.enabled = enabled;
         String propName = I18n.format(prop.getLanguageKey());
         String comment;
-        
+
         if (prop.getType().equals(ConfigGuiType.INTEGER))
             comment = I18n.format(prop.getLanguageKey() + ".tooltip",
                     "\n" + EnumChatFormatting.AQUA, prop.getDefault(), prop.getMinIntValue(), prop.getMaxIntValue());
         else
             comment = I18n.format(prop.getLanguageKey() + ".tooltip",
                     "\n" + EnumChatFormatting.AQUA, prop.getDefault(), prop.getMinDoubleValue(), prop.getMaxDoubleValue());
-        
+
         if (!comment.equals(prop.getLanguageKey() + ".tooltip"))
-            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
                     EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + comment, 300);
         else if (prop.getComment() != null && !prop.getComment().trim().isEmpty())
-            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
                     EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + prop.getComment(), 300);
         else
-            toolTip = mc.fontRenderer.listFormattedStringToWidth(
+            toolTip = mc.fontRendererObj.listFormattedStringToWidth(
                     EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.RED + "No tooltip defined.", 300);
-        
+
         if (parentScreen instanceof GuiConfig)
         {
             this.title = ((GuiConfig) parentScreen).title;
             this.titleLine2 = ((GuiConfig) parentScreen).titleLine2;
             this.titleLine3 = I18n.format(prop.getLanguageKey());
             this.tooltipHoverChecker = new HoverChecker(28, 37, 0, parentScreen.width, 800);
-            
+
         }
         else
         {
@@ -73,7 +73,7 @@ public class GuiSelectString extends GuiScreen
             this.tooltipHoverChecker = new HoverChecker(8, 17, 0, parentScreen.width, 800);
         }
     }
-    
+
     /**
      * Adds the buttons (and other controls) to the screen in question.
      */
@@ -81,16 +81,16 @@ public class GuiSelectString extends GuiScreen
     public void initGui()
     {
         this.guiScrollList = new GuiSelectStringEntries(this, this.mc, this.prop, this.selectableValues, this.beforeValue, this.currentValue);
-        
-        int doneWidth = Math.max(mc.fontRenderer.getStringWidth(I18n.format("gui.done")) + 20, 100);
-        int undoWidth = mc.fontRenderer.getStringWidth("↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")) + 20;
-        int resetWidth = mc.fontRenderer.getStringWidth("☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")) + 20;
+
+        int doneWidth = Math.max(mc.fontRendererObj.getStringWidth(I18n.format("gui.done")) + 20, 100);
+        int undoWidth = mc.fontRendererObj.getStringWidth("↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")) + 20;
+        int resetWidth = mc.fontRendererObj.getStringWidth("☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")) + 20;
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth) / 2;
         this.buttonList.add(btnDone = new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
         this.buttonList.add(btnDefault = new GuiButtonExt(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5, this.height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
         this.buttonList.add(btnUndoChanges = new GuiButtonExt(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5, this.height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
     }
-    
+
     @Override
     protected void actionPerformed(GuiButton button)
     {
@@ -117,20 +117,20 @@ public class GuiSelectString extends GuiScreen
             this.guiScrollList = new GuiSelectStringEntries(this, this.mc, this.prop, this.selectableValues, this.beforeValue, this.currentValue);
         }
     }
-    
+
     /**
      * Called when the mouse is moved or a mouse button is released. Signature: (mouseX, mouseY, which) which==-1 is mouseMove, which==0 or
      * which==1 is mouseUp
      */
     @Override
-    protected void mouseMovedOrUp(int x, int y, int mouseEvent)
+    protected void mouseReleased(int x, int y, int mouseEvent)
     {
         if (mouseEvent != 0 || !this.guiScrollList.func_148181_b(x, y, mouseEvent))
         {
-            super.mouseMovedOrUp(x, y, mouseEvent);
+            super.mouseReleased(x, y, mouseEvent);
         }
     }
-    
+
     /**
      * Draws the screen and all the components in it.
      */
@@ -140,21 +140,21 @@ public class GuiSelectString extends GuiScreen
         this.drawDefaultBackground();
         this.guiScrollList.drawScreen(par1, par2, par3);
         this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
-        
+
         if (this.titleLine2 != null)
             this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
-        
+
         if (this.titleLine3 != null)
             this.drawCenteredString(this.fontRendererObj, this.titleLine3, this.width / 2, 28, 16777215);
-        
+
         this.btnDefault.enabled = enabled && !this.guiScrollList.isDefault();
         this.btnUndoChanges.enabled = enabled && this.guiScrollList.isChanged();
         super.drawScreen(par1, par2, par3);
-        
+
         if (this.tooltipHoverChecker != null && this.tooltipHoverChecker.checkHover(par1, par2))
             drawToolTip(this.toolTip, par1, par2);
     }
-    
+
     public void drawToolTip(List stringList, int x, int y)
     {
         this.drawHoveringText(stringList, x, y, fontRendererObj);

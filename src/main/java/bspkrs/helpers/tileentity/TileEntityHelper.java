@@ -18,7 +18,7 @@ public class TileEntityHelper
     {
         te.readFromNBT(ntc);
     }
-    
+
     public static void writeToNBT(TileEntity te, NBTTagCompound ntc)
     {
         te.writeToNBT(ntc);

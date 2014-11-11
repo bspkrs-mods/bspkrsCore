@@ -9,7 +9,7 @@ public class HoverChecker
     private int       top, bottom, left, right, threshold;
     private GuiButton button;
     private long      hoverStart;
-    
+
     public HoverChecker(int top, int bottom, int left, int right, int threshold)
     {
         this.top = top;
@@ -19,13 +19,13 @@ public class HoverChecker
         this.threshold = threshold;
         this.hoverStart = -1;
     }
-    
+
     public HoverChecker(GuiButton button, int threshold)
     {
         this.button = button;
         this.threshold = threshold;
     }
-    
+
     public void updateBounds(int top, int bottom, int left, int right)
     {
         this.top = top;
@@ -33,12 +33,12 @@ public class HoverChecker
         this.left = left;
         this.right = right;
     }
-    
+
     public boolean checkHover(int mouseX, int mouseY)
     {
         return checkHover(mouseX, mouseY, true);
     }
-    
+
     public boolean checkHover(int mouseX, int mouseY, boolean canHover)
     {
         if (this.button != null)
@@ -49,15 +49,15 @@ public class HoverChecker
             this.right = button.xPosition + button.getButtonWidth();
             canHover = canHover && button.visible;
         }
-        
+
         if (canHover && hoverStart == -1 && mouseY >= top && mouseY <= bottom && mouseX >= left && mouseX <= right)
             hoverStart = System.currentTimeMillis();
         else if (!canHover || mouseY < top || mouseY > bottom || mouseX < left || mouseX > right)
             resetHoverTimer();
-        
+
         return canHover && hoverStart != -1 && System.currentTimeMillis() - hoverStart >= threshold;
     }
-    
+
     public void resetHoverTimer()
     {
         hoverStart = -1;

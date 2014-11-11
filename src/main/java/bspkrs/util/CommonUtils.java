@@ -40,7 +40,7 @@ public final class CommonUtils
                 return false;
         return true;
     }
-    
+
     public static boolean isStringAllLettersOrDigitsOr(CharSequence s, String chrs)
     {
         for (int i = 0; i < s.length(); i++)
@@ -48,11 +48,11 @@ public final class CommonUtils
                 return false;
         return true;
     }
-    
+
     /*
      * List parser helpers
      */
-    
+
     public static boolean isItemInList(int id, int md, String list)
     {
         if (list.trim().length() != 0)
@@ -72,14 +72,14 @@ public final class CommonUtils
         }
         return false;
     }
-    
+
     public static boolean isIDInList(String id, int md, String list)
     {
         String[] itemArray = list.split(";");
         for (int i = 0; i < itemArray.length; i++)
         {
             String[] values = itemArray[i].split(",");
-            
+
             if (values.length > 1 && values[0].trim().equals(id) && parseInt(values[1], -1) == md)
                 return true;
             else if (values[0].trim().equals(id))
@@ -87,7 +87,7 @@ public final class CommonUtils
         }
         return false;
     }
-    
+
     public static boolean isIDInList(int id, int md, String list)
     {
         String[] itemArray = list.split(";");
@@ -95,10 +95,10 @@ public final class CommonUtils
         {
             String[] values = itemArray[i].split(",");
             int tempID = parseInt(values[0], Integer.MAX_VALUE);
-            
+
             if (tempID == Integer.MAX_VALUE)
                 continue;
-            
+
             if (values.length > 1 && tempID == id && parseInt(values[1], -1) == md)
                 return true;
             else if (tempID == id)
@@ -106,12 +106,12 @@ public final class CommonUtils
         }
         return false;
     }
-    
+
     public static boolean isIDInList(int id, String list)
     {
         return isIDInList(id, -1, list);
     }
-    
+
     public static int[][][] stringToGroups(String string)
     {
         List<int[][]> groupList = new ArrayList<int[][]>();
@@ -127,7 +127,7 @@ public final class CommonUtils
         }
         return res;
     }
-    
+
     public static int[][] stringToGroup(String string)
     {
         List<int[]> blockList = new ArrayList<int[]>();
@@ -143,7 +143,7 @@ public final class CommonUtils
         }
         return res;
     }
-    
+
     public static int[] stringToBlock(String string)
     {
         int[] values = new int[] { 0, -1 };
@@ -156,7 +156,7 @@ public final class CommonUtils
         values[1] = parseInt(src[1]);
         return values;
     }
-    
+
     public static boolean isBlockInGroups(int[] block, int[][][] groups)
     {
         for (int[][] group : groups)
@@ -166,7 +166,7 @@ public final class CommonUtils
         }
         return false;
     }
-    
+
     public static int indexOfBlock(int[] block, int[][] group)
     {
         for (int i = 0; i < group.length; i++)
@@ -179,7 +179,7 @@ public final class CommonUtils
         }
         return -1;
     }
-    
+
     public static int[][] getRelatedBlocks(int[] block, int[][][] groups)
     {
         List<int[]> blockList = new ArrayList<int[]>();
@@ -202,7 +202,7 @@ public final class CommonUtils
         }
         return secondary;
     }
-    
+
     public static int smallerBlockIndex(int[] block, int[][][] groups)
     {
         int min = Integer.MAX_VALUE;
@@ -216,7 +216,7 @@ public final class CommonUtils
             min = -1;
         return min;
     }
-    
+
     public static boolean isMetadataNull(int id, int[][][] groups)
     {
         for (int[][] group : groups)
@@ -229,26 +229,26 @@ public final class CommonUtils
         }
         return false;
     }
-    
+
     /*
      * Math helpers
      */
-    
+
     public static int sqr(int value)
     {
         return value * value;
     }
-    
+
     public static float sqr(float value)
     {
         return value * value;
     }
-    
+
     public static int parseInt(String string)
     {
         return parseInt(string, 0);
     }
-    
+
     public static int parseInt(String string, int defaultValue)
     {
         try
@@ -260,17 +260,17 @@ public final class CommonUtils
             return defaultValue;
         }
     }
-    
+
     /*
      * General Minecraft methods
      */
-    
+
     public void playAtPitch(int i, World world, EntityPlayer entityplayer)
     {
         float f = (float) Math.pow(2D, (i - 12) / 12D);
         world.playSoundAtEntity(entityplayer, "note.pling", 0.5F, f);
     }
-    
+
     public static int getHighestGroundBlock(World world, int x, int y, int z)
     {
         for (; y > 0 && (world.isAirBlock(x, y, z) || !world.isBlockNormalCubeDefault(x, y, z, true)
@@ -278,7 +278,7 @@ public final class CommonUtils
         {}
         return y;
     }
-    
+
     public static int getFirstNonAirBlockFromTop(World world, int x, int z)
     {
         int y;
@@ -286,34 +286,34 @@ public final class CommonUtils
         {}
         return y;
     }
-    
+
     public static int getSphericalDistance(Coord startPos, Coord endPos)
     {
         return (int) Math.round(Math.sqrt(CommonUtils.sqr(endPos.x - startPos.x) + CommonUtils.sqr(endPos.z - startPos.z) + CommonUtils.sqr(endPos.y - startPos.y)));
     }
-    
+
     public static int getCubicDistance(Coord startPos, Coord endPos)
     {
         return Math.abs(endPos.x - startPos.x) + Math.abs(endPos.y - startPos.y) + Math.abs(endPos.z - startPos.z);
     }
-    
+
     public static int getHorSquaredDistance(Coord startPos, Coord endPos)
     {
         return Math.abs(endPos.x - startPos.x) + Math.abs(endPos.z - startPos.z);
     }
-    
+
     public static int getVerDistance(Coord startPos, Coord endPos)
     {
         return Math.abs(endPos.y - startPos.y);
     }
-    
+
     public static double getDistanceRatioToCenter(int point1, int point2, int pos)
     {
         double radius = Math.abs(point2 - point1) / 2D;
         double dar = Math.abs(Math.abs(pos - point1) - radius);
         return radius != 0.0D ? dar / radius : 0.0D;
     }
-    
+
     public static void setHugeMushroom(World world, Random random, int x, int y, int z, Block block)
     {
         byte w = 3;
@@ -325,7 +325,7 @@ public final class CommonUtils
         fillWithBlocks(world, x + w, y, (z - w) + 1, x + w, (y + h) - 1, (z + w) - 1, block, 10);
         fillWithBlocksRounded(world, x - cw, y + h, z - cw, x + cw, y + h, z + cw, block, 14);
     }
-    
+
     public static void fillWithBlocks(World world, int x1, int y1, int z1, int x2, int y2, int z2, Block block, int metadata)
     {
         for (int x = x1; x <= x2; x++)
@@ -333,7 +333,7 @@ public final class CommonUtils
                 for (int z = z1; z <= z2; z++)
                     world.setBlock(x, y, z, block, metadata, 3);
     }
-    
+
     public static void fillWithBlocksRounded(World world, int x1, int y1, int z1, int x2, int y2, int z2, Block block, int metadata)
     {
         for (int x = x1; x <= x2; x++)
@@ -347,12 +347,12 @@ public final class CommonUtils
                         world.setBlock(x, y, z, block, metadata, 3);
                 }
     }
-    
+
     public static boolean isGamePaused(Minecraft mc)
     {
         return mc.currentScreen != null && (mc.currentScreen.doesGuiPauseGame() || mc.currentScreen instanceof GuiMainMenu);
     }
-    
+
     public static String getMCTimeString(long worldTime, long fmt)
     {
         long HH = (int) (((worldTime / 1000L) + 6) % 24L);
@@ -360,79 +360,79 @@ public final class CommonUtils
         boolean am = HH < 12;
         HH = HH % fmt;
         String hour = "";
-        
+
         if (fmt == 24L)
             hour = (HH < 10 ? "0" : "") + String.valueOf(HH);
         else
             hour = String.valueOf(HH == 0 ? 12 : HH);
-        
+
         String min = (MM < 10 ? "0" : "") + String.valueOf(MM);
         return hour + ":" + min + (fmt == 12L ? (am ? "AM" : "PM") : "");
     }
-    
+
     public static String ticksToTimeString(long ticks)
     {
         long secs = ticks / 20L;
         long mins = secs / 60L;
         long hrs = mins / 60L;
         long days = hrs / 24L;
-        
+
         String time = "";
-        
+
         if (days > 0L)
             time = days + ":";
-        
+
         if (hrs > 0L)
             time = time + ((hrs % 24L) < 10L && days > 0L ? "0" : "") + (hrs % 24L) + ":";
-        
+
         if (mins > 0L)
             time = time + ((mins % 60L) < 10L && hrs > 0L ? "0" : "") + (mins % 60L) + ":";
         else
             time = time + "0:";
-        
+
         time = time + ((secs % 60L) < 10L ? "0" : "") + (secs % 60L);
         return time;
     }
-    
+
     public static String stringArrayToString(String[] sa)
     {
         return stringArrayToString(sa, "#");
     }
-    
+
     public static String stringArrayToString(String[] sa, String separator)
     {
         String ret = "";
         for (String s : sa)
             ret += separator + " " + s;
-        
+
         return ret.replaceFirst(separator + " ", "");
     }
-    
+
     public static String[] loadTextFromURL(URL url, Logger logger)
     {
         return loadTextFromURL(url, logger, new String[] { "" }, 0);
     }
-    
+
     public static String[] loadTextFromURL(URL url, Logger logger, int timeoutMS)
     {
         return loadTextFromURL(url, logger, new String[] { "" }, timeoutMS);
     }
-    
+
     public static String[] loadTextFromURL(URL url, Logger logger, String defaultValue)
     {
         return loadTextFromURL(url, logger, new String[] { defaultValue }, 0);
     }
-    
+
     public static String[] loadTextFromURL(URL url, Logger logger, String defaultValue, int timeoutMS)
     {
         return loadTextFromURL(url, logger, new String[] { defaultValue }, timeoutMS);
     }
-    
+
     public static String[] loadTextFromURL(URL url, Logger logger, String[] defaultValue)
     {
         return loadTextFromURL(url, logger, defaultValue, 0);
     }
-    
+
     public static String[] loadTextFromURL(URL url, Logger logger, String[] defaultValue, int timeoutMS)
     {
         List<String> arraylist = new ArrayList<String>();
@@ -454,7 +454,7 @@ public final class CommonUtils
                 scanner.close();
             return defaultValue;
         }
-        
+
         while (scanner.hasNextLine())
         {
             arraylist.add(scanner.nextLine());
@@ -462,7 +462,7 @@ public final class CommonUtils
         scanner.close();
         return arraylist.toArray(new String[arraylist.size()]);
     }
-    
+
     public static String getLogFileName()
     {
         try
@@ -475,7 +475,7 @@ public final class CommonUtils
             return "ForgeModLoader-server-0.log";
         }
     }
-    
+
     public static String getMinecraftDir()
     {
         try
@@ -487,13 +487,13 @@ public final class CommonUtils
             return MinecraftServer.getServer().getFile("").getAbsolutePath();
         }
     }
-    
+
     public static String getConfigDir()
     {
         File configDir = new File(getMinecraftDir(), "config");
         return configDir.getAbsolutePath();
     }
-    
+
     public static boolean isObfuscatedEnv()
     {
         try
@@ -506,7 +506,7 @@ public final class CommonUtils
             return true;
         }
     }
-    
+
     public static MovingObjectPosition getPlayerLookingSpot(EntityPlayer player, boolean restrict)
     {
         float scale = 1.0F;
@@ -530,7 +530,7 @@ public final class CommonUtils
         Vec3 vector2 = vector1.addVector(pitchAdjustedSinYaw * distance, sinPitch * distance, pitchAdjustedCosYaw * distance);
         return player.worldObj.rayTraceBlocks(vector1, vector2);
     }
-    
+
     public static void spawnExplosionParticleAtEntity(Entity entity)
     {
         for (int i = 0; i < 20; ++i)

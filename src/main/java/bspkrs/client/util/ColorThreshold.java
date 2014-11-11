@@ -31,8 +31,8 @@ public class ColorThreshold implements Comparable<ColorThreshold>
     }
 
     /**
-     * Returns the colorCode attached to the first threshold in the list that is
-     * >= value. Expects that the list has been sorted by threshold ascending.
+     * Returns the colorCode attached to the first threshold in the list that is >= value. Expects that the list has been sorted by
+     * threshold ascending.
      */
     public static String getColorCode(List<ColorThreshold> colorList, int value)
     {

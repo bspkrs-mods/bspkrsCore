@@ -20,12 +20,12 @@ public class GuiScreenWrapper extends GuiScreen
     {
         return buttonList;
     }
-    
+
     public int height()
     {
         return this.height;
     }
-    
+
     public int width()
     {
         return this.width;

@@ -15,7 +15,7 @@ public class ReflectionHelper
                 privateField = clazz.getDeclaredField(srgFieldName);
             else
                 privateField = clazz.getDeclaredField(mcpFieldName);
-            
+
             privateField.setAccessible(true);
             return (List) privateField.get(instance);
         }
@@ -25,7 +25,7 @@ public class ReflectionHelper
             return null;
         }
     }
-    
+
     @SuppressWarnings("rawtypes")
     public static void setBooleanValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, boolean newValue) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException
     {
@@ -34,11 +34,11 @@ public class ReflectionHelper
             privateField = clazz.getDeclaredField(srgFieldName);
         else
             privateField = clazz.getDeclaredField(mcpFieldName);
-        
+
         privateField.setAccessible(true);
         privateField.setBoolean(instance, newValue);
     }
-    
+
     @SuppressWarnings("rawtypes")
     public static boolean getBooleanValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, boolean defaultValue)
     {
@@ -49,7 +49,7 @@ public class ReflectionHelper
                 privateField = clazz.getDeclaredField(srgFieldName);
             else
                 privateField = clazz.getDeclaredField(mcpFieldName);
-            
+
             privateField.setAccessible(true);
             return privateField.getBoolean(instance);
         }
@@ -59,7 +59,7 @@ public class ReflectionHelper
             return defaultValue;
         }
     }
-    
+
     @SuppressWarnings("rawtypes")
     public static void setIntValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, int newValue) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException
     {
@@ -68,11 +68,11 @@ public class ReflectionHelper
             privateField = clazz.getDeclaredField(srgFieldName);
         else
             privateField = clazz.getDeclaredField(mcpFieldName);
-        
+
         privateField.setAccessible(true);
         privateField.setInt(instance, newValue);
     }
-    
+
     @SuppressWarnings("rawtypes")
     public static int getIntValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, int defaultValue)
     {
@@ -83,7 +83,7 @@ public class ReflectionHelper
                 privateField = clazz.getDeclaredField(srgFieldName);
             else
                 privateField = clazz.getDeclaredField(mcpFieldName);
-            
+
             privateField.setAccessible(true);
             return privateField.getInt(instance);
         }
@@ -93,7 +93,7 @@ public class ReflectionHelper
             return defaultValue;
         }
     }
-    
+
     @SuppressWarnings("rawtypes")
     public static void setFloatValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, float newValue) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException
     {
@@ -102,11 +102,11 @@ public class ReflectionHelper
             privateField = clazz.getDeclaredField(srgFieldName);
         else
             privateField = clazz.getDeclaredField(mcpFieldName);
-        
+
         privateField.setAccessible(true);
         privateField.setFloat(instance, newValue);
     }
-    
+
     @SuppressWarnings("rawtypes")
     public static float getFloatValue(Class clazz, String srgFieldName, String mcpFieldName, Object instance, float defaultValue)
     {
@@ -117,7 +117,7 @@ public class ReflectionHelper
                 privateField = clazz.getDeclaredField(srgFieldName);
             else
                 privateField = clazz.getDeclaredField(mcpFieldName);
-            
+
             privateField.setAccessible(true);
             return privateField.getFloat(instance);
         }

@@ -59,18 +59,18 @@ public class BSMainMenuRenderTicker
     private static ItemStack[]                     zombieItems;
     private static ItemStack[]                     skelItems;
     private static Random                          random       = new Random();
-    
+
     private static Set                             entities;
     private static Object[]                        entStrings;
     private static int                             id;
-    
+
     private static boolean                         erroredOut   = false;
-    
+
     public BSMainMenuRenderTicker()
     {
         mcClient = FMLClientHandler.instance().getClient();
     }
-    
+
     @SubscribeEvent
     public void onTick(RenderTickEvent event)
     {
@@ -80,7 +80,7 @@ public class BSMainMenuRenderTicker
             {
                 if (world == null || mcClient.thePlayer == null || randMob == null)
                     init();
-                
+
                 if (world != null && mcClient.thePlayer != null && randMob != null)
                 {
                     ScaledResolution sr = new ScaledResolution(mcClient, mcClient.displayWidth, mcClient.displayHeight);
@@ -116,16 +116,16 @@ public class BSMainMenuRenderTicker
             }
         }
     }
-    
+
     private void init()
     {
         try
         {
             boolean createNewWorld = world == null;
-            
+
             if (createNewWorld)
                 world = new FakeWorld();
-            
+
             if (createNewWorld || mcClient.thePlayer == null)
             {
                 mcClient.thePlayer = new EntityClientPlayerMP(mcClient, world, mcClient.getSession(), null, null);
@@ -134,7 +134,7 @@ public class BSMainMenuRenderTicker
                 mcClient.thePlayer.eyeHeight = 1.82F;
                 setRandomMobItem(mcClient.thePlayer);
             }
-            
+
             if (createNewWorld || randMob == null)
             {
                 if (bspkrsCoreMod.instance.allowDebugOutput)
@@ -147,8 +147,8 @@ public class BSMainMenuRenderTicker
                 }
                 setRandomMobItem(randMob);
             }
-            
-            RenderManager.instance.cacheActiveRenderInfo(world, mcClient.renderEngine, mcClient.fontRenderer, mcClient.thePlayer, mcClient.thePlayer, mcClient.gameSettings, 0.0F);
+
+            RenderManager.instance.cacheActiveRenderInfo(world, mcClient.renderEngine, mcClient.fontRendererObj, mcClient.thePlayer, mcClient.thePlayer, mcClient.gameSettings, 0.0F);
             savedScreen = mcClient.currentScreen;
         }
         catch (Throwable e)
@@ -161,7 +161,7 @@ public class BSMainMenuRenderTicker
             world = null;
         }
     }
-    
+
     private static EntityLivingBase getNextEntity(World world)
     {
         Class clazz;
@@ -173,19 +173,19 @@ public class BSMainMenuRenderTicker
             clazz = (Class) EntityList.stringToClassMapping.get(entStrings[id]);
         }
         while (!EntityLivingBase.class.isAssignableFrom(clazz) && ++tries <= 5);
-        
+
         if (!EntityLivingBase.class.isAssignableFrom(clazz))
         {
             SimpleEntry<UUID, String> entry = fallbackPlayerNames.get(random.nextInt(fallbackPlayerNames.size()));
-            return new EntityOtherPlayerMP(world, mcClient.func_152347_ac().fillProfileProperties(new GameProfile(entry.getKey(), entry.getValue()), false));
+            return new EntityOtherPlayerMP(world, mcClient.getSessionService().fillProfileProperties(new GameProfile(entry.getKey(), entry.getValue()), false));
         }
-        
+
         if (bspkrsCoreMod.instance.allowDebugOutput)
             BSLog.info(entStrings[id].toString());
-        
+
         return (EntityLivingBase) EntityList.createEntityByName((String) entStrings[id], world);
     }
-    
+
     private static void setRandomMobItem(EntityLivingBase ent)
     {
         try
@@ -207,14 +207,14 @@ public class BSMainMenuRenderTicker
             else if (ent instanceof EntityPigZombie)
                 ent.setCurrentItemOrArmor(0, new ItemStack(Items.golden_sword));
             else if (ent instanceof EntityEnderman)
-                ((EntityEnderman) ent).func_146081_a(Blocks.grass);
+                ((EntityEnderman) ent).setCarriedBlock(Blocks.grass);
         }
         catch (Throwable e)
         {
             e.printStackTrace();
         }
     }
-    
+
     public void register()
     {
         if (!isRegistered)
@@ -224,7 +224,7 @@ public class BSMainMenuRenderTicker
             isRegistered = true;
         }
     }
-    
+
     public void unRegister()
     {
         if (isRegistered)
@@ -236,12 +236,12 @@ public class BSMainMenuRenderTicker
             world = null;
         }
     }
-    
+
     public static boolean isRegistered()
     {
         return isRegistered;
     }
-    
+
     static
     {
         entityBlacklist = new ArrayList();
@@ -260,7 +260,7 @@ public class BSMainMenuRenderTicker
         entityBlacklist.add("ml_GenericAsimmFemale");
         entityBlacklist.add("ml_GenericSimmFemale");
         entityBlacklist.add("ml_GenericVillager");
-        
+
         entityBlacklist.add("BiomesOPlenty.Phantom");
         entityBlacklist.add("Forestry.butterflyGE");
         entityBlacklist.add("TConstruct.Crystal");
@@ -279,7 +279,7 @@ public class BSMainMenuRenderTicker
         entityBlacklist.add("TwilightForest.Mist Wolf");
         entityBlacklist.add("TwilightForest.Mosquito Swarm");
         entityBlacklist.add("TwilightForest.Upper Goblin Knight");
-        
+
         fallbackPlayerNames = new ArrayList<SimpleEntry<UUID, String>>();
         // UUIDs gotten using http://connorlinfoot.com/uuid/
         fallbackPlayerNames.add(new SimpleEntry<UUID, String>(UUIDTypeAdapter.fromString("92d459067a50474285b6b079db9dc189"), "bspkrs"));
@@ -337,21 +337,21 @@ public class BSMainMenuRenderTicker
         fallbackPlayerNames.add(new SimpleEntry<UUID, String>(UUIDTypeAdapter.fromString("4b9a5c51e9324e1ead30637101fb6fae"), "Thunderdark"));
         fallbackPlayerNames.add(new SimpleEntry<UUID, String>(UUIDTypeAdapter.fromString("7e6d65ed6fd840a786f8df09791572fc"), "Myrathi"));
         fallbackPlayerNames.add(new SimpleEntry<UUID, String>(UUIDTypeAdapter.fromString("b97e12cedbb14c0cafc8132b708a9b88"), "XCompWiz"));
-        
+
         playerItems = new ItemStack[] {
             new ItemStack(Items.iron_sword), new ItemStack(Items.diamond_sword), new ItemStack(Items.golden_sword),
             new ItemStack(Items.diamond_pickaxe), new ItemStack(Items.iron_pickaxe), new ItemStack(Items.iron_axe)
         };
-        
+
         zombieItems = new ItemStack[] {
             new ItemStack(Items.iron_sword), new ItemStack(Items.diamond_sword), new ItemStack(Items.golden_sword), new ItemStack(Items.iron_axe)
         };
-        
+
         skelItems = new ItemStack[] {
             new ItemStack(Items.bow), new ItemStack(Items.golden_sword), new ItemStack(Items.bow),
             new ItemStack(Items.bow), new ItemStack(Items.bow), new ItemStack(Items.bow)
         };
-        
+
         // Get a COPY dumbass!
         entities = new TreeSet(EntityList.stringToClassMapping.keySet());
         entities.removeAll(entityBlacklist);

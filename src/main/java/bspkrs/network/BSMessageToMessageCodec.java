@@ -9,14 +9,14 @@ public class BSMessageToMessageCodec extends FMLIndexedMessageToMessageCodec<BSP
 {
     public BSMessageToMessageCodec()
     {}
-    
+
     @Override
     public void encodeInto(ChannelHandlerContext ctx, BSPacket source, ByteBuf target) throws Exception
     {
         target = new PacketBuffer(target);
         source.writeBytes((PacketBuffer) target);
     }
-    
+
     @Override
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, BSPacket target)
     {

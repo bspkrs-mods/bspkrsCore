@@ -11,12 +11,12 @@ public class GuiButtonExt extends GuiButton
     {
         super(id, xPos, yPos, displayString);
     }
-    
+
     public GuiButtonExt(int id, int xPos, int yPos, int width, int height, String displayString)
     {
         super(id, xPos, yPos, width, height, displayString);
     }
-    
+
     /**
      * Draws this button to the screen.
      */
@@ -25,12 +25,12 @@ public class GuiButtonExt extends GuiButton
     {
         if (this.visible)
         {
-            this.field_146123_n = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
-            int k = this.getHoverState(this.field_146123_n);
+            this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+            int k = this.getHoverState(this.hovered);
             HUDUtils.drawContinuousTexturedBox(buttonTextures, this.xPosition, this.yPosition, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
             this.mouseDragged(mc, mouseX, mouseY);
             int color = 14737632;
-            
+
             if (packedFGColour != 0)
             {
                 color = packedFGColour;
@@ -39,19 +39,19 @@ public class GuiButtonExt extends GuiButton
             {
                 color = 10526880;
             }
-            else if (this.field_146123_n)
+            else if (this.hovered)
             {
                 color = 16777120;
             }
-            
+
             String buttonText = this.displayString;
-            int strWidth = mc.fontRenderer.getStringWidth(buttonText);
-            int elipsisWidth = mc.fontRenderer.getStringWidth("...");
-            
+            int strWidth = mc.fontRendererObj.getStringWidth(buttonText);
+            int elipsisWidth = mc.fontRendererObj.getStringWidth("...");
+
             if (strWidth > width - 6 && strWidth > elipsisWidth)
-                buttonText = mc.fontRenderer.trimStringToWidth(buttonText, width - 6 - elipsisWidth).trim() + "...";
-            
-            this.drawCenteredString(mc.fontRenderer, buttonText, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, color);
+                buttonText = mc.fontRendererObj.trimStringToWidth(buttonText, width - 6 - elipsisWidth).trim() + "...";
+
+            this.drawCenteredString(mc.fontRendererObj, buttonText, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, color);
         }
     }
 }

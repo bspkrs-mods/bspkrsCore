@@ -18,7 +18,7 @@ public class NBTTagListHelper
     {
         return ntl.getCompoundTagAt(i);
     }
-    
+
     public static String getStringTagAt(NBTTagList ntl, int i)
     {
         return ntl.getStringTagAt(i);

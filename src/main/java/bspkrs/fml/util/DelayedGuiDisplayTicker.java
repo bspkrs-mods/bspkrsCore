@@ -13,7 +13,7 @@ public class DelayedGuiDisplayTicker
     private int       delayTicks;
     private Minecraft mcClient;
     private GuiScreen screen;
-    
+
     public DelayedGuiDisplayTicker(int delayTicks, GuiScreen screen)
     {
         this.delayTicks = delayTicks;
@@ -21,13 +21,13 @@ public class DelayedGuiDisplayTicker
         this.screen = screen;
         FMLCommonHandler.instance().bus().register(this);
     }
-    
+
     @SubscribeEvent
     public void onTick(ClientTickEvent event)
     {
         if (event.phase.equals(Phase.START))
             return;
-        
+
         if (--delayTicks <= 0)
         {
             mcClient.displayGuiScreen(screen);

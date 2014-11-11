@@ -12,19 +12,19 @@ import net.minecraftforge.common.config.Property;
 public class BSConfiguration extends Configuration
 {
     private final File fileRef;
-    
+
     public BSConfiguration(File file)
     {
         super(file);
         fileRef = file;
     }
-    
+
     @Override
     public File getConfigFile()
     {
         return fileRef;
     }
-    
+
     /**
      * Renames a property in a given category.
      * 
@@ -47,7 +47,7 @@ public class BSConfiguration extends Configuration
         }
         return false;
     }
-    
+
     /**
      * Moves a property from one category to another.
      * 
@@ -69,7 +69,7 @@ public class BSConfiguration extends Configuration
         }
         return false;
     }
-    
+
     //    public static void renameCtgy(Configuration config, String oldCtgy, String newCtgy)
     //    {
     //        if (!oldCtgy.equalsIgnoreCase(newCtgy))
@@ -96,7 +96,7 @@ public class BSConfiguration extends Configuration
     //            //config.categories.remove(oldCtgy);
     //        }
     //    }
-    
+
     /**
      * Creates a string property.
      * 
@@ -111,7 +111,7 @@ public class BSConfiguration extends Configuration
     {
         return getString(name, category, defaultValue, comment, new String[0]);
     }
-    
+
     /**
      * Creates a string property.
      * 
@@ -129,7 +129,7 @@ public class BSConfiguration extends Configuration
         prop.comment = comment + " [default: " + defaultValue + "]";
         return prop.getString();
     }
-    
+
     /**
      * Creates a string list property.
      * 
@@ -144,7 +144,7 @@ public class BSConfiguration extends Configuration
     {
         return getStringList(name, category, defaultValues, comment, new String[0]);
     }
-    
+
     /**
      * Creates a string list property.
      * 
@@ -161,7 +161,7 @@ public class BSConfiguration extends Configuration
         prop.comment = comment + " [default: " + defaultValue + "]";
         return prop.getStringList();
     }
-    
+
     /**
      * Creates a boolean property.
      * 
@@ -178,7 +178,7 @@ public class BSConfiguration extends Configuration
         prop.comment = comment + " [default: " + defaultValue + "]";
         return prop.getBoolean(defaultValue);
     }
-    
+
     /**
      * Creates a integer property.
      * 
@@ -197,7 +197,7 @@ public class BSConfiguration extends Configuration
         prop.comment = comment + " [range: " + minValue + " ~ " + maxValue + ", default: " + defaultValue + "]";
         return prop.getInt(defaultValue) < minValue ? minValue : (prop.getInt(defaultValue) > maxValue ? maxValue : prop.getInt(defaultValue));
     }
-    
+
     /**
      * Creates a float property.
      * 

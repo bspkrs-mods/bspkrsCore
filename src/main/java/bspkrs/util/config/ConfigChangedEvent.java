@@ -15,13 +15,13 @@ public class ConfigChangedEvent extends Event
      * Whether or not properties with isHotLoadable() == false were allowed to be modified.
      */
     public final boolean allowNonHotLoadConfigChanges;
-    
+
     public ConfigChangedEvent(String modID, boolean allowNonHotLoadConfigChanges)
     {
         this.modID = modID;
         this.allowNonHotLoadConfigChanges = allowNonHotLoadConfigChanges;
     }
-    
+
     public static class OnConfigChangedEvent extends ConfigChangedEvent
     {
         public OnConfigChangedEvent(String modID, boolean allowNonHotLoadConfigChanges)
@@ -29,7 +29,7 @@ public class ConfigChangedEvent extends Event
             super(modID, allowNonHotLoadConfigChanges);
         }
     }
-    
+
     public static class PostConfigChangedEvent extends ConfigChangedEvent
     {
         public PostConfigChangedEvent(String modID, boolean allowNonHotLoadConfigChanges)

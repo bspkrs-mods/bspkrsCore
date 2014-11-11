@@ -20,22 +20,22 @@ public class BlockHelper
     {
         return block.getMaterial();
     }
-    
+
     public static String getUniqueID(Block block)
     {
         return GameData.getBlockRegistry().getNameForObject(block);
     }
-    
+
     public static Block getBlock(String uniqueID)
     {
         return GameData.getBlockRegistry().getObject(uniqueID);
     }
-    
+
     public static int damageDropped(Block block, int metadata)
     {
         return block.damageDropped(metadata);
     }
-    
+
     public static void dropBlockAsItem(Block block, World world, int x, int y, int z, int metadata, int fortuneLevel)
     {
         block.dropBlockAsItem(world, x, y, z, metadata, fortuneLevel);

@@ -30,7 +30,7 @@ public final class HashCodeUtil
      * collisions of <code>hashCode</code> values.
      */
     public static final int SEED = 41;
-    
+
     /**
      * booleans.
      */
@@ -38,7 +38,7 @@ public final class HashCodeUtil
     {
         return firstTerm(aSeed) + (aBoolean ? 1 : 0);
     }
-    
+
     /**
      * chars.
      */
@@ -46,7 +46,7 @@ public final class HashCodeUtil
     {
         return firstTerm(aSeed) + aChar;
     }
-    
+
     /**
      * ints.
      */
@@ -57,7 +57,7 @@ public final class HashCodeUtil
          */
         return firstTerm(aSeed) + aInt;
     }
-    
+
     /**
      * longs.
      */
@@ -65,7 +65,7 @@ public final class HashCodeUtil
     {
         return firstTerm(aSeed) + (int) (aLong ^ (aLong >>> 32));
     }
-    
+
     /**
      * floats.
      */
@@ -73,7 +73,7 @@ public final class HashCodeUtil
     {
         return hash(aSeed, Float.floatToIntBits(aFloat));
     }
-    
+
     /**
      * doubles.
      */
@@ -81,7 +81,7 @@ public final class HashCodeUtil
     {
         return hash(aSeed, Double.doubleToLongBits(aDouble));
     }
-    
+
     /**
      * <code>aObject</code> is a possibly-null object field, and possibly an array.
      * 
@@ -110,15 +110,15 @@ public final class HashCodeUtil
         }
         return result;
     }
-    
+
     // / PRIVATE ///
     private static final int fODD_PRIME_NUMBER = 73;
-    
+
     private static int firstTerm(int aSeed)
     {
         return fODD_PRIME_NUMBER * aSeed;
     }
-    
+
     private static boolean isArray(Object aObject)
     {
         return aObject.getClass().isArray();

@@ -27,21 +27,21 @@ public class Property
         DIMENSION_LIST('W'),
         BIOME_LIST('R'),
         MOD_ID('P');
-        
+
         private char id;
-        
+
         private Type()
         {
             this.id = name().charAt(0);
         }
-        
+
         private Type(char id)
         {
             this.id = id;
         }
-        
+
         private static Type[] values = { STRING, INTEGER, BOOLEAN, DOUBLE, COLOR, ENTITY_LIST, BLOCK_LIST, ITEMSTACK_LIST, DIMENSION_LIST, BIOME_LIST, MOD_ID };
-        
+
         public static Type tryParse(char id)
         {
             for (int x = 0; x < values.length; x++)
@@ -51,16 +51,16 @@ public class Property
                     return values[x];
                 }
             }
-            
+
             return STRING;
         }
-        
+
         public char getID()
         {
             return id;
         }
     }
-    
+
     private String                               name;
     private String                               value;
     private String                               defaultValue;
@@ -71,9 +71,9 @@ public class Property
     private String                               langKey;
     private String                               minValue;
     private String                               maxValue;
-    
+
     private Class<? extends IGuiConfigListEntry> customEntryClass  = null;
-    
+
     private boolean                              isHotLoadable;
     private Pattern                              stringValidationPattern;
     private final boolean                        wasRead;
@@ -82,37 +82,37 @@ public class Property
     private int                                  maxListLength     = -1;
     private final Type                           type;
     private boolean                              changed           = false;
-    
+
     public Property(String name, String value, Type type)
     {
         this(name, value, type, false, new String[0], name);
     }
-    
+
     public Property(String name, String value, Type type, boolean read)
     {
         this(name, value, type, read, new String[0], name);
     }
-    
+
     public Property(String name, String value, Type type, String[] validValues)
     {
         this(name, value, type, false, validValues, name);
     }
-    
+
     public Property(String name, String value, Type type, String langKey)
     {
         this(name, value, type, false, new String[0], langKey);
     }
-    
+
     public Property(String name, String value, Type type, boolean read, String langKey)
     {
         this(name, value, type, read, new String[0], langKey);
     }
-    
+
     public Property(String name, String value, Type type, String[] validValues, String langKey)
     {
         this(name, value, type, false, validValues, langKey);
     }
-    
+
     Property(String name, String value, Type type, boolean read, String[] validValues, String langKey)
     {
         setName(name);
@@ -132,27 +132,27 @@ public class Property
         this.langKey = langKey;
         this.comment = "";
     }
-    
+
     public Property(String name, String[] values, Type type)
     {
         this(name, values, type, false);
     }
-    
+
     Property(String name, String[] values, Type type, boolean read)
     {
         this(name, values, type, read, new String[0], name);
     }
-    
+
     public Property(String name, String[] values, Type type, String langKey)
     {
         this(name, values, type, false, langKey);
     }
-    
+
     Property(String name, String[] values, Type type, boolean read, String langKey)
     {
         this(name, values, type, read, new String[0], langKey);
     }
-    
+
     Property(String name, String[] values, Type type, boolean read, String[] validValues, String langKey)
     {
         setName(name);
@@ -175,7 +175,7 @@ public class Property
         this.langKey = langKey;
         this.comment = "";
     }
-    
+
     /**
      * Returns whether or not this Property is defaulted.
      * 
@@ -190,13 +190,13 @@ public class Property
                 for (int i = 0; i < values.length; i++)
                     if (Boolean.parseBoolean(values[i]) != Boolean.parseBoolean(defaultValues[i]))
                         return false;
-                
+
                 return true;
             }
             else
                 return false;
         }
-        
+
         if (this.isIntList())
         {
             if (values.length == defaultValues.length)
@@ -204,13 +204,13 @@ public class Property
                 for (int i = 0; i < values.length; i++)
                     if (Integer.parseInt(values[i]) != Integer.parseInt(defaultValues[i]))
                         return false;
-                
+
                 return true;
             }
             else
                 return false;
         }
-        
+
         if (this.isDoubleList())
         {
             if (values.length == defaultValues.length)
@@ -218,13 +218,13 @@ public class Property
                 for (int i = 0; i < values.length; i++)
                     if (Double.parseDouble(values[i]) != Double.parseDouble(defaultValues[i]))
                         return false;
-                
+
                 return true;
             }
             else
                 return false;
         }
-        
+
         if (this.isList())
         {
             if (values.length == defaultValues.length)
@@ -232,25 +232,25 @@ public class Property
                 for (int i = 0; i < values.length; i++)
                     if (!values[i].equals(defaultValues[i]))
                         return false;
-                
+
                 return true;
             }
             else
                 return false;
         }
-        
+
         if (this.type.equals(Type.BOOLEAN) && this.isBooleanValue())
             return Boolean.parseBoolean(value) == Boolean.parseBoolean(defaultValue);
-        
+
         if (this.type.equals(Type.INTEGER) && this.isIntValue())
             return Integer.parseInt(value) == Integer.parseInt(defaultValue);
-        
+
         if (this.type.equals(Type.DOUBLE) && this.isDoubleValue())
             return Double.parseDouble(value) == Double.parseDouble(defaultValue);
-        
+
         return value.equals(defaultValue);
     }
-    
+
     /**
      * Sets the current value(s) of this Property to the default value(s).
      */
@@ -260,7 +260,7 @@ public class Property
         this.values = Arrays.copyOf(this.defaultValues, this.defaultValues.length);
         return this;
     }
-    
+
     /**
      * Gets the raw String default value of this Property. Check for isList() == false first.
      * 
@@ -270,7 +270,7 @@ public class Property
     {
         return defaultValue;
     }
-    
+
     /**
      * Gets the raw String[] default values of this Property. Check for isList() == true first.
      * 
@@ -280,7 +280,7 @@ public class Property
     {
         return Arrays.copyOf(this.defaultValues, this.defaultValues.length);
     }
-    
+
     /**
      * Sets the maximum length of this list/array Property. Only important if isList() == true. If the current values array or default
      * values array is longer than the new maximum it will be resized. If calling both this method and setIsListLengthFixed(true), this
@@ -296,14 +296,14 @@ public class Property
             if (values != null && values.length != maxListLength)
                 if (this.isListLengthFixed || values.length > maxListLength)
                     values = Arrays.copyOf(values, maxListLength);
-            
+
             if (defaultValues != null && defaultValues.length != maxListLength)
                 if (this.isListLengthFixed || defaultValues.length > maxListLength)
                     defaultValues = Arrays.copyOf(defaultValues, maxListLength);
         }
         return this;
     }
-    
+
     /**
      * Gets the maximum length of this list/array Property. Only important if isList() == true.
      * 
@@ -313,7 +313,7 @@ public class Property
     {
         return this.maxListLength;
     }
-    
+
     /**
      * Sets the flag for whether this list/array Property has a fixed length. Only important if isList() == true. If calling both this
      * method and setMaxListLength(), this method should be called first (but is not required).
@@ -325,7 +325,7 @@ public class Property
         this.isListLengthFixed = isListLengthFixed;
         return this;
     }
-    
+
     /**
      * Returns whether or not this list/array has a fixed length. Only important if isList() == true.
      * 
@@ -335,7 +335,7 @@ public class Property
     {
         return this.isListLengthFixed;
     }
-    
+
     /**
      * Sets the flag for whether or not this Property can be edited "on the fly" while a world is running. Care should be taken to ensure
      * that only properties that are truly dynamic can be changed from the in-game options menu. When set to true the Property will be
@@ -349,7 +349,7 @@ public class Property
         this.isHotLoadable = isHotLoadable;
         return this;
     }
-    
+
     /**
      * Returns whether or not this Property is able to be edited "on the fly" while a world is running using the in-game Mod Options screen
      * as well as the Mods list screen, or only from the Mods list screen.
@@ -360,7 +360,7 @@ public class Property
     {
         return this.isHotLoadable;
     }
-    
+
     /**
      * Sets a custom IGuiConfigListEntry class that should be used in place of the standard entry class for this Property type. This class
      * MUST provide a constructor with the following parameter types: {@code GuiConfig} (the parent GuiConfig screen will be provided),
@@ -374,7 +374,7 @@ public class Property
         this.customEntryClass = clazz;
         return this;
     }
-    
+
     /**
      * Gets the custom IGuiConfigListEntry class that should be used in place of the standard entry class for this Property type, or null if
      * none has been set.
@@ -385,7 +385,7 @@ public class Property
     {
         return this.customEntryClass;
     }
-    
+
     /**
      * Sets a regex Pattern object used to validate user input for formatted String or String[] properties.
      * 
@@ -396,7 +396,7 @@ public class Property
         this.stringValidationPattern = validationPattern;
         return this;
     }
-    
+
     /**
      * Gets the Pattern object used to validate user input for this Property.
      * 
@@ -406,7 +406,7 @@ public class Property
     {
         return this.stringValidationPattern;
     }
-    
+
     /**
      * Sets the localization language key for this Property so that the config GUI screens are nice and pretty <3. The string languageKey +
      * ".tooltip" is used for tooltips when a user hovers the mouse over a GUI property label. The following String.format() arguments are
@@ -420,13 +420,13 @@ public class Property
         this.langKey = langKey;
         return this;
     }
-    
+
     @Deprecated
     public void setLanguageKey(String langKey)
     {
         this.langKey = langKey;
     }
-    
+
     /**
      * Gets the language key string for this Property.
      * 
@@ -436,7 +436,7 @@ public class Property
     {
         return this.langKey;
     }
-    
+
     /**
      * Sets the default string value of this Property.
      * 
@@ -447,7 +447,7 @@ public class Property
         this.defaultValue = defaultValue;
         return this;
     }
-    
+
     /**
      * Sets the default String[] values of this Property.
      * 
@@ -462,7 +462,7 @@ public class Property
         this.defaultValues = Arrays.copyOf(defaultValues, defaultValues.length);
         return this;
     }
-    
+
     /**
      * Sets the default int value of this Property.
      * 
@@ -473,7 +473,7 @@ public class Property
         setDefaultValue(Integer.toString(defaultValue));
         return this;
     }
-    
+
     /**
      * Sets the default int[] values of this Property.
      * 
@@ -484,11 +484,11 @@ public class Property
         String[] temp = new String[defaultValues.length];
         for (int i = 0; i < defaultValues.length; i++)
             temp[i] = Integer.toString(defaultValues[i]);
-        
+
         setDefaultValues(temp);
         return this;
     }
-    
+
     /**
      * Sets the default double value of this Property.
      * 
@@ -499,7 +499,7 @@ public class Property
         setDefaultValue(Double.toString(defaultValue));
         return this;
     }
-    
+
     /**
      * Sets the default double[] values of this Property
      * 
@@ -510,11 +510,11 @@ public class Property
         String[] temp = new String[defaultValues.length];
         for (int i = 0; i < defaultValues.length; i++)
             temp[i] = Double.toString(defaultValues[i]);
-        
+
         setDefaultValues(temp);
         return this;
     }
-    
+
     /**
      * Sets the default boolean value of this Property.
      * 
@@ -525,7 +525,7 @@ public class Property
         setDefaultValue(Boolean.toString(defaultValue));
         return this;
     }
-    
+
     /**
      * Sets the default boolean[] values of this Property.
      * 
@@ -536,11 +536,11 @@ public class Property
         String[] temp = new String[defaultValues.length];
         for (int i = 0; i < defaultValues.length; i++)
             temp[i] = Boolean.toString(defaultValues[i]);
-        
+
         setDefaultValues(temp);
         return this;
     }
-    
+
     /**
      * Sets the minimum int value of this Property.
      * 
@@ -551,7 +551,7 @@ public class Property
         this.minValue = Integer.toString(minValue);
         return this;
     }
-    
+
     /**
      * Sets the maximum int value of this Property.
      * 
@@ -562,7 +562,7 @@ public class Property
         this.maxValue = Integer.toString(maxValue);
         return this;
     }
-    
+
     /**
      * Sets the minimum double value of this Property.
      * 
@@ -573,7 +573,7 @@ public class Property
         this.minValue = Double.toString(minValue);
         return this;
     }
-    
+
     /**
      * Sets the maximum double value of this Property.
      * 
@@ -584,7 +584,7 @@ public class Property
         this.maxValue = Double.toString(maxValue);
         return this;
     }
-    
+
     /**
      * Gets the minimum value as an int.
      * 
@@ -594,7 +594,7 @@ public class Property
     {
         return Integer.parseInt(minValue);
     }
-    
+
     /**
      * Gets the maximum value as an int.
      * 
@@ -604,7 +604,7 @@ public class Property
     {
         return Integer.parseInt(maxValue);
     }
-    
+
     /**
      * Gets the minimum value as a double.
      * 
@@ -614,7 +614,7 @@ public class Property
     {
         return Double.parseDouble(minValue);
     }
-    
+
     /**
      * Gets the maximum value as a double.
      * 
@@ -624,7 +624,7 @@ public class Property
     {
         return Double.parseDouble(maxValue);
     }
-    
+
     /**
      * Returns the value in this property as it's raw string.
      * 
@@ -634,7 +634,7 @@ public class Property
     {
         return value;
     }
-    
+
     /**
      * Sets the array of valid values that this String Property can be set to. When an array of valid values is defined for a Property the
      * GUI control for that property will be a value cycle button.
@@ -646,7 +646,7 @@ public class Property
         this.validValues = validValues;
         return this;
     }
-    
+
     /**
      * Gets the array of valid values that this String Property can be set to, or null if not defined.
      * 
@@ -656,7 +656,7 @@ public class Property
     {
         return this.validValues;
     }
-    
+
     /**
      * Returns the value in this property as an integer, if the value is not a valid integer, it will return the initially provided default.
      * 
@@ -673,7 +673,7 @@ public class Property
             return Integer.parseInt(defaultValue);
         }
     }
-    
+
     /**
      * Returns the value in this property as an integer, if the value is not a valid integer, it will return the provided default.
      * 
@@ -691,7 +691,7 @@ public class Property
             return _default;
         }
     }
-    
+
     /**
      * Checks if the current value stored in this property can be converted to an integer.
      * 
@@ -709,7 +709,7 @@ public class Property
             return false;
         }
     }
-    
+
     /**
      * Returns the value in this property as a boolean, if the value is not a valid boolean, it will return the provided default.
      * 
@@ -727,7 +727,7 @@ public class Property
             return _default;
         }
     }
-    
+
     /**
      * Returns the value in this property as a boolean, if the value is not a valid boolean, it will return the provided default.
      * 
@@ -744,7 +744,7 @@ public class Property
             return Boolean.parseBoolean(defaultValue);
         }
     }
-    
+
     /**
      * Checks if the current value held by this property is a valid boolean value.
      * 
@@ -754,7 +754,7 @@ public class Property
     {
         return ("true".equals(value.toLowerCase()) || "false".equals(value.toLowerCase()));
     }
-    
+
     /**
      * Checks if the current value held by this property is a valid double value.
      * 
@@ -772,7 +772,7 @@ public class Property
             return false;
         }
     }
-    
+
     /**
      * Returns the value in this property as a double, if the value is not a valid double, it will return the provided default.
      * 
@@ -790,7 +790,7 @@ public class Property
             return _default;
         }
     }
-    
+
     /**
      * Returns the value in this property as a double, if the value is not a valid double, it will return the provided default.
      * 
@@ -808,12 +808,12 @@ public class Property
             return Double.parseDouble(defaultValue);
         }
     }
-    
+
     public String[] getStringList()
     {
         return values;
     }
-    
+
     /**
      * Returns the integer value of all values that can be parsed in the list.
      * 
@@ -822,7 +822,7 @@ public class Property
     public int[] getIntList()
     {
         ArrayList<Integer> nums = new ArrayList<Integer>();
-        
+
         for (String value : values)
         {
             try
@@ -832,17 +832,17 @@ public class Property
             catch (NumberFormatException e)
             {}
         }
-        
+
         int[] primitives = new int[nums.size()];
-        
+
         for (int i = 0; i < nums.size(); i++)
         {
             primitives[i] = nums.get(i);
         }
-        
+
         return primitives;
     }
-    
+
     /**
      * Checks if all of the current values stored in this property can be converted to an integer.
      * 
@@ -864,7 +864,7 @@ public class Property
             }
         return isList;
     }
-    
+
     /**
      * Returns the boolean value of all values that can be parsed in the list.
      * 
@@ -882,17 +882,17 @@ public class Property
             catch (NumberFormatException e)
             {}
         }
-        
+
         boolean[] primitives = new boolean[tmp.size()];
-        
+
         for (int i = 0; i < tmp.size(); i++)
         {
             primitives[i] = tmp.get(i);
         }
-        
+
         return primitives;
     }
-    
+
     /**
      * Checks if all of current values stored in this property can be converted to a boolean.
      * 
@@ -908,10 +908,10 @@ public class Property
                     return false;
                 }
             }
-        
+
         return isList;
     }
-    
+
     /**
      * Returns the double value of all values that can be parsed in the list.
      * 
@@ -929,17 +929,17 @@ public class Property
             catch (NumberFormatException e)
             {}
         }
-        
+
         double[] primitives = new double[tmp.size()];
-        
+
         for (int i = 0; i < tmp.size(); i++)
         {
             primitives[i] = tmp.get(i);
         }
-        
+
         return primitives;
     }
-    
+
     /**
      * Checks if all of the current values stored in this property can be converted to a double.
      * 
@@ -959,10 +959,10 @@ public class Property
                     return false;
                 }
             }
-        
+
         return isList;
     }
-    
+
     /**
      * Gets the name/key for this Property.
      * 
@@ -972,7 +972,7 @@ public class Property
     {
         return name;
     }
-    
+
     /**
      * Sets the name/key for this Property.
      * 
@@ -983,7 +983,7 @@ public class Property
         this.name = name;
         return this;
     }
-    
+
     /**
      * Determines if this config value was just created, or if it was read from the config file. This is useful for mods who auto-assign
      * there blocks to determine if the ID returned is a configured one, or a automatically generated one.
@@ -994,7 +994,7 @@ public class Property
     {
         return wasRead;
     }
-    
+
     /**
      * Gets the Property.Type enum value for this Property.
      * 
@@ -1004,7 +1004,7 @@ public class Property
     {
         return type;
     }
-    
+
     /**
      * Returns whether or not this Property is a list/array.
      * 
@@ -1014,7 +1014,7 @@ public class Property
     {
         return isList;
     }
-    
+
     /**
      * Gets the changed status of this Property.
      * 
@@ -1024,12 +1024,12 @@ public class Property
     {
         return changed;
     }
-    
+
     void resetChangedState()
     {
         changed = false;
     }
-    
+
     /**
      * Sets the value of this Property to the provided String value.
      * 
@@ -1041,12 +1041,12 @@ public class Property
         changed = true;
         return this;
     }
-    
+
     public void set(String value)
     {
         this.setValue(value);
     }
-    
+
     /**
      * Sets the values of this Property to the provided String[] values.
      * 
@@ -1058,13 +1058,13 @@ public class Property
         changed = true;
         return this;
     }
-    
+
     @Deprecated
     public void set(String[] values)
     {
         this.setValues(values);
     }
-    
+
     /**
      * Sets the value of this Property to the provided int value.
      * 
@@ -1075,13 +1075,13 @@ public class Property
         setValue(Integer.toString(value));
         return this;
     }
-    
+
     @Deprecated
     public void set(int value)
     {
         this.setValue(value);
     }
-    
+
     /**
      * Sets the value of this Property to the provided boolean value.
      * 
@@ -1092,13 +1092,13 @@ public class Property
         setValue(Boolean.toString(value));
         return this;
     }
-    
+
     @Deprecated
     public void set(boolean value)
     {
         this.setValue(value);
     }
-    
+
     /**
      * Sets the value of this Property to the provided double value.
      * 
@@ -1109,13 +1109,13 @@ public class Property
         setValue(Double.toString(value));
         return this;
     }
-    
+
     @Deprecated
     public void set(double value)
     {
         this.setValue(value);
     }
-    
+
     /**
      * Sets the values of this Property to the provided boolean[] values.
      * 
@@ -1129,13 +1129,13 @@ public class Property
         changed = true;
         return this;
     }
-    
+
     @Deprecated
     public void set(boolean[] values)
     {
         this.setValues(values);
     }
-    
+
     /**
      * Sets the values of this Property to the provided int[] values.
      * 
@@ -1149,13 +1149,13 @@ public class Property
         changed = true;
         return this;
     }
-    
+
     @Deprecated
     public void set(int[] values)
     {
         this.setValues(values);
     }
-    
+
     /**
      * Sets the values of this Property to the provided double[] values.
      * 
@@ -1169,7 +1169,7 @@ public class Property
         changed = true;
         return this;
     }
-    
+
     @Deprecated
     public void set(double[] values)
     {

@@ -20,11 +20,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 public abstract class InputEventListener
 {
     private static HashMap<KeyBinding, InputEventListener> instances = new HashMap<KeyBinding, InputEventListener>();
-    
+
     protected KeyBinding                                   keyBinding;
     protected boolean                                      isKeyDown;
     protected boolean                                      allowRepeats;
-    
+
     public InputEventListener(KeyBinding keyBinding, boolean allowRepeats)
     {
         this.keyBinding = keyBinding;
@@ -33,24 +33,24 @@ public abstract class InputEventListener
         instances.put(keyBinding, this);
         ClientRegistry.registerKeyBinding(keyBinding);
     }
-    
+
     public KeyBinding getKeyBinding()
     {
         return this.keyBinding;
     }
-    
+
     @SubscribeEvent
     public void onKeyInputEvent(KeyInputEvent event)
     {
         onInputEvent(event);
     }
-    
+
     @SubscribeEvent
     public void onMouseInputEvent(MouseInputEvent event)
     {
         onInputEvent(event);
     }
-    
+
     private void onInputEvent(InputEvent event)
     {
         int keyCode = keyBinding.getKeyCode();
@@ -61,20 +61,20 @@ public abstract class InputEventListener
                 keyDown(keyBinding, state == isKeyDown);
             else
                 keyUp(keyBinding);
-            
+
             isKeyDown = state;
         }
     }
-    
+
     public abstract void keyDown(KeyBinding kb, boolean isRepeat);
-    
+
     public abstract void keyUp(KeyBinding kb);
-    
+
     public static boolean isRegistered(KeyBinding kb)
     {
         return instances.containsKey(kb);
     }
-    
+
     public static void unRegister(KeyBinding kb)
     {
         if (isRegistered(kb))
@@ -83,5 +83,5 @@ public abstract class InputEventListener
             instances.remove(kb);
         }
     }
-    
+
 }

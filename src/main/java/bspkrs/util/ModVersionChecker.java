@@ -36,12 +36,12 @@ public class ModVersionChecker
     private final String                                CHECK_ERROR       = "check_error";
     private final boolean                               errorDetected;
     private int                                         runsSinceLastMessage;
-    
+
     public ModVersionChecker(String modID, String curVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg)
     {
         this(modID, curVer, versionURL, updateURL, loadMsg, inGameMsg, bspkrsCoreMod.instance.updateTimeoutMilliseconds);
     }
-    
+
     public ModVersionChecker(String modID, String curVer, String versionURL, String updateURL, String[] loadMsg, String[] inGameMsg, int timeoutMS)
     {
         this.modID = modID;
@@ -49,12 +49,12 @@ public class ModVersionChecker
         this.updateURL = updateURL;
         this.loadMsg = loadMsg;
         this.inGameMsg = inGameMsg;
-        
+
         try
         {
             if (versionURL.startsWith("http://dl.dropboxusercontent.com"))
                 versionURL = versionURL.replaceFirst("http", "https");
-            
+
             this.versionURL = new URL(versionURL);
             BSLog.info("Initializing ModVersionChecker for mod %s", modID);
         }
@@ -62,16 +62,16 @@ public class ModVersionChecker
         {
             BSLog.warning("Error initializing ModVersionChecker for mod %s: %s", modID, e.getMessage());
         }
-        
+
         String[] versionLines = CommonUtils.loadTextFromURL(this.versionURL, BSLog.INSTANCE.getLogger(), new String[] { CHECK_ERROR }, timeoutMS);
-        
+
         if (versionLines.length == 0 || versionLines[0].trim().equals("<html>"))
             newVersion = CHECK_ERROR;
         else
             newVersion = versionLines[0].trim();
-        
+
         errorDetected = newVersion.equals(CHECK_ERROR);
-        
+
         // Keep track of the versions we've seen to keep from nagging players with new version notifications beyond the first one
         if (trackerDir == null)
         {
@@ -82,28 +82,28 @@ public class ModVersionChecker
                 trackerFile.delete();
                 trackerDir.delete();
             }
-            
+
             trackerDir = new File(CommonUtils.getConfigDir());
             trackerFile = new File(trackerDir, "bspkrs_ModVersionCheckerTracking.txt");
             if ((trackerFile.exists()))
                 trackerFile.delete();
         }
-        
+
         if (versionCheckTracker == null)
             versionCheckTracker = Preferences.userNodeForPackage(this.getClass()).node("modversiontracker" + Const.MCVERSION);
-        
+
         if (!(new StringBuilder("@").append("MOD_VERSION@")).toString().equals(currentVersion) && !"${mod_version}".equals(currentVersion))
         {
             lastNewVersionFound = versionCheckTracker.get(modID, currentVersion);
-            
+
             if (lastNewVersionFound.equals("<html>"))
                 lastNewVersionFound = currentVersion;
-            
+
             runsSinceLastMessage = versionCheckTracker.node("runs_since_last_message").getInt(modID, 0);
-            
+
             if (errorDetected)
                 newVersion = lastNewVersionFound;
-            
+
             if (!errorDetected && !isCurrentVersion(lastNewVersionFound, newVersion))
             {
                 runsSinceLastMessage = 0;
@@ -111,106 +111,106 @@ public class ModVersionChecker
             }
             else
                 runsSinceLastMessage = runsSinceLastMessage % 10;
-            
+
             versionCheckTracker.node("runs_since_last_message").putInt(modID, runsSinceLastMessage + 1);
             versionCheckTracker.put(modID, lastNewVersionFound);
         }
-        
+
         // Override instantiated updateURL with second line of version file if it exists and is non-blank
         if (versionLines.length > 1 && versionLines[1].trim().length() != 0)
             this.updateURL = versionLines[1];
-        
+
         setLoadMessage(loadMsg);
         setInGameMessage(inGameMsg);
-        
+
         versionCheckerMap.put(modID.toLowerCase(Locale.US), this);
     }
-    
+
     public ModVersionChecker(String modName, String oldVer, String versionURL, String updateURL)
     {
         this(modName, oldVer, versionURL, updateURL,
                 new String[] { "{modID} {oldVer} is out of date! Visit {updateURL} to download the latest release ({newVer})." },
                 new String[] { "\247c{modID} {newVer} \247ris out! Download the latest from \247a{updateURL}\247r" });
     }
-    
+
     public void checkVersionWithLogging()
     {
         if (!isCurrentVersion(currentVersion, newVersion))
             for (String msg : loadMsg)
                 BSLog.info(msg);
     }
-    
+
     public void setLoadMessage(String[] loadMsg)
     {
         this.loadMsg = loadMsg;
-        
+
         for (int i = 0; i < this.loadMsg.length; i++)
             this.loadMsg[i] = replaceAllTags(this.loadMsg[i]);
     }
-    
+
     public void setInGameMessage(String[] inGameMsg)
     {
         this.inGameMsg = inGameMsg;
-        
+
         for (int i = 0; i < this.inGameMsg.length; i++)
             this.inGameMsg[i] = replaceAllTags(this.inGameMsg[i]);
-        
+
     }
-    
+
     public String[] getLoadMessage()
     {
         return loadMsg;
     }
-    
+
     public String[] getInGameMessage()
     {
         return inGameMsg;
     }
-    
+
     public URL getVersionURL()
     {
         return versionURL;
     }
-    
+
     public String getNewVersion()
     {
         return newVersion;
     }
-    
+
     public String getCurrentVersion()
     {
         return currentVersion;
     }
-    
+
     public String getUpdateURL()
     {
         return updateURL;
     }
-    
+
     public static Map<String, ModVersionChecker> getVersionCheckerMap()
     {
         return versionCheckerMap;
     }
-    
+
     public boolean isCurrentVersion()
     {
         return errorDetected || isCurrentVersion(runsSinceLastMessage == 0 ? currentVersion : lastNewVersionFound, newVersion);
     }
-    
+
     public static boolean isCurrentVersion(String oldVer, String newVer)
     {
         return Ordering.natural().compare(oldVer, newVer) >= 0;
     }
-    
+
     private String replaceAllTags(String s)
     {
         return s.replace("{oldVer}", currentVersion).replace("{newVer}", newVersion).replace("{modID}", modID).replace("{updateURL}", updateURL);
     }
-    
+
     public static String[] checkVersionForMod(String modID)
     {
         String[] r = { "" };
-        
+
         if (versionCheckerMap.containsKey(modID.toLowerCase(Locale.US)))
         {
             ModVersionChecker versionChecker = versionCheckerMap.get(modID.toLowerCase(Locale.US));
@@ -226,7 +226,7 @@ public class ModVersionChecker
         }
         else
             r = new String[] { StatCollector.translateToLocal("bspkrs.modversionchecker.invalidmodid") };
-        
+
         return r;
     }
 }

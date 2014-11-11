@@ -12,7 +12,7 @@ public class Reference
     static
     {
         Properties prop = new Properties();
-        
+
         try
         {
             InputStream stream = Reference.class.getClassLoader().getResourceAsStream("version.properties");
@@ -23,7 +23,7 @@ public class Reference
         {
             Throwables.propagate(e);
         }
-        
+
         MC_VERSION = prop.getProperty("version.minecraft");
     }
     public static final String  MODID        = "bspkrsCore";
@@ -33,6 +33,6 @@ public class Reference
     public static final String  PROXY_COMMON = "bspkrs.bspkrscore.fml.CommonProxy";
     public static final String  PROXY_CLIENT = "bspkrs.bspkrscore.fml.ClientProxy";
     public static final String  GUI_FACTORY  = "bspkrs.bspkrscore.fml.gui.ModGuiFactoryHandler";
-    
+
     public static Configuration config       = null;
 }

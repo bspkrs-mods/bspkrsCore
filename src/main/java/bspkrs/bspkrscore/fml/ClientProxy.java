@@ -11,21 +11,21 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ClientProxy extends CommonProxy
 {
     private BSMainMenuRenderTicker mainMenuTicker;
-    
+
     @Override
     protected void registerGameTickHandler()
     {
         if (BSCClientTicker.allowUpdateCheck)
             new BSCClientTicker();
     }
-    
+
     @Override
     protected void registerMainMenuTickHandler()
     {
         mainMenuTicker = new BSMainMenuRenderTicker();
         MinecraftForge.EVENT_BUS.register(this);
     }
-    
+
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event)
     {

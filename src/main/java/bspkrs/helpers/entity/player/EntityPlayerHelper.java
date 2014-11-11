@@ -20,7 +20,7 @@ public class EntityPlayerHelper
     {
         player.addChatMessage(message);
     }
-    
+
     public static GameProfile getGameProfile(EntityPlayer player)
     {
         return player.getGameProfile();
