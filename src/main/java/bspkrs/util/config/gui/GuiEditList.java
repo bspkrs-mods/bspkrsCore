@@ -26,18 +26,20 @@ public class GuiEditList extends GuiScreen
     private final String[]     beforeValues;
     private String[]           currentValues;
     private HoverChecker       tooltipHoverChecker;
+    @SuppressWarnings("rawtypes")
     private List               toolTip;
     protected boolean          enabled;
 
+    @SuppressWarnings("rawtypes")
     public GuiEditList(GuiScreen parentScreen, IConfigProperty prop, int slotIndex, String[] currentValues, boolean enabled)
     {
-        this.mc = Minecraft.getMinecraft();
+        mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;
         this.prop = prop;
         this.slotIndex = slotIndex;
-        this.beforeValues = currentValues;
+        beforeValues = currentValues;
         this.currentValues = currentValues;
-        this.toolTip = new ArrayList();
+        toolTip = new ArrayList();
         this.enabled = enabled;
         String propName = I18n.format(prop.getLanguageKey());
         String comment;
@@ -52,7 +54,7 @@ public class GuiEditList extends GuiScreen
         if (!comment.equals(prop.getLanguageKey() + ".tooltip"))
             toolTip = mc.fontRendererObj.listFormattedStringToWidth(
                     EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + comment, 300);
-        else if (prop.getComment() != null && !prop.getComment().trim().isEmpty())
+        else if ((prop.getComment() != null) && !prop.getComment().trim().isEmpty())
             toolTip = mc.fontRendererObj.listFormattedStringToWidth(
                     EnumChatFormatting.GREEN + propName + "\n" + EnumChatFormatting.YELLOW + prop.getComment(), 300);
         else
@@ -61,34 +63,35 @@ public class GuiEditList extends GuiScreen
 
         if (parentScreen instanceof GuiConfig)
         {
-            this.title = ((GuiConfig) parentScreen).title;
-            this.titleLine2 = ((GuiConfig) parentScreen).titleLine2;
-            this.titleLine3 = I18n.format(prop.getLanguageKey());
-            this.tooltipHoverChecker = new HoverChecker(28, 37, 0, parentScreen.width, 800);
+            title = ((GuiConfig) parentScreen).title;
+            titleLine2 = ((GuiConfig) parentScreen).titleLine2;
+            titleLine3 = I18n.format(prop.getLanguageKey());
+            tooltipHoverChecker = new HoverChecker(28, 37, 0, parentScreen.width, 800);
 
         }
         else
         {
-            this.title = I18n.format(prop.getLanguageKey());
-            this.tooltipHoverChecker = new HoverChecker(8, 17, 0, parentScreen.width, 800);
+            title = I18n.format(prop.getLanguageKey());
+            tooltipHoverChecker = new HoverChecker(8, 17, 0, parentScreen.width, 800);
         }
     }
 
     /**
      * Adds the buttons (and other controls) to the screen in question.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {
-        this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop, this.beforeValues, this.currentValues);
+        guiScrollList = new GuiEditListEntries(this, mc, prop, beforeValues, currentValues);
 
         int doneWidth = Math.max(mc.fontRendererObj.getStringWidth(I18n.format("gui.done")) + 20, 100);
         int undoWidth = mc.fontRendererObj.getStringWidth("↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")) + 20;
         int resetWidth = mc.fontRendererObj.getStringWidth("☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")) + 20;
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth) / 2;
-        this.buttonList.add(btnDone = new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
-        this.buttonList.add(btnDefault = new GuiButtonExt(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5, this.height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
-        this.buttonList.add(btnUndoChanges = new GuiButtonExt(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5, this.height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
+        buttonList.add(btnDone = new GuiButtonExt(2000, (width / 2) - buttonWidthHalf, height - 29, doneWidth, 20, I18n.format("gui.done")));
+        buttonList.add(btnDefault = new GuiButtonExt(2001, ((width / 2) - buttonWidthHalf) + doneWidth + 5 + undoWidth + 5, height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
+        buttonList.add(btnUndoChanges = new GuiButtonExt(2002, ((width / 2) - buttonWidthHalf) + doneWidth + 5, height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
     }
 
     @Override
@@ -98,23 +101,23 @@ public class GuiEditList extends GuiScreen
         {
             try
             {
-                this.guiScrollList.saveListChanges();
+                guiScrollList.saveListChanges();
             }
             catch (Throwable e)
             {
                 e.printStackTrace();
             }
-            this.mc.displayGuiScreen(this.parentScreen);
+            mc.displayGuiScreen(parentScreen);
         }
         else if (button.id == 2001)
         {
-            this.currentValues = prop.getDefaults();
-            this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop, this.beforeValues, this.currentValues);
+            currentValues = prop.getDefaults();
+            guiScrollList = new GuiEditListEntries(this, mc, prop, beforeValues, currentValues);
         }
         else if (button.id == 2002)
         {
-            this.currentValues = Arrays.copyOf(beforeValues, beforeValues.length);
-            this.guiScrollList = new GuiEditListEntries(this, this.mc, this.prop, this.beforeValues, this.currentValues);
+            currentValues = Arrays.copyOf(beforeValues, beforeValues.length);
+            guiScrollList = new GuiEditListEntries(this, mc, prop, beforeValues, currentValues);
         }
     }
 
@@ -124,9 +127,9 @@ public class GuiEditList extends GuiScreen
     @Override
     protected void mouseClicked(int x, int y, int mouseEvent)
     {
-        if (mouseEvent != 0 || !this.guiScrollList.func_148179_a(x, y, mouseEvent))
+        if ((mouseEvent != 0) || !guiScrollList.func_148179_a(x, y, mouseEvent))
         {
-            this.guiScrollList.mouseClicked(x, y, mouseEvent);
+            guiScrollList.mouseClicked(x, y, mouseEvent);
             super.mouseClicked(x, y, mouseEvent);
         }
     }
@@ -138,7 +141,7 @@ public class GuiEditList extends GuiScreen
     @Override
     protected void mouseReleased(int x, int y, int mouseEvent)
     {
-        if (mouseEvent != 0 || !this.guiScrollList.func_148181_b(x, y, mouseEvent))
+        if ((mouseEvent != 0) || !guiScrollList.func_148181_b(x, y, mouseEvent))
         {
             super.mouseReleased(x, y, mouseEvent);
         }
@@ -148,16 +151,16 @@ public class GuiEditList extends GuiScreen
     protected void keyTyped(char eventChar, int eventKey)
     {
         if (eventKey == Keyboard.KEY_ESCAPE)
-            this.mc.displayGuiScreen(parentScreen);
+            mc.displayGuiScreen(parentScreen);
         else
-            this.guiScrollList.keyTyped(eventChar, eventKey);
+            guiScrollList.keyTyped(eventChar, eventKey);
     }
 
     @Override
     public void updateScreen()
     {
         super.updateScreen();
-        this.guiScrollList.updateScreen();
+        guiScrollList.updateScreen();
     }
 
     /**
@@ -167,25 +170,26 @@ public class GuiEditList extends GuiScreen
     public void drawScreen(int par1, int par2, float par3)
     {
         this.drawDefaultBackground();
-        this.guiScrollList.drawScreen(par1, par2, par3);
-        this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
+        guiScrollList.drawScreen(par1, par2, par3);
+        this.drawCenteredString(fontRendererObj, title, width / 2, 8, 16777215);
 
-        if (this.titleLine2 != null)
-            this.drawCenteredString(this.fontRendererObj, this.titleLine2, this.width / 2, 18, 16777215);
+        if (titleLine2 != null)
+            this.drawCenteredString(fontRendererObj, titleLine2, width / 2, 18, 16777215);
 
-        if (this.titleLine3 != null)
-            this.drawCenteredString(this.fontRendererObj, this.titleLine3, this.width / 2, 28, 16777215);
+        if (titleLine3 != null)
+            this.drawCenteredString(fontRendererObj, titleLine3, width / 2, 28, 16777215);
 
-        this.btnDone.enabled = this.guiScrollList.isListSavable();
-        this.btnDefault.enabled = enabled && !this.guiScrollList.isDefault();
-        this.btnUndoChanges.enabled = enabled && this.guiScrollList.isChanged();
+        btnDone.enabled = guiScrollList.isListSavable();
+        btnDefault.enabled = enabled && !guiScrollList.isDefault();
+        btnUndoChanges.enabled = enabled && guiScrollList.isChanged();
         super.drawScreen(par1, par2, par3);
-        this.guiScrollList.drawScreenPost(par1, par2, par3);
+        guiScrollList.drawScreenPost(par1, par2, par3);
 
-        if (this.tooltipHoverChecker != null && this.tooltipHoverChecker.checkHover(par1, par2))
-            drawToolTip(this.toolTip, par1, par2);
+        if ((tooltipHoverChecker != null) && tooltipHoverChecker.checkHover(par1, par2))
+            drawToolTip(toolTip, par1, par2);
     }
 
+    @SuppressWarnings("rawtypes")
     public void drawToolTip(List stringList, int x, int y)
     {
         this.drawHoveringText(stringList, x, y, fontRendererObj);

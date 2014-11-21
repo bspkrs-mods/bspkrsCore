@@ -20,29 +20,27 @@ import bspkrs.util.config.gui.GuiPropertyList.EditListPropEntry;
 @Deprecated
 public class GuiEditListEntries extends GuiListExtended
 {
-    private GuiEditList             parentGuiEditList;
-    private Minecraft               mc;
-    private IConfigProperty         prop;
-    private List<IGuiEditListEntry> listEntries;
-    private boolean                 isDefault;
-    private boolean                 isChanged;
-    private boolean                 canAddMoreEntries;
-    private final int               controlWidth;
-    private final String[]          beforeValues;
-    private String[]                currentValues;
+    private final GuiEditList             parentGuiEditList;
+    private final Minecraft               mc;
+    private final IConfigProperty         prop;
+    private final List<IGuiEditListEntry> listEntries;
+    private boolean                       isDefault;
+    private boolean                       isChanged;
+    private boolean                       canAddMoreEntries;
+    private final int                     controlWidth;
+    private final String[]                beforeValues;
 
     public GuiEditListEntries(GuiEditList parent, Minecraft mc, IConfigProperty prop, String[] beforeValues, String[] currentValues)
     {
         super(mc, parent.width, parent.height, parent.titleLine2 != null ? (parent.titleLine3 != null ? 43 : 33) : 23, parent.height - 32, 20);
-        this.parentGuiEditList = parent;
+        parentGuiEditList = parent;
         this.mc = mc;
         this.prop = prop;
         this.beforeValues = beforeValues;
-        this.currentValues = currentValues;
         this.setShowSelectionBox(false);
-        this.isChanged = !Arrays.deepEquals(beforeValues, currentValues);
-        this.isDefault = Arrays.deepEquals(currentValues, prop.getDefaults());
-        this.canAddMoreEntries = !prop.isListLengthFixed() && (prop.getMaxListLength() == -1 || currentValues.length < prop.getMaxListLength());
+        isChanged = !Arrays.deepEquals(beforeValues, currentValues);
+        isDefault = Arrays.deepEquals(currentValues, prop.getDefaults());
+        canAddMoreEntries = !prop.isListLengthFixed() && ((prop.getMaxListLength() == -1) || (currentValues.length < prop.getMaxListLength()));
 
         listEntries = new ArrayList<IGuiEditListEntry>();
 
@@ -103,14 +101,14 @@ public class GuiEditListEntries extends GuiListExtended
             listEntries.add(index, new EditListDoubleEntry(0.0F));
         else if (prop.isList())
             listEntries.add(index, new EditListStringEntry(""));
-        this.canAddMoreEntries = !prop.isListLengthFixed() && (prop.getMaxListLength() == -1 || this.listEntries.size() - 1 < prop.getMaxListLength());
+        canAddMoreEntries = !prop.isListLengthFixed() && ((prop.getMaxListLength() == -1) || ((listEntries.size() - 1) < prop.getMaxListLength()));
         keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
     }
 
     private void removeEntryAtIndex(int index)
     {
-        this.listEntries.remove(index);
-        this.canAddMoreEntries = !prop.isListLengthFixed() && (prop.getMaxListLength() == -1 || this.listEntries.size() - 1 < prop.getMaxListLength());
+        listEntries.remove(index);
+        canAddMoreEntries = !prop.isListLengthFixed() && ((prop.getMaxListLength() == -1) || ((listEntries.size() - 1) < prop.getMaxListLength()));
         keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
     }
 
@@ -154,7 +152,7 @@ public class GuiEditListEntries extends GuiListExtended
 
     protected void keyTyped(char eventChar, int eventKey)
     {
-        for (IGuiEditListEntry entry : this.listEntries)
+        for (IGuiEditListEntry entry : listEntries)
             entry.keyTyped(eventChar, eventKey);
 
         recalculateState();
@@ -162,19 +160,19 @@ public class GuiEditListEntries extends GuiListExtended
 
     protected void updateScreen()
     {
-        for (IGuiEditListEntry entry : this.listEntries)
+        for (IGuiEditListEntry entry : listEntries)
             entry.updateCursorCounter();
     }
 
     protected void mouseClicked(int x, int y, int mouseEvent)
     {
-        for (IGuiEditListEntry entry : this.listEntries)
+        for (IGuiEditListEntry entry : listEntries)
             entry.mouseClicked(x, y, mouseEvent);
     }
 
     protected boolean isListSavable()
     {
-        for (IGuiEditListEntry entry : this.listEntries)
+        for (IGuiEditListEntry entry : listEntries)
             if (!entry.isValueSavable())
                 return false;
 
@@ -185,9 +183,9 @@ public class GuiEditListEntries extends GuiListExtended
     {
         int listLength = prop.isListLengthFixed() ? listEntries.size() : listEntries.size() - 1;
 
-        if (parentGuiEditList.slotIndex != -1 && parentGuiEditList.parentScreen != null
-                && parentGuiEditList.parentScreen instanceof GuiConfig
-                && ((GuiConfig) parentGuiEditList.parentScreen).propertyList.getListEntry(parentGuiEditList.slotIndex) instanceof EditListPropEntry)
+        if ((parentGuiEditList.slotIndex != -1) && (parentGuiEditList.parentScreen != null)
+                && (parentGuiEditList.parentScreen instanceof GuiConfig)
+                && (((GuiConfig) parentGuiEditList.parentScreen).propertyList.getListEntry(parentGuiEditList.slotIndex) instanceof EditListPropEntry))
         {
             EditListPropEntry entry = (EditListPropEntry) ((GuiConfig) parentGuiEditList.parentScreen).propertyList.getListEntry(parentGuiEditList.slotIndex);
 
@@ -236,7 +234,7 @@ public class GuiEditListEntries extends GuiListExtended
 
     protected void drawScreenPost(int mouseX, int mouseY, float f)
     {
-        for (IGuiEditListEntry entry : this.listEntries)
+        for (IGuiEditListEntry entry : listEntries)
             entry.drawToolTip(mouseX, mouseY);
     }
 
@@ -249,48 +247,48 @@ public class GuiEditListEntries extends GuiListExtended
         public EditListDoubleEntry(double value)
         {
             super(String.valueOf(value));
-            this.isValidated = true;
+            isValidated = true;
         }
 
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            if (parentGuiEditList.enabled || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
-                    || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
+            if (parentGuiEditList.enabled || (eventKey == Keyboard.KEY_LEFT) || (eventKey == Keyboard.KEY_RIGHT)
+                    || (eventKey == Keyboard.KEY_HOME) || (eventKey == Keyboard.KEY_END))
             {
                 String validChars = "0123456789";
-                String before = this.textFieldValue.getText();
+                String before = textFieldValue.getText();
                 if (validChars.contains(String.valueOf(eventChar)) ||
-                        (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
-                        || (!before.contains(".") && eventChar == '.')
-                        || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
-                        || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
-                    this.textFieldValue.textboxKeyTyped((parentGuiEditList.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                        (!before.startsWith("-") && (textFieldValue.getCursorPosition() == 0) && (eventChar == '-'))
+                        || (!before.contains(".") && (eventChar == '.'))
+                        || (eventKey == Keyboard.KEY_BACK) || (eventKey == Keyboard.KEY_DELETE) || (eventKey == Keyboard.KEY_LEFT) || (eventKey == Keyboard.KEY_RIGHT)
+                        || (eventKey == Keyboard.KEY_HOME) || (eventKey == Keyboard.KEY_END))
+                    textFieldValue.textboxKeyTyped((parentGuiEditList.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
 
                 if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
                 {
                     try
                     {
                         double value = Double.parseDouble(textFieldValue.getText().trim());
-                        if (value < prop.getMinDoubleValue() || value > prop.getMaxDoubleValue())
-                            this.isValidValue = false;
+                        if ((value < prop.getMinDoubleValue()) || (value > prop.getMaxDoubleValue()))
+                            isValidValue = false;
                         else
-                            this.isValidValue = true;
+                            isValidValue = true;
                     }
                     catch (Throwable e)
                     {
-                        this.isValidValue = false;
+                        isValidValue = false;
                     }
                 }
                 else
-                    this.isValidValue = false;
+                    isValidValue = false;
             }
         }
 
         @Override
         public String getValue()
         {
-            return this.textFieldValue.getText().trim();
+            return textFieldValue.getText().trim();
         }
     }
 
@@ -299,47 +297,47 @@ public class GuiEditListEntries extends GuiListExtended
         public EditListIntegerEntry(int value)
         {
             super(String.valueOf(value));
-            this.isValidated = true;
+            isValidated = true;
         }
 
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            if (parentGuiEditList.enabled || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
-                    || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
+            if (parentGuiEditList.enabled || (eventKey == Keyboard.KEY_LEFT) || (eventKey == Keyboard.KEY_RIGHT)
+                    || (eventKey == Keyboard.KEY_HOME) || (eventKey == Keyboard.KEY_END))
             {
                 String validChars = "0123456789";
-                String before = this.textFieldValue.getText();
+                String before = textFieldValue.getText();
                 if (validChars.contains(String.valueOf(eventChar))
-                        || (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
-                        || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE
-                        || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
-                    this.textFieldValue.textboxKeyTyped((parentGuiEditList.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                        || (!before.startsWith("-") && (textFieldValue.getCursorPosition() == 0) && (eventChar == '-'))
+                        || (eventKey == Keyboard.KEY_BACK) || (eventKey == Keyboard.KEY_DELETE)
+                        || (eventKey == Keyboard.KEY_LEFT) || (eventKey == Keyboard.KEY_RIGHT) || (eventKey == Keyboard.KEY_HOME) || (eventKey == Keyboard.KEY_END))
+                    textFieldValue.textboxKeyTyped((parentGuiEditList.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
 
                 if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
                 {
                     try
                     {
                         long value = Long.parseLong(textFieldValue.getText().trim());
-                        if (value < prop.getMinIntValue() || value > prop.getMaxIntValue())
-                            this.isValidValue = false;
+                        if ((value < prop.getMinIntValue()) || (value > prop.getMaxIntValue()))
+                            isValidValue = false;
                         else
-                            this.isValidValue = true;
+                            isValidValue = true;
                     }
                     catch (Throwable e)
                     {
-                        this.isValidValue = false;
+                        isValidValue = false;
                     }
                 }
                 else
-                    this.isValidValue = false;
+                    isValidValue = false;
             }
         }
 
         @Override
         public String getValue()
         {
-            return this.textFieldValue.getText().trim();
+            return textFieldValue.getText().trim();
         }
     }
 
@@ -350,45 +348,45 @@ public class GuiEditListEntries extends GuiListExtended
         public EditListStringEntry(String value)
         {
             super();
-            this.textFieldValue = new GuiTextField(GuiEditListEntries.this.mc.fontRendererObj, width / 4 + 1, 0, controlWidth - 3, 16);
-            this.textFieldValue.setMaxStringLength(10000);
-            this.textFieldValue.setText(value);
-            this.isValidated = prop.getValidStringPattern() != null;
+            textFieldValue = new GuiTextField(mc.fontRendererObj, (width / 4) + 1, 0, controlWidth - 3, 16);
+            textFieldValue.setMaxStringLength(10000);
+            textFieldValue.setText(value);
+            isValidated = prop.getValidStringPattern() != null;
         }
 
         @Override
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
         {
             super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
-            if (prop.isListLengthFixed() || slotIndex != listEntries.size() - 1)
+            if (prop.isListLengthFixed() || (slotIndex != (listEntries.size() - 1)))
             {
-                this.textFieldValue.setVisible(true);
+                textFieldValue.setVisible(true);
                 try
                 {
-                    if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146210_g", "yPosition", this.textFieldValue, -1) != y + 1)
-                        ReflectionHelper.setIntValue(GuiTextField.class, "field_146210_g", "yPosition", this.textFieldValue, y + 1);
+                    if (ReflectionHelper.getIntValue(GuiTextField.class, "field_146210_g", "yPosition", textFieldValue, -1) != (y + 1))
+                        ReflectionHelper.setIntValue(GuiTextField.class, "field_146210_g", "yPosition", textFieldValue, y + 1);
                 }
                 catch (Throwable e)
                 {
                     e.printStackTrace();
                 }
-                this.textFieldValue.drawTextBox();
+                textFieldValue.drawTextBox();
             }
             else
-                this.textFieldValue.setVisible(false);
+                textFieldValue.setVisible(false);
         }
 
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            if (parentGuiEditList.enabled || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
-                    || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
+            if (parentGuiEditList.enabled || (eventKey == Keyboard.KEY_LEFT) || (eventKey == Keyboard.KEY_RIGHT)
+                    || (eventKey == Keyboard.KEY_HOME) || (eventKey == Keyboard.KEY_END))
             {
-                this.textFieldValue.textboxKeyTyped((parentGuiEditList.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                textFieldValue.textboxKeyTyped((parentGuiEditList.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
 
                 if (prop.getValidStringPattern() != null)
                 {
-                    if (prop.getValidStringPattern().matcher(this.textFieldValue.getText().trim()).matches())
+                    if (prop.getValidStringPattern().matcher(textFieldValue.getText().trim()).matches())
                         isValidValue = true;
                     else
                         isValidValue = false;
@@ -399,19 +397,19 @@ public class GuiEditListEntries extends GuiListExtended
         @Override
         public void updateCursorCounter()
         {
-            this.textFieldValue.updateCursorCounter();
+            textFieldValue.updateCursorCounter();
         }
 
         @Override
         public void mouseClicked(int x, int y, int mouseEvent)
         {
-            this.textFieldValue.mouseClicked(x, y, mouseEvent);
+            textFieldValue.mouseClicked(x, y, mouseEvent);
         }
 
         @Override
         public String getValue()
         {
-            return this.textFieldValue.getText().trim();
+            return textFieldValue.getText().trim();
         }
 
     }
@@ -425,32 +423,32 @@ public class GuiEditListEntries extends GuiListExtended
         {
             super();
             this.value = value;
-            this.btnValue = new GuiButtonExt(0, 0, 0, controlWidth, 18, I18n.format(String.valueOf(value)));
-            this.btnValue.enabled = parentGuiEditList.enabled;
-            this.isValidated = false;
+            btnValue = new GuiButtonExt(0, 0, 0, controlWidth, 18, I18n.format(String.valueOf(value)));
+            btnValue.enabled = parentGuiEditList.enabled;
+            isValidated = false;
         }
 
         @Override
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
         {
             super.drawEntry(slotIndex, x, y, listWidth, slotHeight, tessellator, mouseX, mouseY, isSelected);
-            this.btnValue.xPosition = listWidth / 4;
-            this.btnValue.yPosition = y;
+            btnValue.xPosition = listWidth / 4;
+            btnValue.yPosition = y;
 
             String trans = I18n.format(String.valueOf(value));
             if (!trans.equals(String.valueOf(value)))
-                this.btnValue.displayString = trans;
+                btnValue.displayString = trans;
             else
-                this.btnValue.displayString = String.valueOf(value);
+                btnValue.displayString = String.valueOf(value);
             btnValue.packedFGColour = value ? HUDUtils.getColorCode('2', true) : HUDUtils.getColorCode('4', true);
 
-            this.btnValue.drawButton(GuiEditListEntries.this.mc, mouseX, mouseY);
+            btnValue.drawButton(mc, mouseX, mouseY);
         }
 
         @Override
         public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
         {
-            if (this.btnValue.mousePressed(GuiEditListEntries.this.mc, x, y))
+            if (btnValue.mousePressed(mc, x, y))
             {
                 btnValue.playPressSound(mc.getSoundHandler());
                 value = !value;
@@ -464,7 +462,7 @@ public class GuiEditListEntries extends GuiListExtended
         @Override
         public void mouseReleased(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
         {
-            this.btnValue.mouseReleased(x, y);
+            btnValue.mouseReleased(x, y);
             super.mouseReleased(index, x, y, mouseEvent, relativeX, relativeY);
         }
 
@@ -481,22 +479,24 @@ public class GuiEditListEntries extends GuiListExtended
         private final HoverChecker   addNewEntryAboveHoverChecker;
         protected final GuiButtonExt btnRemoveEntry;
         private final HoverChecker   removeEntryHoverChecker;
-        private List                 addNewToolTip, removeToolTip;
+        @SuppressWarnings("rawtypes")
+        private final List           addNewToolTip, removeToolTip;
         protected boolean            isValidValue = true;
         protected boolean            isValidated  = false;
 
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         public EditListBaseEntry()
         {
-            this.btnAddNewEntryAbove = new GuiButtonExt(0, 0, 0, 18, 18, "+");
-            this.btnAddNewEntryAbove.packedFGColour = HUDUtils.getColorCode('2', true);
-            this.btnAddNewEntryAbove.enabled = parentGuiEditList.enabled;
-            this.btnRemoveEntry = new GuiButtonExt(0, 0, 0, 18, 18, "x");
-            this.btnRemoveEntry.packedFGColour = HUDUtils.getColorCode('c', true);
-            this.btnRemoveEntry.enabled = parentGuiEditList.enabled;
-            this.addNewEntryAboveHoverChecker = new HoverChecker(this.btnAddNewEntryAbove, 800);
-            this.removeEntryHoverChecker = new HoverChecker(this.btnRemoveEntry, 800);
-            this.addNewToolTip = new ArrayList();
-            this.removeToolTip = new ArrayList();
+            btnAddNewEntryAbove = new GuiButtonExt(0, 0, 0, 18, 18, "+");
+            btnAddNewEntryAbove.packedFGColour = HUDUtils.getColorCode('2', true);
+            btnAddNewEntryAbove.enabled = parentGuiEditList.enabled;
+            btnRemoveEntry = new GuiButtonExt(0, 0, 0, 18, 18, "x");
+            btnRemoveEntry.packedFGColour = HUDUtils.getColorCode('c', true);
+            btnRemoveEntry.enabled = parentGuiEditList.enabled;
+            addNewEntryAboveHoverChecker = new HoverChecker(btnAddNewEntryAbove, 800);
+            removeEntryHoverChecker = new HoverChecker(btnRemoveEntry, 800);
+            addNewToolTip = new ArrayList();
+            removeToolTip = new ArrayList();
             addNewToolTip.add(I18n.format("bspkrs.configgui.tooltip.addNewEntryAbove"));
             removeToolTip.add(I18n.format("bspkrs.configgui.tooltip.removeEntry"));
         }
@@ -504,56 +504,56 @@ public class GuiEditListEntries extends GuiListExtended
         @Override
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, Tessellator tessellator, int mouseX, int mouseY, boolean isSelected)
         {
-            if (this.getValue() != null && this.isValidated)
-                GuiEditListEntries.this.mc.fontRendererObj.drawString(
+            if ((this.getValue() != null) && isValidated)
+                mc.fontRendererObj.drawString(
                         isValidValue ? EnumChatFormatting.GREEN + "✔" : EnumChatFormatting.RED + "✕",
-                        listWidth / 4 - mc.fontRendererObj.getStringWidth("✔") - 2,
-                        y + slotHeight / 2 - GuiEditListEntries.this.mc.fontRendererObj.FONT_HEIGHT / 2,
+                        (listWidth / 4) - mc.fontRendererObj.getStringWidth("✔") - 2,
+                        (y + (slotHeight / 2)) - (mc.fontRendererObj.FONT_HEIGHT / 2),
                         16777215);
 
             int half = listWidth / 2;
             if (canAddMoreEntries)
             {
-                this.btnAddNewEntryAbove.visible = true;
-                this.btnAddNewEntryAbove.xPosition = half + ((half / 2) - 44);
-                this.btnAddNewEntryAbove.yPosition = y;
-                this.btnAddNewEntryAbove.drawButton(GuiEditListEntries.this.mc, mouseX, mouseY);
+                btnAddNewEntryAbove.visible = true;
+                btnAddNewEntryAbove.xPosition = half + ((half / 2) - 44);
+                btnAddNewEntryAbove.yPosition = y;
+                btnAddNewEntryAbove.drawButton(mc, mouseX, mouseY);
             }
             else
-                this.btnAddNewEntryAbove.visible = false;
+                btnAddNewEntryAbove.visible = false;
 
-            if (!prop.isListLengthFixed() && slotIndex != listEntries.size() - 1)
+            if (!prop.isListLengthFixed() && (slotIndex != (listEntries.size() - 1)))
             {
-                this.btnRemoveEntry.visible = true;
-                this.btnRemoveEntry.xPosition = half + ((half / 2) - 22);
-                this.btnRemoveEntry.yPosition = y;
-                this.btnRemoveEntry.drawButton(GuiEditListEntries.this.mc, mouseX, mouseY);
+                btnRemoveEntry.visible = true;
+                btnRemoveEntry.xPosition = half + ((half / 2) - 22);
+                btnRemoveEntry.yPosition = y;
+                btnRemoveEntry.drawButton(mc, mouseX, mouseY);
             }
             else
-                this.btnRemoveEntry.visible = false;
+                btnRemoveEntry.visible = false;
         }
 
         @Override
         public void drawToolTip(int mouseX, int mouseY)
         {
-            boolean canHover = mouseY < GuiEditListEntries.this.bottom && mouseY > GuiEditListEntries.this.top;
-            if (this.btnAddNewEntryAbove.visible && this.addNewEntryAboveHoverChecker.checkHover(mouseX, mouseY, canHover))
-                GuiEditListEntries.this.parentGuiEditList.drawToolTip(this.addNewToolTip, mouseX, mouseY);
-            if (this.btnRemoveEntry.visible && this.removeEntryHoverChecker.checkHover(mouseX, mouseY, canHover))
-                GuiEditListEntries.this.parentGuiEditList.drawToolTip(this.removeToolTip, mouseX, mouseY);
+            boolean canHover = (mouseY < GuiEditListEntries.this.bottom) && (mouseY > GuiEditListEntries.this.top);
+            if (btnAddNewEntryAbove.visible && addNewEntryAboveHoverChecker.checkHover(mouseX, mouseY, canHover))
+                parentGuiEditList.drawToolTip(addNewToolTip, mouseX, mouseY);
+            if (btnRemoveEntry.visible && removeEntryHoverChecker.checkHover(mouseX, mouseY, canHover))
+                parentGuiEditList.drawToolTip(removeToolTip, mouseX, mouseY);
         }
 
         @Override
         public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
         {
-            if (this.btnAddNewEntryAbove.mousePressed(GuiEditListEntries.this.mc, x, y))
+            if (btnAddNewEntryAbove.mousePressed(mc, x, y))
             {
                 btnAddNewEntryAbove.playPressSound(mc.getSoundHandler());
                 addNewEntryAtIndex(index);
                 recalculateState();
                 return true;
             }
-            else if (this.btnRemoveEntry.mousePressed(GuiEditListEntries.this.mc, x, y))
+            else if (btnRemoveEntry.mousePressed(mc, x, y))
             {
                 btnRemoveEntry.playPressSound(mc.getSoundHandler());
                 removeEntryAtIndex(index);
@@ -567,8 +567,8 @@ public class GuiEditListEntries extends GuiListExtended
         @Override
         public void mouseReleased(int index, int x, int y, int mouseEvent, int relativeX, int relativeY)
         {
-            this.btnAddNewEntryAbove.mouseReleased(x, y);
-            this.btnRemoveEntry.mouseReleased(x, y);
+            btnAddNewEntryAbove.mouseReleased(x, y);
+            btnRemoveEntry.mouseReleased(x, y);
         }
 
         @Override

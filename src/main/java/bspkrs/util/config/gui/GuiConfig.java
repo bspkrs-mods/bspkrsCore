@@ -20,6 +20,7 @@ import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+@SuppressWarnings("deprecation")
 @SideOnly(Side.CLIENT)
 @Deprecated
 public class GuiConfig extends GuiScreen
@@ -97,17 +98,17 @@ public class GuiConfig extends GuiScreen
     public GuiConfig(GuiScreen parentScreen, List<IConfigProperty> properties, boolean areAllPropsHotLoadable, String modID,
             boolean allowNonHotLoadConfigChanges, String title, String titleLine2)
     {
-        this.mc = Minecraft.getMinecraft();
+        mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;
         this.properties = properties;
-        this.propertyList = new GuiPropertyList(this, mc);
+        propertyList = new GuiPropertyList(this, mc);
         this.areAllPropsHotLoadable = areAllPropsHotLoadable;
         this.modID = modID;
         this.allowNonHotLoadConfigChanges = allowNonHotLoadConfigChanges;
         if (title != null)
             this.title = title;
         this.titleLine2 = titleLine2;
-        if (this.titleLine2 != null && this.titleLine2.startsWith(" > "))
+        if ((this.titleLine2 != null) && this.titleLine2.startsWith(" > "))
             this.titleLine2 = this.titleLine2.replaceFirst(" > ", "");
     }
 
@@ -120,23 +121,23 @@ public class GuiConfig extends GuiScreen
     @Deprecated
     public GuiConfig(GuiScreen parentScreen, IConfigProperty[] properties, Method saveAction, Object configObject, Method afterSaveAction, Object afterSaveObject, String titleLine2)
     {
-        this.mc = Minecraft.getMinecraft();
+        mc = Minecraft.getMinecraft();
         this.parentScreen = parentScreen;
         this.properties = Arrays.asList(properties);
         this.saveAction = saveAction;
         this.configObject = configObject;
         this.afterSaveAction = afterSaveAction;
         this.afterSaveObject = afterSaveObject;
-        this.propertyList = new GuiPropertyList(this, mc);
+        propertyList = new GuiPropertyList(this, mc);
         this.titleLine2 = titleLine2;
-        this.areAllPropsHotLoadable = false;
-        this.modID = null;
-        this.allowNonHotLoadConfigChanges = true;
+        areAllPropsHotLoadable = false;
+        modID = null;
+        allowNonHotLoadConfigChanges = true;
 
         if (mc.mcDataDir.getAbsolutePath().endsWith("."))
-            this.title = configObject.toString().replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/").substring(0, mc.mcDataDir.getAbsolutePath().length() - 1), "/.minecraft/");
+            title = configObject.toString().replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/").substring(0, mc.mcDataDir.getAbsolutePath().length() - 1), "/.minecraft/");
         else
-            this.title = configObject.toString().replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/"), "/.minecraft");
+            title = configObject.toString().replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/"), "/.minecraft");
     }
 
     public static String getAbridgedConfigPath(String path)
@@ -151,15 +152,16 @@ public class GuiConfig extends GuiScreen
     /**
      * Adds the buttons (and other controls) to the screen in question.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {
         Keyboard.enableRepeatEvents(true);
 
-        if (this.propertyList == null || this.needsRefresh)
+        if ((propertyList == null) || needsRefresh)
         {
-            this.propertyList = new GuiPropertyList(this, mc);
-            this.needsRefresh = false;
+            propertyList = new GuiPropertyList(this, mc);
+            needsRefresh = false;
         }
 
         int doneWidth = Math.max(mc.fontRendererObj.getStringWidth(I18n.format("gui.done")) + 20, 100);
@@ -167,13 +169,13 @@ public class GuiConfig extends GuiScreen
         int resetWidth = mc.fontRendererObj.getStringWidth("☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")) + 20;
         int checkWidth = mc.fontRendererObj.getStringWidth(I18n.format("bspkrs.configgui.applyGlobally")) + 13;
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth + 5 + checkWidth) / 2;
-        this.buttonList.add(new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
-        this.buttonList.add(this.btnDefaultAll = new GuiButtonExt(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5, this.height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
-        this.buttonList.add(btnUndoAll = new GuiButtonExt(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5, this.height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
-        this.buttonList.add(chkApplyGlobally = new GuiCheckBox(2003, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5 + resetWidth + 5, this.height - 24, I18n.format("bspkrs.configgui.applyGlobally"), false));
+        buttonList.add(new GuiButtonExt(2000, (width / 2) - buttonWidthHalf, height - 29, doneWidth, 20, I18n.format("gui.done")));
+        buttonList.add(btnDefaultAll = new GuiButtonExt(2001, ((width / 2) - buttonWidthHalf) + doneWidth + 5 + undoWidth + 5, height - 29, resetWidth, 20, "☄ " + I18n.format("bspkrs.configgui.tooltip.resetToDefault")));
+        buttonList.add(btnUndoAll = new GuiButtonExt(2002, ((width / 2) - buttonWidthHalf) + doneWidth + 5, height - 29, undoWidth, 20, "↩ " + I18n.format("bspkrs.configgui.tooltip.undoChanges")));
+        buttonList.add(chkApplyGlobally = new GuiCheckBox(2003, ((width / 2) - buttonWidthHalf) + doneWidth + 5 + undoWidth + 5 + resetWidth + 5, height - 24, I18n.format("bspkrs.configgui.applyGlobally"), false));
 
-        this.checkBoxHoverChecker = new HoverChecker(chkApplyGlobally, 800);
-        this.propertyList.initGui();
+        checkBoxHoverChecker = new HoverChecker(chkApplyGlobally, 800);
+        propertyList.initGui();
     }
 
     @Override
@@ -189,20 +191,20 @@ public class GuiConfig extends GuiScreen
         {
             try
             {
-                if (this.parentScreen == null || !(this.parentScreen instanceof GuiConfig) && this.propertyList.areAnyPropsChanged(true))
+                if ((parentScreen == null) || (!(parentScreen instanceof GuiConfig) && propertyList.areAnyPropsChanged(true)))
                 {
-                    this.propertyList.saveProperties();
+                    propertyList.saveProperties();
 
                     if (modID == null)
                     {
                         if (saveAction != null)
-                            this.saveAction.invoke(configObject);
+                            saveAction.invoke(configObject);
                         if (afterSaveAction != null)
-                            this.afterSaveAction.invoke(afterSaveObject);
+                            afterSaveAction.invoke(afterSaveObject);
                     }
                     else if (Loader.isModLoaded(modID))
                     {
-                        ConfigChangedEvent event = new OnConfigChangedEvent(modID, this.allowNonHotLoadConfigChanges);
+                        ConfigChangedEvent event = new OnConfigChangedEvent(modID, allowNonHotLoadConfigChanges);
                         FMLCommonHandler.instance().bus().post(event);
                         if (!event.getResult().equals(Result.DENY))
                             FMLCommonHandler.instance().bus().post(new PostConfigChangedEvent(modID, allowNonHotLoadConfigChanges));
@@ -213,15 +215,15 @@ public class GuiConfig extends GuiScreen
             {
                 e.printStackTrace();
             }
-            this.mc.displayGuiScreen(this.parentScreen);
+            mc.displayGuiScreen(parentScreen);
         }
         else if (button.id == 2001)
         {
-            this.propertyList.setAllPropsDefault(this.chkApplyGlobally.isChecked());
+            propertyList.setAllPropsDefault(chkApplyGlobally.isChecked());
         }
         else if (button.id == 2002)
         {
-            this.propertyList.undoAllChanges(this.chkApplyGlobally.isChecked());
+            propertyList.undoAllChanges(chkApplyGlobally.isChecked());
         }
     }
 
@@ -231,9 +233,9 @@ public class GuiConfig extends GuiScreen
     @Override
     protected void mouseClicked(int x, int y, int mouseEvent)
     {
-        if (mouseEvent != 0 || !this.propertyList.func_148179_a(x, y, mouseEvent))
+        if ((mouseEvent != 0) || !propertyList.func_148179_a(x, y, mouseEvent))
         {
-            this.propertyList.mouseClicked(x, y, mouseEvent);
+            propertyList.mouseClicked(x, y, mouseEvent);
             super.mouseClicked(x, y, mouseEvent);
         }
     }
@@ -245,7 +247,7 @@ public class GuiConfig extends GuiScreen
     @Override
     protected void mouseReleased(int x, int y, int mouseEvent)
     {
-        if (mouseEvent != 0 || !this.propertyList.func_148181_b(x, y, mouseEvent))
+        if ((mouseEvent != 0) || !propertyList.func_148181_b(x, y, mouseEvent))
         {
             super.mouseReleased(x, y, mouseEvent);
         }
@@ -255,16 +257,16 @@ public class GuiConfig extends GuiScreen
     protected void keyTyped(char eventChar, int eventKey)
     {
         if (eventKey == Keyboard.KEY_ESCAPE)
-            this.mc.displayGuiScreen(parentScreen);
+            mc.displayGuiScreen(parentScreen);
         else
-            this.propertyList.keyTyped(eventChar, eventKey);
+            propertyList.keyTyped(eventChar, eventKey);
     }
 
     @Override
     public void updateScreen()
     {
         super.updateScreen();
-        this.propertyList.updateScreen();
+        propertyList.updateScreen();
     }
 
     /**
@@ -274,25 +276,26 @@ public class GuiConfig extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        this.propertyList.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRendererObj, this.title, this.width / 2, 8, 16777215);
-        String title2 = this.titleLine2;
+        propertyList.drawScreen(mouseX, mouseY, partialTicks);
+        this.drawCenteredString(fontRendererObj, title, width / 2, 8, 16777215);
+        String title2 = titleLine2;
 
         int strWidth = mc.fontRendererObj.getStringWidth(title2);
         int elipsisWidth = mc.fontRendererObj.getStringWidth("...");
-        if (strWidth > width - 6 && strWidth > elipsisWidth)
+        if ((strWidth > (width - 6)) && (strWidth > elipsisWidth))
             title2 = mc.fontRendererObj.trimStringToWidth(title2, width - 6 - elipsisWidth).trim() + "...";
         if (title2 != null)
-            this.drawCenteredString(this.fontRendererObj, title2, this.width / 2, 18, 16777215);
+            this.drawCenteredString(fontRendererObj, title2, width / 2, 18, 16777215);
 
-        this.btnUndoAll.enabled = this.propertyList.areAnyPropsEnabled(this.chkApplyGlobally.isChecked()) && this.propertyList.areAnyPropsChanged(this.chkApplyGlobally.isChecked());
-        this.btnDefaultAll.enabled = this.propertyList.areAnyPropsEnabled(this.chkApplyGlobally.isChecked()) && !this.propertyList.areAllPropsDefault(this.chkApplyGlobally.isChecked());
+        btnUndoAll.enabled = propertyList.areAnyPropsEnabled(chkApplyGlobally.isChecked()) && propertyList.areAnyPropsChanged(chkApplyGlobally.isChecked());
+        btnDefaultAll.enabled = propertyList.areAnyPropsEnabled(chkApplyGlobally.isChecked()) && !propertyList.areAllPropsDefault(chkApplyGlobally.isChecked());
         super.drawScreen(mouseX, mouseY, partialTicks);
-        this.propertyList.drawScreenPost(mouseX, mouseY, partialTicks);
-        if (this.checkBoxHoverChecker.checkHover(mouseX, mouseY))
+        propertyList.drawScreenPost(mouseX, mouseY, partialTicks);
+        if (checkBoxHoverChecker.checkHover(mouseX, mouseY))
             this.drawToolTip(Arrays.asList(new String[] { I18n.format("bspkrs.configgui.applyGlobally.tooltip") }), mouseX, mouseY);
     }
 
+    @SuppressWarnings("rawtypes")
     public void drawToolTip(List stringList, int x, int y)
     {
         this.drawHoveringText(stringList, x, y, fontRendererObj);

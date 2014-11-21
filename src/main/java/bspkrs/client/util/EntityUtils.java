@@ -215,7 +215,7 @@ public class EntityUtils
         return getRandomLivingEntity(world, null, 5, null);
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static EntityLivingBase getRandomLivingEntity(World world,
             List blacklist, int numberOfAttempts,
             List<SimpleEntry<UUID, String>> fallbackPlayerNames)
@@ -238,7 +238,7 @@ public class EntityUtils
             clazz = (Class) EntityList.stringToClassMapping.get(entStrings[id]);
         }
         while (!EntityLivingBase.class.isAssignableFrom(clazz)
-                && ++tries <= numberOfAttempts);
+                && (++tries <= numberOfAttempts));
 
         if (!EntityLivingBase.class.isAssignableFrom(clazz))
         {

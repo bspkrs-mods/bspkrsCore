@@ -8,7 +8,7 @@ import cpw.mods.fml.client.config.GuiConfig;
 
 public class GuiBSConfig extends GuiConfig
 {
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public GuiBSConfig(GuiScreen parent)
     {
         super(parent, (new ConfigElement(Reference.config.getCategory(Configuration.CATEGORY_GENERAL))).getChildElements(),

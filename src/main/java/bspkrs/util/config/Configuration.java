@@ -45,30 +45,30 @@ import cpw.mods.fml.relauncher.FMLInjectionData;
 @Deprecated
 public class Configuration
 {
-    public static final String          CATEGORY_GENERAL      = "general";
-    public static final String          ALLOWED_CHARS         = "._-";
-    public static final String          DEFAULT_ENCODING      = "UTF-8";
-    public static final String          CATEGORY_SPLITTER     = ".";
-    public static final String          NEW_LINE;
-    public static final String          COMMENT_SEPARATOR     = "##########################################################################################################";
-    private static final String         CONFIG_VERSION_MARKER = "~CONFIG_VERSION";
-    private static final Pattern        CONFIG_START          = Pattern.compile("START: \"([^\\\"]+)\"");
-    private static final Pattern        CONFIG_END            = Pattern.compile("END: \"([^\\\"]+)\"");
-    public static final CharMatcher     allowedProperties     = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
-    private static Configuration        PARENT                = null;
+    public static final String               CATEGORY_GENERAL      = "general";
+    public static final String               ALLOWED_CHARS         = "._-";
+    public static final String               DEFAULT_ENCODING      = "UTF-8";
+    public static final String               CATEGORY_SPLITTER     = ".";
+    public static final String               NEW_LINE;
+    public static final String               COMMENT_SEPARATOR     = "##########################################################################################################";
+    private static final String              CONFIG_VERSION_MARKER = "~CONFIG_VERSION";
+    private static final Pattern             CONFIG_START          = Pattern.compile("START: \"([^\\\"]+)\"");
+    private static final Pattern             CONFIG_END            = Pattern.compile("END: \"([^\\\"]+)\"");
+    public static final CharMatcher          allowedProperties     = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
+    private static Configuration             PARENT                = null;
 
-    File                                file;
+    File                                     file;
 
-    private Map<String, ConfigCategory> categories            = new TreeMap<String, ConfigCategory>();
-    private Map<String, Configuration>  children              = new TreeMap<String, Configuration>();
+    private Map<String, ConfigCategory>      categories            = new TreeMap<String, ConfigCategory>();
+    private final Map<String, Configuration> children              = new TreeMap<String, Configuration>();
 
-    private boolean                     caseSensitiveCustomCategories;
-    public String                       defaultEncoding       = DEFAULT_ENCODING;
-    private String                      fileName              = null;
-    public boolean                      isChild               = false;
-    private boolean                     changed               = false;
-    private String                      definedConfigVersion  = null;
-    private String                      loadedConfigVersion   = null;
+    private boolean                          caseSensitiveCustomCategories;
+    public String                            defaultEncoding       = DEFAULT_ENCODING;
+    private String                           fileName              = null;
+    public boolean                           isChild               = false;
+    private boolean                          changed               = false;
+    private String                           definedConfigVersion  = null;
+    private String                           loadedConfigVersion   = null;
 
     static
     {
@@ -92,7 +92,7 @@ public class Configuration
     public Configuration(File file, String configVersion)
     {
         this.file = file;
-        this.definedConfigVersion = configVersion;
+        definedConfigVersion = configVersion;
         String basePath = ((File) (FMLInjectionData.data()[6])).getAbsolutePath().replace(File.separatorChar, '/').replace("/.", "");
         String path = file.getAbsolutePath().replace(File.separatorChar, '/').replace("/./", "/").replace(basePath, "");
         if (PARENT != null)
@@ -126,12 +126,12 @@ public class Configuration
 
     public String getDefinedConfigVersion()
     {
-        return this.definedConfigVersion;
+        return definedConfigVersion;
     }
 
     public String getLoadedConfigVersion()
     {
-        return this.loadedConfigVersion;
+        return loadedConfigVersion;
     }
 
     /******************************************************************************************************************
@@ -876,12 +876,12 @@ public class Configuration
     public boolean hasKey(String category, String key)
     {
         ConfigCategory cat = categories.get(category);
-        return cat != null && cat.containsKey(key);
+        return (cat != null) && cat.containsKey(key);
     }
 
     public void load()
     {
-        if (PARENT != null && PARENT != this)
+        if ((PARENT != null) && (PARENT != this))
         {
             return;
         }
@@ -940,7 +940,7 @@ public class Configuration
                         fileName = end.group(1);
                         Configuration child = new Configuration();
                         child.categories = categories;
-                        this.children.put(fileName, child);
+                        children.put(fileName, child);
                         continue;
                     }
 
@@ -949,9 +949,9 @@ public class Configuration
                     boolean quoted = false;
                     boolean isFirstNonWhitespaceCharOnLine = true;
 
-                    for (int i = 0; i < line.length() && !skip; ++i)
+                    for (int i = 0; (i < line.length()) && !skip; ++i)
                     {
-                        if (Character.isLetterOrDigit(line.charAt(i)) || ALLOWED_CHARS.indexOf(line.charAt(i)) != -1 || (quoted && line.charAt(i) != '"'))
+                        if (Character.isLetterOrDigit(line.charAt(i)) || (ALLOWED_CHARS.indexOf(line.charAt(i)) != -1) || (quoted && (line.charAt(i) != '"')))
                         {
                             if (nameStart == -1)
                             {
@@ -982,7 +982,7 @@ public class Configuration
                                     {
                                         quoted = false;
                                     }
-                                    if (!quoted && nameStart == -1)
+                                    if (!quoted && (nameStart == -1))
                                     {
                                         quoted = true;
                                     }
@@ -1043,11 +1043,11 @@ public class Configuration
                                     break;
 
                                 case '<':
-                                    if ((tmpList != null && i + 1 == line.length()) || (tmpList == null && i + 1 != line.length()))
+                                    if (((tmpList != null) && ((i + 1) == line.length())) || ((tmpList == null) && ((i + 1) != line.length())))
                                     {
                                         throw new RuntimeException(String.format("Malformed list property \"%s:%d\"", fileName, lineNum));
                                     }
-                                    else if (i + 1 == line.length())
+                                    else if ((i + 1) == line.length())
                                     {
 
                                         name = line.substring(nameStart, nameEnd + 1);
@@ -1106,7 +1106,7 @@ public class Configuration
                     {
                         throw new RuntimeException(String.format("Unmatched quote in '%s:%d'", fileName, lineNum));
                     }
-                    else if (tmpList != null && !skip)
+                    else if ((tmpList != null) && !skip)
                     {
                         tmpList.add(line.trim());
                     }
@@ -1144,7 +1144,7 @@ public class Configuration
 
     public void save()
     {
-        if (PARENT != null && PARENT != this)
+        if ((PARENT != null) && (PARENT != this))
         {
             PARENT.save();
             return;
@@ -1169,8 +1169,8 @@ public class Configuration
 
                 buffer.write("# Configuration file" + NEW_LINE + NEW_LINE);
 
-                if (this.definedConfigVersion != null)
-                    buffer.write(CONFIG_VERSION_MARKER + ": " + this.definedConfigVersion + NEW_LINE + NEW_LINE);
+                if (definedConfigVersion != null)
+                    buffer.write(CONFIG_VERSION_MARKER + ": " + definedConfigVersion + NEW_LINE + NEW_LINE);
 
                 if (children.isEmpty())
                 {
@@ -1378,11 +1378,9 @@ public class Configuration
     public static class UnicodeInputStreamReader extends Reader
     {
         private final InputStreamReader input;
-        private final String            defaultEnc;
 
         public UnicodeInputStreamReader(InputStream source, String encoding) throws IOException
         {
-            defaultEnc = encoding;
             String enc = encoding;
             byte[] data = new byte[4];
 
@@ -1390,9 +1388,9 @@ public class Configuration
             int read = pbStream.read(data, 0, data.length);
             int size = 0;
 
-            int bom16 = (data[0] & 0xFF) << 8 | (data[1] & 0xFF);
-            int bom24 = bom16 << 8 | (data[2] & 0xFF);
-            int bom32 = bom24 << 8 | (data[3] & 0xFF);
+            int bom16 = ((data[0] & 0xFF) << 8) | (data[1] & 0xFF);
+            int bom24 = (bom16 << 8) | (data[2] & 0xFF);
+            int bom32 = (bom24 << 8) | (data[3] & 0xFF);
 
             if (bom24 == 0xEFBBBF)
             {
@@ -1425,7 +1423,7 @@ public class Configuration
                 pbStream.unread(data, size, read - size);
             }
 
-            this.input = new InputStreamReader(pbStream, enc);
+            input = new InputStreamReader(pbStream, enc);
         }
 
         public String getEncoding()

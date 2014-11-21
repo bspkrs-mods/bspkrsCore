@@ -44,7 +44,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @SideOnly(Side.CLIENT)
 public class BSMainMenuRenderTicker
 {
@@ -52,6 +52,7 @@ public class BSMainMenuRenderTicker
     private static boolean                         isRegistered = false;
     private World                                  world;
     private EntityLivingBase                       randMob;
+    @SuppressWarnings("unused")
     private GuiScreen                              savedScreen;
     private static List                            entityBlacklist;
     private static List<SimpleEntry<UUID, String>> fallbackPlayerNames;
@@ -74,34 +75,34 @@ public class BSMainMenuRenderTicker
     @SubscribeEvent
     public void onTick(RenderTickEvent event)
     {
-        if (bspkrsCoreMod.instance.showMainMenuMobs && !erroredOut && mcClient.currentScreen instanceof GuiMainMenu)
+        if (bspkrsCoreMod.instance.showMainMenuMobs && !erroredOut && (mcClient.currentScreen instanceof GuiMainMenu))
         {
             try
             {
-                if (world == null || mcClient.thePlayer == null || randMob == null)
+                if ((world == null) || (mcClient.thePlayer == null) || (randMob == null))
                     init();
 
-                if (world != null && mcClient.thePlayer != null && randMob != null)
+                if ((world != null) && (mcClient.thePlayer != null) && (randMob != null))
                 {
                     ScaledResolution sr = new ScaledResolution(mcClient, mcClient.displayWidth, mcClient.displayHeight);
-                    final int mouseX = Mouse.getX() * sr.getScaledWidth() / mcClient.displayWidth;
-                    final int mouseY = sr.getScaledHeight() - Mouse.getY() * sr.getScaledHeight() / mcClient.displayHeight - 1;
+                    final int mouseX = (Mouse.getX() * sr.getScaledWidth()) / mcClient.displayWidth;
+                    final int mouseY = sr.getScaledHeight() - ((Mouse.getY() * sr.getScaledHeight()) / mcClient.displayHeight) - 1;
                     int distanceToSide = ((mcClient.currentScreen.width / 2) - 98) / 2;
                     float targetHeight = (float) (sr.getScaledHeight_double() / 5.0F) / 1.8F;
                     float scale = EntityUtils.getEntityScale(randMob, targetHeight, 1.8F);
                     EntityUtils.drawEntityOnScreen(
                             distanceToSide,
-                            (int) (sr.getScaledHeight() / 2 + (randMob.height * scale)),
+                            (int) ((sr.getScaledHeight() / 2) + (randMob.height * scale)),
                             scale,
                             distanceToSide - mouseX,
-                            (sr.getScaledHeight() / 2 + (randMob.height * scale)) - (randMob.height * scale * (randMob.getEyeHeight() / randMob.height)) - mouseY,
+                            ((sr.getScaledHeight() / 2) + (randMob.height * scale)) - (randMob.height * scale * (randMob.getEyeHeight() / randMob.height)) - mouseY,
                             randMob);
                     EntityUtils.drawEntityOnScreen(
                             sr.getScaledWidth() - distanceToSide,
-                            (int) (sr.getScaledHeight() / 2 + (mcClient.thePlayer.height * targetHeight)),
+                            (int) ((sr.getScaledHeight() / 2) + (mcClient.thePlayer.height * targetHeight)),
                             targetHeight,
                             sr.getScaledWidth() - distanceToSide - mouseX,
-                            (sr.getScaledHeight() / 2 + (mcClient.thePlayer.height * targetHeight)) - (mcClient.thePlayer.height * targetHeight * (mcClient.thePlayer.getEyeHeight() / mcClient.thePlayer.height)) - mouseY,
+                            ((sr.getScaledHeight() / 2) + (mcClient.thePlayer.height * targetHeight)) - (mcClient.thePlayer.height * targetHeight * (mcClient.thePlayer.getEyeHeight() / mcClient.thePlayer.height)) - mouseY,
                             mcClient.thePlayer);
                 }
             }
@@ -126,7 +127,7 @@ public class BSMainMenuRenderTicker
             if (createNewWorld)
                 world = new FakeWorld();
 
-            if (createNewWorld || mcClient.thePlayer == null)
+            if (createNewWorld || (mcClient.thePlayer == null))
             {
                 mcClient.thePlayer = new EntityClientPlayerMP(mcClient, world, mcClient.getSession(), null, null);
                 mcClient.thePlayer.dimension = 0;
@@ -135,7 +136,7 @@ public class BSMainMenuRenderTicker
                 setRandomMobItem(mcClient.thePlayer);
             }
 
-            if (createNewWorld || randMob == null)
+            if (createNewWorld || (randMob == null))
             {
                 if (bspkrsCoreMod.instance.allowDebugOutput)
                 {
@@ -172,7 +173,7 @@ public class BSMainMenuRenderTicker
                 id = 0;
             clazz = (Class) EntityList.stringToClassMapping.get(entStrings[id]);
         }
-        while (!EntityLivingBase.class.isAssignableFrom(clazz) && ++tries <= 5);
+        while (!EntityLivingBase.class.isAssignableFrom(clazz) && (++tries <= 5));
 
         if (!EntityLivingBase.class.isAssignableFrom(clazz))
         {
@@ -237,7 +238,7 @@ public class BSMainMenuRenderTicker
         }
     }
 
-    public static boolean isRegistered()
+    public boolean isRegistered()
     {
         return isRegistered;
     }

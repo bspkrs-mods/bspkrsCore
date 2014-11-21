@@ -2,9 +2,7 @@ package bspkrs.bspkrscore.fml;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.config.Configuration;
@@ -42,37 +40,6 @@ public class bspkrsCoreMod
     public boolean              generateUniqueNamesFile          = generateUniqueNamesFileDefault;
     private final boolean       showMainMenuMobsDefault          = true;
     public boolean              showMainMenuMobs                 = showMainMenuMobsDefault;
-
-    // Example config stuff
-    private final boolean[]     fixedBooleanListDefault          = new boolean[] { true, true, true, false, false, false };
-    public boolean[]            fixedBooleanList                 = Arrays.copyOf(fixedBooleanListDefault, fixedBooleanListDefault.length);
-    private final String[]      variablePatternStringListDefault = new String[] { "minecraft:stone_pickaxe,1,0", "minecraft:stone_shovel,1,0",
-                                                                 "minecraft:stone_sword,1,0,{RepairCost:2,display:{Name:\"Rapier\",},}",
-                                                                 "minecraft:stone_axe,1,0", "minecraft:apple,16,0", "minecraft:torch,16,0",
-                                                                 "minecraft:enchanted_book,1,0,{StoredEnchantments:[0:{id:3s,lvl:4s,},],}",
-                                                                 "minecraft:enchanted_book,1,0,{StoredEnchantments:[0:{id:51s,lvl:1s,},],}",
-                                                                 "minecraft:anvil,1,0" };
-    private final Pattern       variablePatternStringListPattern = Pattern.compile("[A-Za-z]+:[A-Za-z_]+,[0-9]+,[0-9]+($|,\\{.+?\\}$)");
-    public String[]             variablePatternStringList        = Arrays.copyOf(variablePatternStringListDefault, variablePatternStringListDefault.length);
-    private final String        regularStringDefault             = "This is a regular string, anything goes.";
-    public String               regularString                    = regularStringDefault;
-    private final String        patternStringDefault             = "Only, comma, separated, words, can, be, entered, in, this, box";
-    public String               patternString                    = patternStringDefault;
-    private final Pattern       patternStringPattern             = Pattern.compile("([A-Za-z]+((,){1}( )*|$))+?");
-    private final String        selectStringDefault              = "This";
-    public String               selectString                     = selectStringDefault;
-    private final String[]      selectStringValues               = new String[] { "This", "property", "cycles", "through", "a", "list", "of", "valid", "choices." };
-    private final int           unboundedIntegerDefault          = 25;
-    public int                  unboundedInteger                 = unboundedIntegerDefault;
-    private final int           boundedIntegerDefault            = 100;
-    public int                  boundedInteger                   = boundedIntegerDefault;
-    private final float         unboundedFloatDefault            = 25.0F;
-    public float                unboundedFloat                   = unboundedFloatDefault;
-    private final float         boundedFloatDefault              = 100.0F;
-    public float                boundedFloat                     = boundedFloatDefault;
-    private final String        chatColorPickerDefault           = "c";
-    public String               chatColorPicker                  = chatColorPickerDefault;
-    private final String[]      chatColorPickerValues            = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
 
     @Metadata(value = Reference.MODID)
     public static ModMetadata   metadata;

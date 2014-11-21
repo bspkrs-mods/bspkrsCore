@@ -14,7 +14,7 @@ public class ConfigProperty implements IConfigProperty
 {
     private Property       prop;
     private Property.Type  type;
-    private boolean        isProperty;
+    private final boolean  isProperty;
     private ConfigCategory ctgy;
 
     public ConfigProperty(ConfigCategory ctgy)
@@ -32,7 +32,7 @@ public class ConfigProperty implements IConfigProperty
     {
         this.prop = prop;
         this.type = type;
-        this.isProperty = true;
+        isProperty = true;
     }
 
     @Override
@@ -43,8 +43,6 @@ public class ConfigProperty implements IConfigProperty
             List<IConfigProperty> props = new ArrayList<IConfigProperty>();
             Iterator<ConfigCategory> ccI = ctgy.getChildren().iterator();
             Iterator<Property> pI = ctgy.getOrderedValuesSet().iterator();
-            int index = 0;
-
             if (listCategoriesFirst)
                 while (ccI.hasNext())
                     props.add(new ConfigProperty(ccI.next()));

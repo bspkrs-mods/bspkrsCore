@@ -32,9 +32,8 @@ public class ConfigCategory implements Map<String, Property>
     private String                               name;
     private String                               comment          = "";
     private String                               languagekey;
-    private ArrayList<ConfigCategory>            children         = new ArrayList<ConfigCategory>();
-    private Map<String, Property>                properties       = new TreeMap<String, Property>();
-    private int                                  propNumber       = 0;
+    private final ArrayList<ConfigCategory>      children         = new ArrayList<ConfigCategory>();
+    private final Map<String, Property>          properties       = new TreeMap<String, Property>();
     public final ConfigCategory                  parent;
     private boolean                              changed          = false;
     private boolean                              isHotLoadable    = false;
@@ -100,10 +99,10 @@ public class ConfigCategory implements Map<String, Property>
 
     public Property[] getOrderedValuesArray()
     {
-        if (this.propertyOrder != null)
+        if (propertyOrder != null)
         {
             List<Property> list = new ArrayList<Property>();
-            for (String s : this.propertyOrder)
+            for (String s : propertyOrder)
                 if (properties.containsKey(s))
                     list.add(properties.get(s));
 
@@ -115,10 +114,10 @@ public class ConfigCategory implements Map<String, Property>
 
     public Set<Property> getOrderedValuesSet()
     {
-        if (this.propertyOrder != null)
+        if (propertyOrder != null)
         {
             LinkedHashSet<Property> set = new LinkedHashSet<Property>();
-            for (String key : this.propertyOrder)
+            for (String key : propertyOrder)
                 if (properties.containsKey(key))
                     set.add(properties.get(key));
 
@@ -130,13 +129,13 @@ public class ConfigCategory implements Map<String, Property>
 
     public ConfigCategory setCustomIGuiConfigListEntryClass(Class<? extends IGuiConfigListEntry> clazz)
     {
-        this.customEntryClass = clazz;
+        customEntryClass = clazz;
         return this;
     }
 
     public Class<? extends IGuiConfigListEntry> getCustomIGuiConfigListEntryClass()
     {
-        return this.customEntryClass;
+        return customEntryClass;
     }
 
     public ConfigCategory setLanguageKey(String languagekey)
@@ -147,8 +146,8 @@ public class ConfigCategory implements Map<String, Property>
 
     public String getLanguagekey()
     {
-        if (this.languagekey != null)
-            return this.languagekey;
+        if (languagekey != null)
+            return languagekey;
         else
             return getQualifiedName();
     }
@@ -161,7 +160,7 @@ public class ConfigCategory implements Map<String, Property>
 
     public String getComment()
     {
-        return this.comment;
+        return comment;
     }
 
     public ConfigCategory setIsHotLoadable(boolean isHotLoadable)
@@ -172,7 +171,7 @@ public class ConfigCategory implements Map<String, Property>
 
     public boolean isHotLoadable()
     {
-        return this.isHotLoadable;
+        return isHotLoadable;
     }
 
     public ConfigCategory setPropertyOrder(List<String> propertyOrder)
@@ -186,8 +185,8 @@ public class ConfigCategory implements Map<String, Property>
 
     public List<String> getPropertyOrder()
     {
-        if (this.propertyOrder != null)
-            return ImmutableList.copyOf(this.propertyOrder);
+        if (propertyOrder != null)
+            return ImmutableList.copyOf(propertyOrder);
         else
             return ImmutableList.copyOf(properties.keySet());
     }
@@ -223,7 +222,7 @@ public class ConfigCategory implements Map<String, Property>
         String pad1 = getIndent(indent + 1);
         String pad2 = getIndent(indent + 2);
 
-        if (comment != null && !comment.isEmpty())
+        if ((comment != null) && !comment.isEmpty())
         {
             write(out, pad0, COMMENT_SEPARATOR);
             write(out, pad0, "# ", name);
@@ -251,7 +250,7 @@ public class ConfigCategory implements Map<String, Property>
         {
             Property prop = props[x];
 
-            if (prop.comment != null && !prop.comment.isEmpty())
+            if ((prop.comment != null) && !prop.comment.isEmpty())
             {
                 if (x != 0)
                 {
@@ -373,9 +372,9 @@ public class ConfigCategory implements Map<String, Property>
     public Property put(String key, Property value)
     {
         changed = true;
-        if (this.propertyOrder != null)
-            if (!this.propertyOrder.contains(key))
-                this.propertyOrder.add(key);
+        if (propertyOrder != null)
+            if (!propertyOrder.contains(key))
+                propertyOrder.add(key);
         return properties.put(key, value);
     }
 
@@ -390,10 +389,10 @@ public class ConfigCategory implements Map<String, Property>
     public void putAll(Map<? extends String, ? extends Property> m)
     {
         changed = true;
-        if (this.propertyOrder != null)
+        if (propertyOrder != null)
             for (String key : m.keySet())
-                if (!this.propertyOrder.contains(key))
-                    this.propertyOrder.add(key);
+                if (!propertyOrder.contains(key))
+                    propertyOrder.add(key);
         properties.putAll(m);
 
     }
