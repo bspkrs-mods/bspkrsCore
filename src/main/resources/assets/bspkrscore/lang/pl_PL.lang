@@ -1,0 +1,17 @@
+bspkrs.configgui.allowDebugOutput.tooltip=Brak zdefiniowanej podpowiedzi.
+bspkrs.configgui.allowDebugOutput=Zezwól na wyjście debugowania
+bspkrs.configgui.allowUpdateCheck.tooltip=Ustaw na 'true' aby zezwolić na sprawdzanie aktualizacji WSZYSTKICH moich modów, 'false' by wyłączyć.
+bspkrs.configgui.allowUpdateCheck=Zezwól na sprawdzanie aktualizacji
+bspkrs.configgui.applyGlobally.tooltip=Aplikuj, Odwracaj i Resetuj do domyślnych globalnie.
+bspkrs.configgui.applyGlobally=Aplikuj globalnie
+bspkrs.configgui.generateUniqueNamesFile.tooltip=Kiedy 'true' plik "UniqueNames.txt" zostanie dla wygody wygenerowany w folderze "config". Nazwy w tym pliku so znakowymi reprezentacjami bloków i przedmiotw w Minecrafcie. Mody takie jak Treecapitator i StartingInventory używają ich w sowich plikach konfiguracji od kiedy nie ma ID.
+bspkrs.configgui.generateUniqueNamesFile=Wygeneruj plik "UniqueNames.txt"
+bspkrs.configgui.showMainMenuMobs.tooltip=Ustaw na 'true' by pokazywać zalogowanego gracza i losowego moba w menu głównym, 'false' by wyłączyć.
+bspkrs.configgui.showMainMenuMobs=Pokazuj moby w menu głównym
+bspkrs.configgui.updateTimeoutMilliseconds.tooltip=Czas w millisekundach po jakim sprawdzić aktualizacje.
+bspkrs.configgui.updateTimeoutMilliseconds=Czas sprawdzania aktualizacji (ms)
+bspkrs.modversionchecker.error=Wystąpićł błąd podczas sprawdzania wersji przez moda %s.
+bspkrs.modversionchecker.invalidmodid=Niepoprawne Mod ID użyte podczas sprawdzania wersji.
+bspkrs.modversionchecker.uptodate=Mod %s jest aktualny.
+commands.bs.disabled=Sprawdzanie wersji jest wyłączone w "bspkrsCore.cfg". Ustaw "allowUpdateCheck=true" aby używać tej komendy.
+commands.bs.usage=bs version <modid>
