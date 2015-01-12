@@ -64,7 +64,7 @@ processResources {
 
 // change the name of my obfuscated jar
 jar {
-    appendix = 'universal'
+    appendix = config.appendix
 }
 
 // add a source jar
