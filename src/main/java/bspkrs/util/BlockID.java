@@ -1,8 +1,10 @@
 package bspkrs.util;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameData;
 
 public class BlockID
 {
@@ -22,35 +24,32 @@ public class BlockID
 
     public BlockID(Block block, int metadata)
     {
-        this(GameData.getBlockRegistry().getNameForObject(block), metadata);
+        this(GameData.getBlockRegistry().getNameForObject(block).toString(), metadata);
     }
 
     public BlockID(Block block)
     {
-        this(GameData.getBlockRegistry().getNameForObject(block), -1);
+        this(GameData.getBlockRegistry().getNameForObject(block).toString(), -1);
     }
 
-    @Deprecated
-    public BlockID(String format, String delimiter)
+    public BlockID(Block block, IBlockState state)
     {
-        int comma = format.indexOf(",");
-
-        if (comma != -1)
-            this.id = format.substring(0, comma).trim();
-        else
-            this.id = format.trim();
-
-        this.metadata = CommonUtils.parseInt(format.substring(comma + 1, format.length()).trim(), -1);
+        this(block, block.getMetaFromState(state));
     }
 
-    public BlockID(World world, int x, int y, int z)
+    public BlockID(IBlockState state)
     {
-        this(world, x, y, z, world.getBlockMetadata(x, y, z));
+        this(state.getBlock(), state);
     }
 
-    public BlockID(World world, int x, int y, int z, int metadata)
+    public BlockID(World world, BlockPos pos)
     {
-        this(world.getBlock(x, y, z), metadata);
+        this(world.getBlockState(pos));
+    }
+
+    public BlockID(World world, BlockPos pos, int metadata)
+    {
+        this(world.getBlockState(pos).getBlock(), metadata);
     }
 
     public boolean isValid()
@@ -74,11 +73,11 @@ public class BlockID
         if (tilde == -1)
             tilde = format.indexOf("%");
 
-        if (comma == -1 && tilde != -1)
+        if ((comma == -1) && (tilde != -1))
             throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" or \"%1$s\" was found, but no \",\" in format \"%2$s\". " +
                     "Expected format is \"<blockidstring>, <integer metadata> %1$s <integer modulus>\". EG: \"minecraft:log, 0 %1$s 4\".", "%", format));
 
-        if (tilde != -1 && comma > tilde)
+        if ((tilde != -1) && (comma > tilde))
             throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" or \"%1$s\" was found before a \",\" in format \"%2$s\". " +
                     "Expected format is \"<blockidstring>, <integer metadata> %1$s <integer modulus>\". EG: \"minecraft:log, 0 %1$s 4\".", "%", format));
 
@@ -94,7 +93,7 @@ public class BlockID
         if (tilde != format.length())
             metadataModulus = CommonUtils.parseInt(format.substring(tilde + 1, format.length()).trim(), 0);
 
-        if (metadata != -1 && metadataModulus > 0)
+        if ((metadata != -1) && (metadataModulus > 0))
             return new ModulusBlockID(id, metadata, metadataModulus);
         else
             return new BlockID(id, metadata);
@@ -115,20 +114,20 @@ public class BlockID
         if (!(obj instanceof BlockID))
             return false;
 
-        if (((BlockID) obj).id != null && !((BlockID) obj).id.equals(this.id))
+        if ((((BlockID) obj).id != null) && !((BlockID) obj).id.equals(id))
             return false;
-        else if (((BlockID) obj).id == null && this.id != null)
+        else if ((((BlockID) obj).id == null) && (id != null))
             return false;
 
         if (obj instanceof ModulusBlockID)
         {
             ModulusBlockID o = (ModulusBlockID) obj;
-            return metadata % o.metadataModulus == o.metadata % o.metadataModulus;
+            return (metadata % o.metadataModulus) == (o.metadata % o.metadataModulus);
         }
         else
         {
             BlockID o = (BlockID) obj;
-            if (o.metadata == -1 || metadata == -1)
+            if ((o.metadata == -1) || (metadata == -1))
                 return true;
             else
                 return metadata == o.metadata;
@@ -144,6 +143,6 @@ public class BlockID
     @Override
     public String toString()
     {
-        return (metadata == -1 ? id + "" : id + ", " + metadata);
+        return (metadata == -1 ? id : id + ", " + metadata);
     }
 }

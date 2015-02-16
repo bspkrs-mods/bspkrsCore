@@ -11,6 +11,7 @@ import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.Render;
@@ -19,10 +20,6 @@ import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
 import bspkrs.bspkrscore.fml.bspkrsCoreMod;
 import bspkrs.util.BSLog;
 
@@ -78,7 +75,7 @@ public class EntityUtils
     @SuppressWarnings("unused")
     public static float getModelSize(EntityLivingBase ent)
     {
-        Render render = RenderManager.instance.getEntityRenderObject(ent);
+        Render render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(ent);
         if (render instanceof RendererLivingEntity)
         {
             RendererLivingEntity entRender = (RendererLivingEntity) render;
@@ -98,93 +95,93 @@ public class EntityUtils
         return 1.8F;
     }
 
-    public static void drawEntityOnScreenAtRotation(int posX, int posY,
-            float scale, float xAngle, float yAngle, EntityLivingBase ent)
-    {
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDepthMask(true);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glPushMatrix();
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        GL11.glTranslatef(posX, posY, 50.0F);
-        GL11.glScalef((-scale), scale, scale);
-        GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
-        float f2 = ent.renderYawOffset;
-        float f3 = ent.rotationYaw;
-        float f4 = ent.rotationPitch;
-        float f5 = ent.rotationYawHead;
-        GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F);
-        RenderHelper.enableStandardItemLighting();
-        GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(xAngle, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(yAngle, 0.0F, 1.0F, 0.0F);
-        ent.renderYawOffset = (float) Math.atan(2.0F / 40.0F) * 20.0F;
-        ent.rotationYaw = (float) Math.atan(2.0F / 40.0F) * 40.0F;
-        ent.rotationPitch = -((float) Math.atan(2.0F / 40.0F)) * 20.0F;
-        ent.rotationYawHead = ent.renderYawOffset;
-        GL11.glTranslatef(0.0F, ent.yOffset, 0.0F);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        float viewY = RenderManager.instance.playerViewY;
-        try
-        {
-            RenderManager.instance.playerViewY = 180.0F;
-            RenderManager.instance.renderEntityWithPosYaw(ent, 0.0D, 0.0D,
-                    0.0D, 0.0F, 1.0F);
-        }
-        finally
-        {
-            GL11.glTranslatef(0.0F, -0.22F, 0.0F);
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,
-                    255.0F * 0.8F, 255.0F * 0.8F);
-            RenderManager.instance.playerViewY = viewY;
-            ent.renderYawOffset = f2;
-            ent.rotationYaw = f3;
-            ent.rotationPitch = f4;
-            ent.rotationYawHead = f5;
-            GL11.glPopMatrix();
-            RenderHelper.disableStandardItemLighting();
-            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-            OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
-        }
-    }
+    //    public static void drawEntityOnScreenAtRotation(int posX, int posY,
+    //            float scale, float xAngle, float yAngle, EntityLivingBase ent)
+    //    {
+    //        GL11.glDisable(GL11.GL_BLEND);
+    //        GL11.glDepthMask(true);
+    //        GL11.glEnable(GL11.GL_DEPTH_TEST);
+    //        GL11.glEnable(GL11.GL_ALPHA_TEST);
+    //        GL11.glPushMatrix();
+    //        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+    //        GlStateManager.translate(posX, posY, 50.0F);
+    //        GL11.glScalef((-scale), scale, scale);
+    //        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
+    //        float f2 = ent.renderYawOffset;
+    //        float f3 = ent.rotationYaw;
+    //        float f4 = ent.rotationPitch;
+    //        float f5 = ent.rotationYawHead;
+    //        GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
+    //        RenderHelper.enableStandardItemLighting();
+    //        GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
+    //        GlStateManager.rotate(xAngle, 1.0F, 0.0F, 0.0F);
+    //        GlStateManager.rotate(yAngle, 0.0F, 1.0F, 0.0F);
+    //        ent.renderYawOffset = (float) Math.atan(2.0F / 40.0F) * 20.0F;
+    //        ent.rotationYaw = (float) Math.atan(2.0F / 40.0F) * 40.0F;
+    //        ent.rotationPitch = -((float) Math.atan(2.0F / 40.0F)) * 20.0F;
+    //        ent.rotationYawHead = ent.renderYawOffset;
+    //        GlStateManager.translate(0.0F, ent.yOffset, 0.0F);
+    //        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+    //        float viewY = RenderManager.instance.playerViewY;
+    //        try
+    //        {
+    //            RenderManager.instance.playerViewY = 180.0F;
+    //            RenderManager.instance.renderEntityWithPosYaw(ent, 0.0D, 0.0D,
+    //                    0.0D, 0.0F, 1.0F);
+    //        }
+    //        finally
+    //        {
+    //            GlStateManager.translate(0.0F, -0.22F, 0.0F);
+    //            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit,
+    //                    255.0F * 0.8F, 255.0F * 0.8F);
+    //            RenderManager.instance.playerViewY = viewY;
+    //            ent.renderYawOffset = f2;
+    //            ent.rotationYaw = f3;
+    //            ent.rotationPitch = f4;
+    //            ent.rotationYawHead = f5;
+    //            GL11.glPopMatrix();
+    //            RenderHelper.disableStandardItemLighting();
+    //            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+    //            OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+    //            GL11.glDisable(GL11.GL_TEXTURE_2D);
+    //            OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+    //        }
+    //    }
 
-    public static void drawEntityOnScreen(int posX, int posY, float scale,
-            float mouseX, float mouseY, EntityLivingBase ent)
+    public static void drawEntityOnScreen(int posX, int posY, float scale, float mouseX, float mouseY, EntityLivingBase ent)
     {
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDepthMask(true);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glPushMatrix();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        GL11.glTranslatef(posX, posY, 50.0F);
-        GL11.glScalef((-scale), scale, scale);
-        GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.disableBlend();
+        GlStateManager.depthMask(true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableColorMaterial();
+        GlStateManager.pushMatrix();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.translate(posX, posY, 50.0F);
+        GlStateManager.scale(-scale, scale, scale);
+        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
         float f2 = ent.renderYawOffset;
         float f3 = ent.rotationYaw;
         float f4 = ent.rotationPitch;
         float f5 = ent.prevRotationYawHead;
         float f6 = ent.rotationYawHead;
-        GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
         RenderHelper.enableStandardItemLighting();
-        GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(-((float) Math.atan(mouseY / 40.0F)) * 20.0F, 1.0F,
-                0.0F, 0.0F);
+        GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(-((float) Math.atan(mouseY / 40.0F)) * 20.0F, 1.0F, 0.0F, 0.0F);
         ent.renderYawOffset = (float) Math.atan(mouseX / 40.0F) * 20.0F;
         ent.rotationYaw = (float) Math.atan(mouseX / 40.0F) * 40.0F;
         ent.rotationPitch = -((float) Math.atan(mouseY / 40.0F)) * 20.0F;
         ent.rotationYawHead = ent.rotationYaw;
         ent.prevRotationYawHead = ent.rotationYaw;
-        GL11.glTranslatef(0.0F, ent.yOffset, 0.0F);
+        GlStateManager.translate(0.0F, 0.0F, 0.0F);
         try
         {
-            RenderManager.instance.playerViewY = 180.0F;
-            RenderManager.instance.renderEntityWithPosYaw(ent, 0.0D, 0.0D,
-                    0.0D, 0.0F, 1.0F);
+            RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
+            rendermanager.setPlayerViewY(180.0F);
+            rendermanager.setRenderShadow(false);
+            rendermanager.renderEntityWithPosYaw(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
+            rendermanager.setRenderShadow(true);
         }
         finally
         {
@@ -193,21 +190,19 @@ public class EntityUtils
             ent.rotationPitch = f4;
             ent.prevRotationYawHead = f5;
             ent.rotationYawHead = f6;
+            GlStateManager.popMatrix();
             RenderHelper.disableStandardItemLighting();
-            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-            OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
-            GL11.glTranslatef(0.0F, 0.0F, 20F);
-            GL11.glPopMatrix();
+            GlStateManager.disableRescaleNormal();
+            GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+            GlStateManager.disableTexture2D();
+            GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+            GlStateManager.translate(0.0F, 0.0F, 20.0F);
         }
     }
 
-    public static float getEntityScale(EntityLivingBase ent, float baseScale,
-            float targetHeight)
+    public static float getEntityScale(EntityLivingBase ent, float baseScale, float targetHeight)
     {
-        return (targetHeight / Math.max(Math.max(ent.width, ent.height),
-                ent.yOffset2)) * baseScale;
+        return (targetHeight / Math.max(ent.width, ent.height)) * baseScale;
     }
 
     public static EntityLivingBase getRandomLivingEntity(World world)

@@ -2,7 +2,7 @@ package bspkrs.util;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import cpw.mods.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameData;
 
 public class ItemID
 {
@@ -35,12 +35,12 @@ public class ItemID
 
     public ItemID(Item item, int damage)
     {
-        this(GameData.getItemRegistry().getNameForObject(item), damage);
+        this(GameData.getItemRegistry().getNameForObject(item).toString(), damage);
     }
 
     public ItemID(Item item)
     {
-        this(GameData.getItemRegistry().getNameForObject(item), -1);
+        this(GameData.getItemRegistry().getNameForObject(item).toString(), -1);
     }
 
     public ItemID(String format, String delimiter)
@@ -75,10 +75,10 @@ public class ItemID
             return false;
 
         ItemID o = (ItemID) obj;
-        if (o.damage == -1 || damage == -1)
+        if ((o.damage == -1) || (damage == -1))
             return id != null ? id.equals(o.id) : o.id == null;
         else
-            return id != null ? id.equals(o.id) && damage == o.damage : o.id == null && damage == o.damage;
+            return id != null ? id.equals(o.id) && (damage == o.damage) : (o.id == null) && (damage == o.damage);
     }
 
     @Override

@@ -1,32 +1,15 @@
 package bspkrs.testmod;
 
 import net.minecraft.client.gui.GuiScreen;
-import bspkrs.util.config.ConfigCategory;
-import bspkrs.util.config.ConfigProperty;
-import bspkrs.util.config.Configuration;
-import bspkrs.util.config.Property;
-import bspkrs.util.config.gui.GuiConfig;
-import bspkrs.util.config.gui.IConfigProperty;
+import net.minecraftforge.common.config.ConfigElement;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.config.GuiConfig;
 
 public class GuiTestModConfig extends GuiConfig
 {
-    public GuiTestModConfig(GuiScreen parent) throws NoSuchMethodException, SecurityException
+    public GuiTestModConfig(GuiScreen parent)
     {
-        super(parent, getProps(), Configuration.class.getDeclaredMethod("save"), TestModSimpleConfig.getConfig(),
-                TestModSimpleConfig.class.getDeclaredMethod("syncConfig"), null);
-    }
-    
-    private static IConfigProperty[] getProps()
-    {
-        ConfigCategory cc = TestModSimpleConfig.getConfig().getCategory(Configuration.CATEGORY_GENERAL);
-        IConfigProperty[] props = new IConfigProperty[cc.getValues().size()];
-        int i = -1;
-        for (Property prop : cc.getValues().values())
-        {
-            if (prop != null)
-                props[++i] = new ConfigProperty(prop);
-        }
-        
-        return props;
+        super(parent, (new ConfigElement(TestModSimpleConfig.getConfig().getCategory(Configuration.CATEGORY_GENERAL))).getChildElements(),
+                "TestMod", false, false, GuiConfig.getAbridgedConfigPath(TestModSimpleConfig.getConfig().toString()));
     }
 }

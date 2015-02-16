@@ -1,6 +1,8 @@
 package bspkrs.util;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class ModulusBlockID extends BlockID
@@ -19,14 +21,24 @@ public class ModulusBlockID extends BlockID
         this.metadataModulus = Math.max(metadataModulus, 1);
     }
 
-    public ModulusBlockID(World world, int x, int y, int z, int metadataModulus)
+    public ModulusBlockID(Block block, IBlockState state, int metadataModulus)
     {
-        this(world, x, y, z, world.getBlockMetadata(x, y, z), metadataModulus);
+        this(block, block.getMetaFromState(state), metadataModulus);
     }
 
-    public ModulusBlockID(World world, int x, int y, int z, int metadata, int metadataModulus)
+    public ModulusBlockID(IBlockState state, int metadataModulus)
     {
-        this(world.getBlock(x, y, z), Math.max(metadata, 0), metadataModulus);
+        this(state.getBlock(), state, metadataModulus);
+    }
+
+    public ModulusBlockID(World world, BlockPos pos, int metadataModulus)
+    {
+        this(world.getBlockState(pos), metadataModulus);
+    }
+
+    public ModulusBlockID(World world, BlockPos pos, int metadata, int metadataModulus)
+    {
+        this(world.getBlockState(pos).getBlock(), Math.max(metadata, 0), metadataModulus);
     }
 
     @Override
@@ -44,15 +56,15 @@ public class ModulusBlockID extends BlockID
         if (!(obj instanceof BlockID))
             return false;
 
-        if (((BlockID) obj).id != null && !((BlockID) obj).id.equals(this.id))
+        if ((((BlockID) obj).id != null) && !((BlockID) obj).id.equals(id))
             return false;
-        else if (((BlockID) obj).id == null && this.id != null)
+        else if ((((BlockID) obj).id == null) && (id != null))
             return false;
 
         if (obj instanceof ModulusBlockID)
         {
             ModulusBlockID o = (ModulusBlockID) obj;
-            return metadata % metadataModulus == o.metadata % o.metadataModulus;
+            return (metadata % metadataModulus) == (o.metadata % o.metadataModulus);
         }
         else
         {
@@ -60,7 +72,7 @@ public class ModulusBlockID extends BlockID
             if (o.metadata == -1)
                 return true;
             else
-                return metadata % metadataModulus == o.metadata % metadataModulus;
+                return (metadata % metadataModulus) == (o.metadata % metadataModulus);
         }
     }
 

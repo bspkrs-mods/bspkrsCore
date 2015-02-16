@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import bspkrs.util.ModVersionChecker;
 
@@ -45,7 +46,7 @@ public class CommandBS extends CommandBase
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args)
+    public void processCommand(ICommandSender sender, String[] args) throws WrongUsageException
     {
         if (!bspkrsCoreMod.instance.allowUpdateCheck)
             throw new WrongUsageException("commands.bs.disabled");
@@ -59,13 +60,12 @@ public class CommandBS extends CommandBase
         String[] message = ModVersionChecker.checkVersionForMod(args[1]);
 
         for (String s : message)
-            //sender.sendChatToPlayer(new ChatComponentText(s));
             sender.addChatMessage(new ChatComponentText(s));
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] args)
+    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
     {
         return args.length == 2 ? getListOfStringsMatchingLastWord(args, ModVersionChecker.getVersionCheckerMap().keySet().toArray(new String[] {})) : args.length == 1 ? version : null;
     }

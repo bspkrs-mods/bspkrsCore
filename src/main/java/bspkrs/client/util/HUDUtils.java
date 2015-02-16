@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -140,7 +141,7 @@ public final class HUDUtils
         // Bottom Right
         drawTexturedModalRect(x + leftBorder + canvasWidth, y + topBorder + canvasHeight, u + leftBorder + fillerWidth, v + topBorder + fillerHeight, rightBorder, bottomBorder, zLevel);
 
-        for (int i = 0; i < xPasses + (remainderWidth > 0 ? 1 : 0); i++)
+        for (int i = 0; i < (xPasses + (remainderWidth > 0 ? 1 : 0)); i++)
         {
             // Top Border
             drawTexturedModalRect(x + leftBorder + (i * fillerWidth), y, u + leftBorder, v, (i == xPasses ? remainderWidth : fillerWidth), topBorder, zLevel);
@@ -148,12 +149,12 @@ public final class HUDUtils
             drawTexturedModalRect(x + leftBorder + (i * fillerWidth), y + topBorder + canvasHeight, u + leftBorder, v + topBorder + fillerHeight, (i == xPasses ? remainderWidth : fillerWidth), bottomBorder, zLevel);
 
             // Throw in some filler for good measure
-            for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++)
+            for (int j = 0; j < (yPasses + (remainderHeight > 0 ? 1 : 0)); j++)
                 drawTexturedModalRect(x + leftBorder + (i * fillerWidth), y + topBorder + (j * fillerHeight), u + leftBorder, v + topBorder, (i == xPasses ? remainderWidth : fillerWidth), (j == yPasses ? remainderHeight : fillerHeight), zLevel);
         }
 
         // Side Borders
-        for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++)
+        for (int j = 0; j < (yPasses + (remainderHeight > 0 ? 1 : 0)); j++)
         {
             // Left Border
             drawTexturedModalRect(x, y + topBorder + (j * fillerHeight), u, v + topBorder, leftBorder, (j == yPasses ? remainderHeight : fillerHeight), zLevel);
@@ -166,12 +167,13 @@ public final class HUDUtils
     {
         float var7 = 0.00390625F;
         float var8 = 0.00390625F;
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV((x + 0), (y + height), zLevel, ((u + 0) * var7), ((v + height) * var8));
-        tessellator.addVertexWithUV((x + width), (y + height), zLevel, ((u + width) * var7), ((v + height) * var8));
-        tessellator.addVertexWithUV((x + width), (y + 0), zLevel, ((u + width) * var7), ((v + 0) * var8));
-        tessellator.addVertexWithUV((x + 0), (y + 0), zLevel, ((u + 0) * var7), ((v + 0) * var8));
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        worldRenderer.startDrawingQuads();
+        worldRenderer.addVertexWithUV((x + 0), (y + height), zLevel, ((u + 0) * var7), ((v + height) * var8));
+        worldRenderer.addVertexWithUV((x + width), (y + height), zLevel, ((u + width) * var7), ((v + height) * var8));
+        worldRenderer.addVertexWithUV((x + width), (y + 0), zLevel, ((u + width) * var7), ((v + 0) * var8));
+        worldRenderer.addVertexWithUV((x + 0), (y + 0), zLevel, ((u + 0) * var7), ((v + 0) * var8));
         tessellator.draw();
     }
 
@@ -188,18 +190,18 @@ public final class HUDUtils
      */
     public static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int x, int y, boolean showDamageBar, boolean showCount)
     {
-        if (itemStack != null && (showDamageBar || showCount))
+        if ((itemStack != null) && (showDamageBar || showCount))
         {
             if (itemStack.isItemDamaged() && showDamageBar)
             {
-                int var11 = (int) Math.round(13.0D - itemStack.getCurrentDurability() * 13.0D / itemStack.getMaxDurability());
-                int var7 = (int) Math.round(255.0D - itemStack.getCurrentDurability() * 255.0D / itemStack.getMaxDurability());
+                int var11 = (int) Math.round(13.0D - ((itemStack.getItemDamage() * 13.0D) / itemStack.getMaxDamage()));
+                int var7 = (int) Math.round(255.0D - ((itemStack.getItemDamage() * 255.0D) / itemStack.getMaxDamage()));
                 GL11.glDisable(GL11.GL_LIGHTING);
                 GL11.glDisable(GL11.GL_DEPTH_TEST);
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
-                Tessellator var8 = Tessellator.instance;
-                int var9 = 255 - var7 << 16 | var7 << 8;
-                int var10 = (255 - var7) / 4 << 16 | 16128;
+                Tessellator var8 = Tessellator.getInstance();
+                int var9 = ((255 - var7) << 16) | (var7 << 8);
+                int var10 = (((255 - var7) / 4) << 16) | 16128;
                 renderQuad(var8, x + 2, y + 13, 13, 2, 0);
                 renderQuad(var8, x + 2, y + 13, 12, 1, var10);
                 renderQuad(var8, x + 2, y + 13, var11, 1, var9);
@@ -214,7 +216,7 @@ public final class HUDUtils
                 int count = 0;
 
                 if (itemStack.getMaxStackSize() > 1)
-                    count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, itemStack.getItem(), itemStack.getCurrentDurability());
+                    count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, itemStack.getItem(), itemStack.getItemDamage());
                 else if (itemStack.getItem().equals(Items.bow))
                     count = HUDUtils.countInInventory(Minecraft.getMinecraft().thePlayer, Items.arrow);
 
@@ -223,7 +225,7 @@ public final class HUDUtils
                     String var6 = "" + count;
                     GL11.glDisable(GL11.GL_LIGHTING);
                     GL11.glDisable(GL11.GL_DEPTH_TEST);
-                    fontRenderer.drawStringWithShadow(var6, x + 19 - 2 - fontRenderer.getStringWidth(var6), y + 6 + 3, 16777215);
+                    fontRenderer.drawStringWithShadow(var6, (x + 19) - 2 - fontRenderer.getStringWidth(var6), y + 6 + 3, 16777215);
                     GL11.glEnable(GL11.GL_LIGHTING);
                     GL11.glEnable(GL11.GL_DEPTH_TEST);
                 }
@@ -237,12 +239,13 @@ public final class HUDUtils
      */
     public static void renderQuad(Tessellator tessellator, int x, int y, int width, int height, int color)
     {
-        tessellator.startDrawingQuads();
-        tessellator.setColorOpaque_I(color);
-        tessellator.addVertex((x + 0), (y + 0), 0.0D);
-        tessellator.addVertex((x + 0), (y + height), 0.0D);
-        tessellator.addVertex((x + width), (y + height), 0.0D);
-        tessellator.addVertex((x + width), (y + 0), 0.0D);
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        worldRenderer.startDrawingQuads();
+        worldRenderer.setColorOpaque_I(color);
+        worldRenderer.addVertex((x + 0), (y + 0), 0.0D);
+        worldRenderer.addVertex((x + 0), (y + height), 0.0D);
+        worldRenderer.addVertex((x + width), (y + height), 0.0D);
+        worldRenderer.addVertex((x + width), (y + 0), 0.0D);
         tessellator.draw();
     }
 
@@ -255,7 +258,7 @@ public final class HUDUtils
     {
         int count = 0;
         for (int i = 0; i < player.inventory.mainInventory.length; i++)
-            if (player.inventory.mainInventory[i] != null && item.equals(player.inventory.mainInventory[i].getItem()) && (md == -1 || player.inventory.mainInventory[i].getMetadata() == md))
+            if ((player.inventory.mainInventory[i] != null) && item.equals(player.inventory.mainInventory[i].getItem()) && ((md == -1) || (player.inventory.mainInventory[i].getMetadata() == md)))
                 count += player.inventory.mainInventory[i].stackSize;
         return count;
     }

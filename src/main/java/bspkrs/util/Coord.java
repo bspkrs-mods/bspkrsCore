@@ -1,13 +1,16 @@
 package bspkrs.util;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3i;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.util.ForgeDirection;
 
-public class Coord
+public class Coord extends BlockPos
 {
     public int x;
     public int y;
@@ -15,9 +18,33 @@ public class Coord
 
     public Coord(int x, int y, int z)
     {
+        super(0, 0, 0);
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public Coord(Vec3i v)
+    {
+        this(v.getX(), v.getY(), v.getZ());
+    }
+
+    @Override
+    public int getX()
+    {
+        return x;
+    }
+
+    @Override
+    public int getY()
+    {
+        return y;
+    }
+
+    @Override
+    public int getZ()
+    {
+        return z;
     }
 
     @Override
@@ -32,17 +59,17 @@ public class Coord
         if (this == obj)
             return true;
 
-        if (!(obj instanceof Coord))
+        if (!(obj instanceof Vec3i))
             return false;
 
-        Coord o = (Coord) obj;
-        return x == o.x && y == o.y && z == o.z;
+        Vec3i o = (Vec3i) obj;
+        return (x == o.getX()) && (y == o.getY()) && (z == o.getZ());
     }
 
     @Override
     public int hashCode()
     {
-        return x + z << 8 + y << 16;
+        return (x + z) << (8 + y) << 16;
     }
 
     public Coord add(Coord pos)
@@ -65,14 +92,14 @@ public class Coord
         return new Coord(x - ai[0], y - ai[1], z - ai[2]);
     }
 
-    public Coord getAdjacentCoord(ForgeDirection fd)
+    public Coord getAdjacentCoord(EnumFacing fd)
     {
-        return getOffsetCoord(fd, 1);
+        return (Coord) offset(fd, 1);
     }
 
-    public Coord getOffsetCoord(ForgeDirection fd, int distance)
+    public Coord getOffsetCoord(EnumFacing fd, int distance)
     {
-        return new Coord(x + (fd.offsetX * distance), y + (fd.offsetY * distance), z + (fd.offsetZ * distance));
+        return (Coord) offset(fd, distance);
     }
 
     public Coord[] getDirectlyAdjacentCoords()
@@ -84,18 +111,18 @@ public class Coord
     {
         Coord[] adjacents;
         if (includeBelow)
+        {
             adjacents = new Coord[6];
+            adjacents[5] = getAdjacentCoord(EnumFacing.DOWN);
+        }
         else
             adjacents = new Coord[5];
 
-        adjacents[0] = getAdjacentCoord(ForgeDirection.UP);
-        adjacents[1] = getAdjacentCoord(ForgeDirection.NORTH);
-        adjacents[2] = getAdjacentCoord(ForgeDirection.EAST);
-        adjacents[3] = getAdjacentCoord(ForgeDirection.SOUTH);
-        adjacents[4] = getAdjacentCoord(ForgeDirection.WEST);
-
-        if (includeBelow)
-            adjacents[5] = getAdjacentCoord(ForgeDirection.DOWN);
+        adjacents[0] = getAdjacentCoord(EnumFacing.UP);
+        adjacents[1] = getAdjacentCoord(EnumFacing.NORTH);
+        adjacents[2] = getAdjacentCoord(EnumFacing.EAST);
+        adjacents[3] = getAdjacentCoord(EnumFacing.SOUTH);
+        adjacents[4] = getAdjacentCoord(EnumFacing.WEST);
 
         return adjacents;
     }
@@ -117,7 +144,7 @@ public class Coord
         for (int xl = -1; xl < 1; xl++)
             for (int zl = -1; zl < 1; zl++)
                 for (int yl = (includeBelow ? -1 : 0); yl < 1; yl++)
-                    if (xl != 0 || zl != 0 || yl != 0)
+                    if ((xl != 0) || (zl != 0) || (yl != 0))
                         adjacents[index++] = new Coord(x + xl, y + yl, z + zl);
 
         return adjacents;
@@ -190,17 +217,17 @@ public class Coord
 
     public boolean isAirBlock(World world)
     {
-        return world.isAirBlock(x, y, z);
+        return world.isAirBlock(this);
     }
 
     public boolean chunkExists(World world)
     {
-        return world.checkChunksExist(x, y, z, x, y, z);
+        return world.getChunkProvider().chunkExists(x, z);
     }
 
     public boolean isBlockNormalCube(World world)
     {
-        return world.isBlockNormalCubeDefault(x, y, z, false);
+        return world.isBlockNormalCube(this, false);
     }
 
     public boolean isBlockOpaqueCube(World world)
@@ -210,27 +237,33 @@ public class Coord
 
     public boolean isWood(World world)
     {
-        return world.getBlock(x, y, z).isWood(world, x, y, z);
+        return getBlock(world).isWood(world, this);
     }
 
     public boolean isLeaves(World world)
     {
-        return world.getBlock(x, y, z).isLeaves(world, x, y, z);
+        return getBlock(world).isLeaves(world, this);
     }
 
     public Block getBlock(World world)
     {
-        return world.getBlock(x, y, z);
+        return getBlockState(world).getBlock();
+    }
+
+    public IBlockState getBlockState(World world)
+    {
+        return world.getBlockState(this);
     }
 
     public int getBlockMetadata(World world)
     {
-        return world.getBlockMetadata(x, y, z);
+        IBlockState state = getBlockState(world);
+        return state.getBlock().getMetaFromState(state);
     }
 
     public BiomeGenBase getBiomeGenBase(World world)
     {
-        return world.getBiomeGenForCoords(x, z);
+        return world.getBiomeGenForCoords(this);
     }
 
     public static boolean moveBlock(World world, Coord src, Coord tgt, boolean allowBlockReplacement)
@@ -242,12 +275,13 @@ public class Coord
     {
         if (!world.isRemote && !src.isAirBlock(world) && (tgt.isAirBlock(world) || allowBlockReplacement))
         {
-            Block blockID = src.getBlock(world);
+            Block block = src.getBlock(world);
             int metadata = src.getBlockMetadata(world);
+            IBlockState state = block.getStateFromMeta(metadata);
 
-            world.setBlock(tgt.x, tgt.y, tgt.z, blockID, metadata, notifyFlag);
+            world.setBlockState(tgt, state, notifyFlag);
 
-            TileEntity te = world.getTileEntity(src.x, src.y, src.z);
+            TileEntity te = world.getTileEntity(src);
             if (te != null)
             {
                 NBTTagCompound nbt = new NBTTagCompound();
@@ -257,14 +291,14 @@ public class Coord
                 nbt.setInteger("y", tgt.y);
                 nbt.setInteger("z", tgt.z);
 
-                te = world.getTileEntity(tgt.x, tgt.y, tgt.z);
+                te = world.getTileEntity(tgt);
                 if (te != null)
                     te.readFromNBT(nbt);
 
-                world.removeTileEntity(src.x, src.y, src.z);
+                world.removeTileEntity(src);
             }
 
-            world.setBlockToAir(src.x, src.y, src.z);
+            world.setBlockToAir(src);
             return true;
         }
         return false;
