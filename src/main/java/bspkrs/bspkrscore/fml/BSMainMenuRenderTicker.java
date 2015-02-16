@@ -39,6 +39,7 @@ import com.mojang.util.UUIDTypeAdapter;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -75,11 +76,18 @@ public class BSMainMenuRenderTicker
     @SubscribeEvent
     public void onTick(RenderTickEvent event)
     {
+        if (Loader.isModLoaded("WorldStateCheckpoints"))
+        {
+            bspkrsCoreMod.instance.showMainMenuMobs = false;
+            BSLog.severe("Main menu mob rendering is known to cause crashes with WorldStateCheckpoints has been disabled for the remainder of this session.");
+            this.unRegister();
+        }
+
         if (bspkrsCoreMod.instance.showMainMenuMobs && !erroredOut && (mcClient.currentScreen instanceof GuiMainMenu))
         {
             try
             {
-                if ((world == null) || (mcClient.thePlayer == null) || (randMob == null))
+                if ((mcClient.thePlayer == null) || (mcClient.thePlayer.worldObj == null) || (randMob == null))
                     init();
 
                 if ((world != null) && (mcClient.thePlayer != null) && (randMob != null))
@@ -230,11 +238,12 @@ public class BSMainMenuRenderTicker
     {
         if (isRegistered)
         {
+            BSLog.info("Disabling Main Menu Mob render ticker");
             FMLCommonHandler.instance().bus().unregister(this);
             isRegistered = false;
             randMob = null;
-            mcClient.thePlayer = null;
             world = null;
+            mcClient.thePlayer = null;
         }
     }
 
