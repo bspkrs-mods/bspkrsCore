@@ -1,3 +1,5 @@
+6.16 - 16-Feb-2015
+- disable main menu mob rendering when WorldStateCheckpoints is present
 6.15 - 11-Nov-2014
 - fixed tooltip messages
 - updated mappings
