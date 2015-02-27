@@ -1,0 +1,17 @@
+bspkrs.configgui.allowDebugOutput.tooltip=Aucune infobulle de définie.
+bspkrs.configgui.allowDebugOutput=Permettre la sortie du débogage
+bspkrs.configgui.allowUpdateCheck.tooltip=Définissez à "true" pour permettre la vérification de mises à jour pour TOUS mes mods, "false" pour désactiver.
+bspkrs.configgui.allowUpdateCheck=Permettre la vérification de mises à jour
+bspkrs.configgui.applyGlobally.tooltip=Applique des annulations de changement ou une réinitialisation par défaut de manière globale.
+bspkrs.configgui.applyGlobally=Appliquer globalement
+bspkrs.configgui.generateUniqueNamesFile.tooltip=Lorsque défini à "true", un fichier nommé UniqueNames.txt sera généré dans le dossier config pour plus de commodité. Les noms trouvés dans le fichier sont les lignes qui représentent les blocs et les objets dans Minecraft. Des mods comme Treecapitator et StartingInventory les utilisent dans leurs fichiers de configuration depuis que les IDs n'existent plus.
+bspkrs.configgui.generateUniqueNamesFile=Générer le fichier UniqueNames.txt
+bspkrs.configgui.showMainMenuMobs.tooltip=Définissez à "true" pour montrer votre joueur connecté et un mob aléatoire au menu principal, "false" pour désactiver.
+bspkrs.configgui.showMainMenuMobs=Montrer un mob avec vous au menu principal
+bspkrs.configgui.updateTimeoutMilliseconds.tooltip=Le délai en millisecondes pour une vérification de mise à jour de version.
+bspkrs.configgui.updateTimeoutMilliseconds=Délai de vérification de mise à jour (ms)
+bspkrs.modversionchecker.error=Une erreur est survenue lorsque la vérification de version a été faite pour le mod %s.
+bspkrs.modversionchecker.invalidmodid=ID de mod invalide spécifié pour la vérification de version.
+bspkrs.modversionchecker.uptodate=Le mod %s est à jour.
+commands.bs.disabled=La vérification de version est désactivée dans le fichier bspkrsCore.cfg. Définissez allowUpdateCheck=true pour utiliser cette commande.
+commands.bs.usage=bs version <modid>
