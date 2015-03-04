@@ -32,10 +32,10 @@ public class UniqueNameListGenerator
             ArrayList<String> itemList = new ArrayList<String>();
 
             for (Object obj : GameData.getBlockRegistry().getKeys())
-                blockList.add((String) obj);
+                blockList.add(obj.toString());
 
             for (Object obj : GameData.getItemRegistry().getKeys())
-                itemList.add((String) obj);
+                itemList.add(obj.toString());
 
             Collections.sort(blockList);
             Collections.sort(itemList);

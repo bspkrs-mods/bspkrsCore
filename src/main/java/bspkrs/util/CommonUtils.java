@@ -15,7 +15,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MathHelper;
@@ -273,6 +275,42 @@ public final class CommonUtils
         world.playSoundAtEntity(entityplayer, "note.pling", 0.5F, f);
     }
 
+    public static boolean moveBlock(World world, BlockPos src, BlockPos tgt, boolean allowBlockReplacement)
+    {
+        return moveBlock(world, src, tgt, allowBlockReplacement, BlockNotifyType.ALL);
+    }
+
+    public static boolean moveBlock(World world, BlockPos src, BlockPos tgt, boolean allowBlockReplacement, int notifyFlag)
+    {
+        if (!world.isRemote && !world.isAirBlock(src) && (world.isAirBlock(tgt) || allowBlockReplacement))
+        {
+            IBlockState state = world.getBlockState(src);
+    
+            world.setBlockState(tgt, state, notifyFlag);
+    
+            TileEntity te = world.getTileEntity(src);
+            if (te != null)
+            {
+                NBTTagCompound nbt = new NBTTagCompound();
+                te.writeToNBT(nbt);
+    
+                nbt.setInteger("x", tgt.getX());
+                nbt.setInteger("y", tgt.getY());
+                nbt.setInteger("z", tgt.getZ());
+    
+                te = world.getTileEntity(tgt);
+                if (te != null)
+                    te.readFromNBT(nbt);
+    
+                world.removeTileEntity(src);
+            }
+    
+            world.setBlockToAir(src);
+            return true;
+        }
+        return false;
+    }
+
     public static int getHighestGroundBlock(World world, BlockPos pos)
     {
         while ((pos.getY() > 0) && (world.isAirBlock(pos) || !world.isBlockNormalCube(pos, true)
@@ -293,23 +331,23 @@ public final class CommonUtils
         return y;
     }
 
-    public static int getSphericalDistance(Coord startPos, Coord endPos)
+    public static int getSphericalDistance(BlockPos startPos, BlockPos endPos)
     {
         return (int) Math.round(Math.sqrt(CommonUtils.sqr(endPos.getX() - startPos.getX())
                 + CommonUtils.sqr(endPos.getZ() - startPos.getZ()) + CommonUtils.sqr(endPos.getY() - startPos.getY())));
     }
 
-    public static int getCubicDistance(Coord startPos, Coord endPos)
+    public static int getCubicDistance(BlockPos startPos, BlockPos endPos)
     {
         return Math.abs(endPos.getX() - startPos.getX()) + Math.abs(endPos.getY() - startPos.getY()) + Math.abs(endPos.getZ() - startPos.getZ());
     }
 
-    public static int getHorSquaredDistance(Coord startPos, Coord endPos)
+    public static int getHorSquaredDistance(BlockPos pos, BlockPos pos2)
     {
-        return Math.abs(endPos.getX() - startPos.getX()) + Math.abs(endPos.getZ() - startPos.getZ());
+        return Math.abs(pos2.getX() - pos.getX()) + Math.abs(pos2.getZ() - pos.getZ());
     }
 
-    public static int getVerDistance(Coord startPos, Coord endPos)
+    public static int getVerDistance(BlockPos startPos, BlockPos endPos)
     {
         return Math.abs(endPos.getY() - startPos.getY());
     }
@@ -329,11 +367,11 @@ public final class CommonUtils
         byte w = 3;
         byte cw = 4;
         byte h = 4;
-        fillWithBlocks(world, new BlockPos((x - w) + 1, y, z - w), new BlockPos((x + w) - 1, (y + h) - 1, z - w), state);
-        fillWithBlocks(world, new BlockPos((x - w) + 1, y, z + w), new BlockPos((x + w) - 1, (y + h) - 1, z + w), state);
-        fillWithBlocks(world, new BlockPos(x - w, y, (z - w) + 1), new BlockPos(x - w, (y + h) - 1, (z + w) - 1), state);
-        fillWithBlocks(world, new BlockPos(x + w, y, (z - w) + 1), new BlockPos(x + w, (y + h) - 1, (z + w) - 1), state);
-        fillWithBlocksRounded(world, new BlockPos(x - cw, y + h, z - cw), new BlockPos(x + cw, y + h, z + cw), state);
+        fillWithBlocks(world, new BlockPos((x - w) + 1, y, z - w), new BlockPos((x + w) - 1, (y + h) - 1, z - w), state.getBlock().getStateFromMeta(10));
+        fillWithBlocks(world, new BlockPos((x - w) + 1, y, z + w), new BlockPos((x + w) - 1, (y + h) - 1, z + w), state.getBlock().getStateFromMeta(10));
+        fillWithBlocks(world, new BlockPos(x - w, y, (z - w) + 1), new BlockPos(x - w, (y + h) - 1, (z + w) - 1), state.getBlock().getStateFromMeta(10));
+        fillWithBlocks(world, new BlockPos(x + w, y, (z - w) + 1), new BlockPos(x + w, (y + h) - 1, (z + w) - 1), state.getBlock().getStateFromMeta(10));
+        fillWithBlocksRounded(world, new BlockPos(x - cw, y + h, z - cw), new BlockPos(x + cw, y + h, z + cw), state.getBlock().getStateFromMeta(14));
     }
 
     public static void fillWithBlocks(World world, BlockPos pos1, BlockPos pos2, IBlockState state)

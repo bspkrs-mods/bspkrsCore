@@ -2,6 +2,7 @@ package bspkrs.client.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -196,18 +197,21 @@ public final class HUDUtils
             {
                 int var11 = (int) Math.round(13.0D - ((itemStack.getItemDamage() * 13.0D) / itemStack.getMaxDamage()));
                 int var7 = (int) Math.round(255.0D - ((itemStack.getItemDamage() * 255.0D) / itemStack.getMaxDamage()));
-                GL11.glDisable(GL11.GL_LIGHTING);
-                GL11.glDisable(GL11.GL_DEPTH_TEST);
-                GL11.glDisable(GL11.GL_TEXTURE_2D);
+                GlStateManager.disableLighting();
+                GlStateManager.disableDepth();
+                GlStateManager.disableTexture2D();
+                GlStateManager.disableAlpha();
+                GlStateManager.disableBlend();
                 Tessellator var8 = Tessellator.getInstance();
                 int var9 = ((255 - var7) << 16) | (var7 << 8);
                 int var10 = (((255 - var7) / 4) << 16) | 16128;
                 renderQuad(var8, x + 2, y + 13, 13, 2, 0);
                 renderQuad(var8, x + 2, y + 13, 12, 1, var10);
                 renderQuad(var8, x + 2, y + 13, var11, 1, var9);
-                GL11.glEnable(GL11.GL_TEXTURE_2D);
-                GL11.glEnable(GL11.GL_LIGHTING);
-                GL11.glEnable(GL11.GL_DEPTH_TEST);
+                GlStateManager.enableAlpha();
+                GlStateManager.enableTexture2D();
+                GlStateManager.enableLighting();
+                GlStateManager.enableDepth();
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             }
 
@@ -223,11 +227,12 @@ public final class HUDUtils
                 if (count > 1)
                 {
                     String var6 = "" + count;
-                    GL11.glDisable(GL11.GL_LIGHTING);
-                    GL11.glDisable(GL11.GL_DEPTH_TEST);
+                    GlStateManager.disableLighting();
+                    GlStateManager.disableDepth();
+                    GlStateManager.disableBlend();
                     fontRenderer.drawStringWithShadow(var6, (x + 19) - 2 - fontRenderer.getStringWidth(var6), y + 6 + 3, 16777215);
-                    GL11.glEnable(GL11.GL_LIGHTING);
-                    GL11.glEnable(GL11.GL_DEPTH_TEST);
+                    GlStateManager.enableLighting();
+                    GlStateManager.enableDepth();
                 }
             }
         }
