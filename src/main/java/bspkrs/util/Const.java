@@ -2,6 +2,7 @@ package bspkrs.util;
 
 public class Const
 {
-    public static String MCVERSION   = "@MINECRAFT_VERSION@";
-    public static String VERSION_URL = "http://bspk.rs";
+    public static final String MCVERSION        = "@MINECRAFT_VERSION@";
+    public static final String VERSION_URL_BASE = "http://bspk.rs/Minecraft/";
+    public static final String VERSION_URL_EXT  = ".json";
 }

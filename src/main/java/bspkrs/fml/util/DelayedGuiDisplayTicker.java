@@ -2,6 +2,7 @@ package bspkrs.fml.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -19,7 +20,7 @@ public class DelayedGuiDisplayTicker
         this.delayTicks = delayTicks;
         this.mcClient = FMLClientHandler.instance().getClient();
         this.screen = screen;
-        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
@@ -31,7 +32,7 @@ public class DelayedGuiDisplayTicker
         if (--delayTicks <= 0)
         {
             mcClient.displayGuiScreen(screen);
-            FMLCommonHandler.instance().bus().unregister(this);
+            MinecraftForge.EVENT_BUS.unregister(this);
         }
     }
 }

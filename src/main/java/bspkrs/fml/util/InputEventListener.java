@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import net.minecraft.client.settings.KeyBinding;
 
+import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -79,7 +80,7 @@ public abstract class InputEventListener
     {
         if (isRegistered(kb))
         {
-            FMLCommonHandler.instance().bus().unregister(instances.get(kb));
+            MinecraftForge.EVENT_BUS.unregister(instances.get(kb));
             instances.remove(kb);
         }
     }
