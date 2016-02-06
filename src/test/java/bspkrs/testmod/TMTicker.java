@@ -3,6 +3,7 @@ package bspkrs.testmod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import bspkrs.bspkrscore.fml.bspkrsCoreMod;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -16,34 +17,19 @@ public class TMTicker
 {
     private Minecraft      mcClient;
     private static boolean isRegistered = false;
-    
+
     public TMTicker()
     {
         mcClient = FMLClientHandler.instance().getClient();
         isRegistered = true;
     }
-    
+
     @SubscribeEvent
     public void onTick(ClientTickEvent event)
     {
-        boolean keepTicking = !(mcClient != null && mcClient.thePlayer != null && mcClient.theWorld != null);
-        
-        if (!event.phase.equals(Phase.START))
-        {
-            if (bspkrsCoreMod.instance.allowUpdateCheck && !keepTicking)
-                if (TestMod.instance.versionChecker != null)
-                    if (!TestMod.instance.versionChecker.isCurrentVersion())
-                        for (String msg : TestMod.instance.versionChecker.getInGameMessage())
-                            mcClient.thePlayer.addChatMessage(new ChatComponentText(msg));
-            
-            if (!keepTicking)
-            {
-                FMLCommonHandler.instance().bus().unregister(this);
-                isRegistered = false;
-            }
-        }
+
     }
-    
+
     public static boolean isRegistered()
     {
         return isRegistered;
