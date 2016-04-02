@@ -15,8 +15,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
@@ -76,9 +76,9 @@ public class EntityUtils
     public static float getModelSize(EntityLivingBase ent)
     {
         Render render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(ent);
-        if (render instanceof RendererLivingEntity)
+        if (render instanceof RenderLivingBase)
         {
-            RendererLivingEntity entRender = (RendererLivingEntity) render;
+        	RenderLivingBase entRender = (RenderLivingBase) render;
             ModelBase mainModel;
             ModelBase renderPassModel;
             try
@@ -180,7 +180,7 @@ public class EntityUtils
             RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
             rendermanager.setPlayerViewY(180.0F);
             rendermanager.setRenderShadow(false);
-            rendermanager.renderEntityWithPosYaw(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
+            rendermanager.doRenderEntity(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
             rendermanager.setRenderShadow(true);
         }
         finally

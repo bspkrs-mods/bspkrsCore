@@ -1,7 +1,6 @@
 package bspkrs.util;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -15,16 +15,16 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
@@ -272,7 +272,7 @@ public final class CommonUtils
     public void playAtPitch(int i, World world, EntityPlayer entityplayer)
     {
         float f = (float) Math.pow(2D, (i - 12) / 12D);
-        world.playSoundAtEntity(entityplayer, "note.pling", 0.5F, f);
+        world.playSound(entityplayer, entityplayer.getPosition(), SoundEvents.block_note_pling, SoundCategory.getByName("block"), 0.5F, f);
     }
 
     public static boolean moveBlock(World world, BlockPos src, BlockPos tgt, boolean allowBlockReplacement)
@@ -532,7 +532,11 @@ public final class CommonUtils
         }
         catch (NoClassDefFoundError e)
         {
-            return MinecraftServer.getServer().getFile("").getAbsolutePath();
+//TODO: find an alternative static way to get a handle on MinecraftServer 
+// this is not a static reference anymore
+//            return MinecraftServer.getServer().getFile("").getAbsolutePath();
+// just throw it
+        	throw e;
         }
     }
 
@@ -555,7 +559,7 @@ public final class CommonUtils
         }
     }
 
-    public static MovingObjectPosition getPlayerLookingSpot(EntityPlayer player, boolean restrict)
+    public static RayTraceResult getPlayerLookingSpot(EntityPlayer player, boolean restrict)
     {
         float scale = 1.0F;
         float pitch = player.prevRotationPitch + ((player.rotationPitch - player.prevRotationPitch) * scale);
@@ -563,7 +567,7 @@ public final class CommonUtils
         double x = player.prevPosX + ((player.posX - player.prevPosX) * scale);
         double y = (player.prevPosY + ((player.posY - player.prevPosY) * scale) + 1.62D);
         double z = player.prevPosZ + ((player.posZ - player.prevPosZ) * scale);
-        Vec3 vector1 = new Vec3(x, y, z);
+        Vec3d vector1 = new Vec3d(x, y, z);
         float cosYaw = MathHelper.cos((-yaw * 0.017453292F) - (float) Math.PI);
         float sinYaw = MathHelper.sin((-yaw * 0.017453292F) - (float) Math.PI);
         float cosPitch = -MathHelper.cos(-pitch * 0.017453292F);
@@ -573,9 +577,9 @@ public final class CommonUtils
         double distance = 500D;
         if ((player instanceof EntityPlayerMP) && restrict)
         {
-            distance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
+            distance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
         }
-        Vec3 vector2 = vector1.addVector(pitchAdjustedSinYaw * distance, sinPitch * distance, pitchAdjustedCosYaw * distance);
+        Vec3d vector2 = vector1.addVector(pitchAdjustedSinYaw * distance, sinPitch * distance, pitchAdjustedCosYaw * distance);
         return player.worldObj.rayTraceBlocks(vector1, vector2);
     }
 

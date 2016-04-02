@@ -27,7 +27,7 @@ version = project.mod_version
 archivesBaseName = "[${project.minecraft_version}]${project.mod_id}"
 
 minecraft {
-    version = project.minecraft_version + '-' + project.forge_version // grab latest forge
+    version = project.minecraft_version + '-' + project.forge_version + "-" + project.minecraft_version // grab latest forge
     mappings = project.mappings_version
     runDir = 'run'
     replace '@MOD_VERSION@', project.mod_version
