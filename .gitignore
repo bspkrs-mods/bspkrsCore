@@ -10,7 +10,7 @@
 /.metadata
 /.classpath
 /.project
-/.launch
+/*.launch
 /bin
 
 ## intellij
