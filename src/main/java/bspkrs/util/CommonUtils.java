@@ -272,7 +272,7 @@ public final class CommonUtils
     public void playAtPitch(int i, World world, EntityPlayer entityplayer)
     {
         float f = (float) Math.pow(2D, (i - 12) / 12D);
-        world.playSound(entityplayer, entityplayer.getPosition(), SoundEvents.block_note_pling, SoundCategory.getByName("block"), 0.5F, f);
+        world.playSound(entityplayer, entityplayer.getPosition(), SoundEvents.BLOCK_NOTE_PLING, SoundCategory.getByName("block"), 0.5F, f);
     }
 
     public static boolean moveBlock(World world, BlockPos src, BlockPos tgt, boolean allowBlockReplacement)

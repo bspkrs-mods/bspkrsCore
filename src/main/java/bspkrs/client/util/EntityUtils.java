@@ -217,7 +217,7 @@ public class EntityUtils
     {
         Random random = new Random();
         // Get a COPY dumbass!
-        Set entities = new TreeSet(EntityList.stringToClassMapping.keySet());
+        Set entities = new TreeSet(EntityList.NAME_TO_CLASS.keySet());
 
         if (blacklist != null)
             entities.removeAll(blacklist);
@@ -230,7 +230,7 @@ public class EntityUtils
         do
         {
             id = random.nextInt(entStrings.length);
-            clazz = (Class) EntityList.stringToClassMapping.get(entStrings[id]);
+            clazz = (Class) EntityList.NAME_TO_CLASS.get(entStrings[id]);
         }
         while (!EntityLivingBase.class.isAssignableFrom(clazz)
                 && (++tries <= numberOfAttempts));

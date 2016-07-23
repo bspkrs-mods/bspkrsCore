@@ -12,7 +12,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
         classpath 'com.matthewprenger:CurseGradle:1.0-SNAPSHOT'
     }
 }
@@ -24,17 +24,25 @@ compileJava.options.encoding = 'UTF-8'
 
 group = project.group_name
 version = project.mod_version
-archivesBaseName = "[${project.minecraft_version}]${project.mod_id}"
+archivesBaseName = "${project.mod_id}_mc${project.minecraft_version}-${project.minecraft_maxversion}_v"
 
 minecraft {
-    version = project.minecraft_version + '-' + project.forge_version + "-" + project.minecraft_version // grab latest forge
+    version = project.minecraft_version + '-' + project.forge_version // + "-" + project.minecraft_version // grab latest forge
     mappings = project.mappings_version
     runDir = 'run'
     replace '@MOD_VERSION@', project.mod_version
-    replace '@MINECRAFT_VERSION@', project.minecraft_version
+    replace '@MIN_MC_VERSION@', project.minecraft_version
+    replace '@MAX_MC_VERSION@', project.minecraft_maxversion
 }
 
 processResources {
+    // force replacements if input changes
+    inputs.property 'mod_version', version
+    inputs.property 'forge_version', project.forge_version
+    inputs.property 'forge_versionlimit', project.forge_versionlimit
+    inputs.property 'minecraft_version', project.minecraft_version
+    inputs.property 'minecraft_maxversion', project.minecraft_maxversion
+    
     // replace stuff in the files we want.
     from(sourceSets.main.resources.srcDirs) {
         include '**/*.info'
@@ -44,11 +52,13 @@ processResources {
         expand ([
             'mod_version': project.mod_version,
             'forge_version': project.forge_version,
+            'forge_versionlimit': project.forge_versionlimit,
             'minecraft_version': project.minecraft_version,
+            'minecraft_maxversion': project.minecraft_maxversion
         ])
     }
 
-    // copy everything else that we didnt do before
+    // copy everything else that we didn't do before
     from(sourceSets.main.resources.srcDirs) {
         exclude '**/*.info'
         exclude '**/*.properties'

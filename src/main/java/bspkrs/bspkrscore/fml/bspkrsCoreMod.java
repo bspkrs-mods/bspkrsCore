@@ -22,7 +22,10 @@ import bspkrs.util.CommonUtils;
 import bspkrs.util.Const;
 import bspkrs.util.UniqueNameListGenerator;
 
-@Mod(modid = Reference.MODID, name = Reference.NAME, version = "@MOD_VERSION@", useMetadata = true, guiFactory = Reference.GUI_FACTORY, updateJSON = Const.VERSION_URL_BASE + Reference.MODID + Const.VERSION_URL_EXT)
+@Mod(modid = Reference.MODID, name = Reference.NAME, version = "@MOD_VERSION@", 
+        useMetadata = true, guiFactory = Reference.GUI_FACTORY, 
+        updateJSON = Const.VERSION_URL_BASE + Reference.MODID + Const.VERSION_URL_EXT,
+        acceptedMinecraftVersions = "[@MIN_MC_VERSION@,@MAX_MC_VERSION@]")
 public class bspkrsCoreMod
 {
     // config stuff
@@ -117,7 +120,7 @@ public class bspkrsCoreMod
     @SubscribeEvent
     public void onConfigChanged(OnConfigChangedEvent event)
     {
-        if (event.modID.equals(Reference.MODID))
+        if (event.getModID().equals(Reference.MODID))
         {
             Reference.config.save();
             syncConfig();
