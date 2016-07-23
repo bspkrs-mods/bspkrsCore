@@ -1,9 +1,24 @@
-/.settings/
-/bin/
-/release/
-/build/
-/.gradle/
-/run/
-.project
-.classpath
-build.properties.old
+## gradle
+/.gradle
+/build
+
+## ForgeGradle
+/run
+
+## eclipse
+/.settings
+/.metadata
+/.classpath
+/.project
+/*.launch
+/bin
+
+## intellij
+/out
+/.idea
+/*.iml
+/*.ipr
+/*.iws
+
+## custom
+/release

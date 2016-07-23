@@ -4,10 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -19,14 +18,14 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import bspkrs.util.CommonUtils;
 import bspkrs.util.Const;
-import bspkrs.util.ModVersionChecker;
 import bspkrs.util.UniqueNameListGenerator;
 
-@Mod(modid = Reference.MODID, name = Reference.NAME, version = "@MOD_VERSION@", useMetadata = true, guiFactory = Reference.GUI_FACTORY)
+@Mod(modid = Reference.MODID, name = Reference.NAME, version = "@MOD_VERSION@", 
+        useMetadata = true, guiFactory = Reference.GUI_FACTORY, 
+        updateJSON = Const.VERSION_URL_BASE + Reference.MODID + Const.VERSION_URL_EXT,
+        acceptedMinecraftVersions = "[@MIN_MC_VERSION@,@MAX_MC_VERSION@]")
 public class bspkrsCoreMod
 {
     // config stuff
@@ -48,19 +47,9 @@ public class bspkrsCoreMod
     @SidedProxy(clientSide = Reference.PROXY_CLIENT, serverSide = Reference.PROXY_COMMON)
     public static CommonProxy   proxy;
 
-    protected ModVersionChecker versionChecker;
-    protected final String      versionURL                       = Const.VERSION_URL + "/Minecraft/" + Const.MCVERSION + "/bspkrsCore.version";
-    protected final String      mcfTopic                         = "http://www.minecraftforum.net/topic/1114612-";
-
-    @SideOnly(Side.CLIENT)
-    protected BSCClientTicker   ticker;
-    private boolean             isCommandRegistered;
-
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        metadata = event.getModMetadata();
-
         File file = event.getSuggestedConfigurationFile();
 
         if (!CommonUtils.isObfuscatedEnv())
@@ -108,27 +97,12 @@ public class bspkrsCoreMod
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        if (allowUpdateCheck)
-        {
-            versionChecker = new ModVersionChecker(Reference.MODID, metadata.version, versionURL, mcfTopic);
-            versionChecker.checkVersionWithLogging();
-        }
-
         if (event.getSide().isClient())
         {
-            FMLCommonHandler.instance().bus().register(new NetworkHandler());
-            try
-            {
-                ClientCommandHandler.instance.registerCommand(new CommandBS());
-                isCommandRegistered = true;
-            }
-            catch (Throwable e)
-            {
-                isCommandRegistered = false;
-            }
+            MinecraftForge.EVENT_BUS.register(new NetworkHandler());
         }
 
-        FMLCommonHandler.instance().bus().register(instance);
+        MinecraftForge.EVENT_BUS.register(instance);
     }
 
     @EventHandler
@@ -141,14 +115,12 @@ public class bspkrsCoreMod
     @EventHandler
     public void serverStarting(FMLServerStartingEvent event)
     {
-        if (!isCommandRegistered)
-            event.registerServerCommand(new CommandBS());
     }
 
     @SubscribeEvent
     public void onConfigChanged(OnConfigChangedEvent event)
     {
-        if (event.modID.equals(Reference.MODID))
+        if (event.getModID().equals(Reference.MODID))
         {
             Reference.config.save();
             syncConfig();

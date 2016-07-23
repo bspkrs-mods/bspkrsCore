@@ -5,7 +5,7 @@
     "name": "bspkrsCore",
     "description": "Shared classes used in the mods maintained by bspkrs.",
     "version": "${mod_version}",
-    "mcversion": "${minecraft_version}",
+    "mcversion": "${minecraft_maxversion}",
     "url": "http://www.minecraftforum.net/topic/1114612-/",
     "updateUrl": "",
     "authorList": [ "DaftPVF", "bspkrs" ],
@@ -13,8 +13,8 @@
     "logoFile": "",
     "screenshots": [],
     "parent": "",
-    "requiredMods": ["Forge@[${forge_version},)"],
-    "dependencies": ["Forge@[${forge_version},)"],
+    "requiredMods": ["Forge@[${forge_version},${forge_versionlimit})"],
+    "dependencies": ["Forge@[${forge_version},${forge_versionlimit})"],
     "dependants": [],
     "useDependencyInformation": "true"
   }]
