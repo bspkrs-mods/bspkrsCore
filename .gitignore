@@ -6,4 +6,6 @@
 /run/
 .project
 .classpath
-build.properties.old
+bspkrsCore_Client.launch
+bspkrsCore_Server.launch
+/eclipse/

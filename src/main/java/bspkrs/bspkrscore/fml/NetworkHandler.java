@@ -5,9 +5,9 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
 
 public class NetworkHandler
 {
-    @SubscribeEvent
-    public void clientLoggedIn(ClientConnectedToServerEvent event)
-    {
-        bspkrsCoreMod.proxy.registerGameTickHandler();
-    }
+	@SubscribeEvent
+	public void clientLoggedIn (ClientConnectedToServerEvent event)
+	{
+		bspkrsCoreMod.proxy.registerGameTickHandler();
+	}
 }

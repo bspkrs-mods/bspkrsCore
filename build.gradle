@@ -1,21 +1,20 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+buildscript 
+{
+    repositories 
+    {
+        jcenter()
+        maven 
+        { 
+            url = "http://files.minecraftforge.net/maven" 
         }
     }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    dependencies 
+    {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 
-apply plugin: "forge"
+apply plugin: "net.minecraftforge.gradle.forge"
 
 compileJava.options.encoding = 'UTF-8'
 
@@ -63,14 +62,9 @@ processResources {
 }
 
 // change the name of my obfuscated jar
-jar {
+jar 
+{
     appendix = config.appendix
-}
-
-// add a source jar
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-    appendix = 'src'
 }
 
 // because the normal output has been made to be obfuscated
@@ -79,7 +73,8 @@ task deobfJar(type: Jar) {
     appendix = 'deobf'
 }
 
-artifacts {
+artifacts 
+{
     archives sourceJar
     archives deobfJar
 }
