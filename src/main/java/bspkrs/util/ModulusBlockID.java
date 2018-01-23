@@ -1,42 +1,42 @@
 package bspkrs.util;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.block.*;
+import net.minecraft.block.state.*;
+import net.minecraft.world.*;
+import net.minecraft.util.math.*;
 
 public class ModulusBlockID extends BlockID
 {
     public final int metadataModulus;
 
-    public ModulusBlockID(String id, int metadata, int metadataModulus)
+    public ModulusBlockID(final String id, final int metadata, final int metadataModulus)
     {
         super(id, Math.max(metadata, 0) % Math.max(metadataModulus, 1));
         this.metadataModulus = Math.max(metadataModulus, 1);
     }
 
-    public ModulusBlockID(Block block, int metadata, int metadataModulus)
+    public ModulusBlockID(final Block block, final int metadata, final int metadataModulus)
     {
         super(block, Math.max(metadata, 0) % Math.max(metadataModulus, 1));
         this.metadataModulus = Math.max(metadataModulus, 1);
     }
 
-    public ModulusBlockID(Block block, IBlockState state, int metadataModulus)
+    public ModulusBlockID(final Block block, final IBlockState state, final int metadataModulus)
     {
         this(block, block.getMetaFromState(state), metadataModulus);
     }
 
-    public ModulusBlockID(IBlockState state, int metadataModulus)
+    public ModulusBlockID(final IBlockState state, final int metadataModulus)
     {
         this(state.getBlock(), state, metadataModulus);
     }
 
-    public ModulusBlockID(World world, BlockPos pos, int metadataModulus)
+    public ModulusBlockID(final World world, final BlockPos pos, final int metadataModulus)
     {
         this(world.getBlockState(pos), metadataModulus);
     }
 
-    public ModulusBlockID(World world, BlockPos pos, int metadata, int metadataModulus)
+    public ModulusBlockID(final World world, final BlockPos pos, final int metadata, final int metadataModulus)
     {
         this(world.getBlockState(pos).getBlock(), Math.max(metadata, 0), metadataModulus);
     }
@@ -44,41 +44,40 @@ public class ModulusBlockID extends BlockID
     @Override
     public BlockID clone()
     {
-        return new ModulusBlockID(id, metadata, metadataModulus);
+        return new ModulusBlockID(this.id, this.metadata, this.metadataModulus);
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
-        if (this == obj)
+        if(this == obj)
+        {
             return true;
-
-        if (!(obj instanceof BlockID))
-            return false;
-
-        if ((((BlockID) obj).id != null) && !((BlockID) obj).id.equals(id))
-            return false;
-        else if ((((BlockID) obj).id == null) && (id != null))
-            return false;
-
-        if (obj instanceof ModulusBlockID)
-        {
-            ModulusBlockID o = (ModulusBlockID) obj;
-            return (metadata % metadataModulus) == (o.metadata % o.metadataModulus);
         }
-        else
+        if(!(obj instanceof BlockID))
         {
-            BlockID o = (BlockID) obj;
-            if (o.metadata == -1)
-                return true;
-            else
-                return (metadata % metadataModulus) == (o.metadata % metadataModulus);
+            return false;
         }
+        if(((BlockID)obj).id != null && !((BlockID)obj).id.equals(this.id))
+        {
+            return false;
+        }
+        if(((BlockID)obj).id == null && this.id != null)
+        {
+            return false;
+        }
+        if(obj instanceof ModulusBlockID)
+        {
+            final ModulusBlockID o = (ModulusBlockID)obj;
+            return this.metadata % this.metadataModulus == o.metadata % o.metadataModulus;
+        }
+        final BlockID o2 = (BlockID)obj;
+        return o2.metadata == -1 || this.metadata % this.metadataModulus == o2.metadata % this.metadataModulus;
     }
 
     @Override
     public String toString()
     {
-        return id + ", " + metadata + " % " + metadataModulus;
+        return this.id + ", " + this.metadata + " % " + this.metadataModulus;
     }
 }

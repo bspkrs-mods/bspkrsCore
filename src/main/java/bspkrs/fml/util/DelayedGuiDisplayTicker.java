@@ -1,37 +1,37 @@
 package bspkrs.fml.util;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraft.client.*;
+import net.minecraft.client.gui.*;
+import net.minecraftforge.common.*;
+import net.minecraftforge.fml.client.*;
+import net.minecraftforge.fml.common.gameevent.*;
+import net.minecraftforge.fml.common.eventhandler.*;
 
 public class DelayedGuiDisplayTicker
 {
-    private int       delayTicks;
+    private int delayTicks;
     private Minecraft mcClient;
     private GuiScreen screen;
 
-    public DelayedGuiDisplayTicker(int delayTicks, GuiScreen screen)
+    public DelayedGuiDisplayTicker(final int delayTicks, final GuiScreen screen)
     {
         this.delayTicks = delayTicks;
         this.mcClient = FMLClientHandler.instance().getClient();
         this.screen = screen;
-        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register((Object)this);
     }
 
     @SubscribeEvent
-    public void onTick(ClientTickEvent event)
+    public void onTick(final TickEvent.ClientTickEvent event)
     {
-        if (event.phase.equals(Phase.START))
-            return;
-
-        if (--delayTicks <= 0)
+        if(event.phase.equals((Object)TickEvent.Phase.START))
         {
-            mcClient.displayGuiScreen(screen);
-            FMLCommonHandler.instance().bus().unregister(this);
+            return;
+        }
+        if(--this.delayTicks <= 0)
+        {
+            this.mcClient.displayGuiScreen(this.screen);
+            MinecraftForge.EVENT_BUS.unregister((Object)this);
         }
     }
 }

@@ -1,45 +1,47 @@
 package bspkrs.client.util;
 
-import java.util.List;
+import java.util.*;
 
 public class ColorThreshold implements Comparable<ColorThreshold>
 {
-    public int    threshold;
+    public int threshold;
     public String colorCode;
 
-    public ColorThreshold(int t, String c)
+    public ColorThreshold(final int t, final String c)
     {
-        threshold = t;
-        colorCode = c;
+        this.threshold = t;
+        this.colorCode = c;
     }
 
     @Override
     public String toString()
     {
-        return String.valueOf(threshold) + ", " + colorCode;
+        return String.valueOf(this.threshold) + ", " + this.colorCode;
     }
 
     @Override
-    public int compareTo(ColorThreshold o)
+    public int compareTo(final ColorThreshold o)
     {
-        if (this.threshold > o.threshold)
+        if(this.threshold > o.threshold)
+        {
             return 1;
-        else if (this.threshold < o.threshold)
+        }
+        if(this.threshold < o.threshold)
+        {
             return -1;
-        else
-            return 0;
+        }
+        return 0;
     }
 
-    /**
-     * Returns the colorCode attached to the first threshold in the list that is >= value. Expects that the list has been sorted by
-     * threshold ascending.
-     */
-    public static String getColorCode(List<ColorThreshold> colorList, int value)
+    public static String getColorCode(final List<ColorThreshold> colorList, final int value)
     {
-        for (ColorThreshold ct : colorList)
-            if (value <= ct.threshold)
+        for(final ColorThreshold ct : colorList)
+        {
+            if(value <= ct.threshold)
+            {
                 return ct.colorCode;
-
+            }
+        }
         return "f";
     }
 }

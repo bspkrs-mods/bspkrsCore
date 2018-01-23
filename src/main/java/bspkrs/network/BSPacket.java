@@ -1,10 +1,10 @@
 package bspkrs.network;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.*;
 
 public interface BSPacket
 {
-    public void readBytes(PacketBuffer bytes);
+    void readBytes(final PacketBuffer p0);
 
-    public void writeBytes(PacketBuffer bytes);
+    void writeBytes(final PacketBuffer p0);
 }

@@ -1,95 +1,91 @@
 package bspkrs.util;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraft.item.*;
 
 public class ItemID
 {
-    /**
-     * Unique ID of the item from the namespace registry
-     */
     public final String id;
-    public final int    damage;
+    public final int damage;
 
-    public ItemID(String id, int damage)
+    public ItemID(final String id, final int damage)
     {
         this.id = id;
         this.damage = damage;
     }
 
-    public ItemID(String id)
+    public ItemID(final String id)
     {
         this(id, -1);
     }
 
-    public ItemID(ItemStack itemStack, int damage)
+    public ItemID(final ItemStack itemStack, final int damage)
     {
         this(itemStack.getItem(), damage);
     }
 
-    public ItemID(ItemStack itemStack)
+    public ItemID(final ItemStack itemStack)
     {
         this(itemStack.getItem(), -1);
     }
 
-    public ItemID(Item item, int damage)
+    public ItemID(final Item item, final int damage)
     {
-        this(GameData.getItemRegistry().getNameForObject(item).toString(), damage);
+        this(Item.REGISTRY.getNameForObject(item).toString(), damage);
     }
 
-    public ItemID(Item item)
+    public ItemID(final Item item)
     {
-        this(GameData.getItemRegistry().getNameForObject(item).toString(), -1);
+        this(Item.REGISTRY.getNameForObject(item).toString(), -1);
     }
 
-    public ItemID(String format, String delimiter)
+    public ItemID(final String format, final String delimiter)
     {
-        String[] parts = format.split(delimiter);
-
-        if (parts.length > 1)
+        final String[] parts = format.split(delimiter);
+        if(parts.length > 1)
         {
-            id = parts[0].trim();
-            damage = CommonUtils.parseInt(parts[1], -1);
+            this.id = parts[0].trim();
+            this.damage = CommonUtils.parseInt(parts[1], -1);
         }
         else
         {
-            id = parts[0].trim();
-            damage = -1;
+            this.id = parts[0].trim();
+            this.damage = -1;
         }
     }
 
-    @Override
     public ItemID clone()
     {
-        return new ItemID(id, damage);
+        return new ItemID(this.id, this.damage);
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
-        if (this == obj)
+        if(this == obj)
+        {
             return true;
-
-        if (!(obj instanceof ItemID))
+        }
+        if(!(obj instanceof ItemID))
+        {
             return false;
-
-        ItemID o = (ItemID) obj;
-        if ((o.damage == -1) || (damage == -1))
-            return id != null ? id.equals(o.id) : o.id == null;
-        else
-            return id != null ? id.equals(o.id) && (damage == o.damage) : (o.id == null) && (damage == o.damage);
+        }
+        final ItemID o = (ItemID)obj;
+        if(o.damage == -1 || this.damage == -1)
+        {
+            return (this.id != null) ? this.id.equals(o.id) : (o.id == null);
+        }
+        return (this.id != null) ? (this.id.equals(o.id) && this.damage == o.damage) : (o.id == null && this.damage == o.damage);
     }
 
     @Override
     public int hashCode()
     {
-        return id.hashCode() * 31;
+        return this.id.hashCode() * 31;
     }
 
     @Override
     public String toString()
     {
-        return (damage == -1 ? id + "" : id + ", " + damage);
+        return (this.damage == -1) ? (this.id + "") : (this.id + ", " + this.damage);
     }
 }

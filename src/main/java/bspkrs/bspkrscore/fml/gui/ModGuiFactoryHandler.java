@@ -1,34 +1,31 @@
 package bspkrs.bspkrscore.fml.gui;
 
-import java.util.Set;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.client.IModGuiFactory;
+import net.minecraftforge.fml.client.*;
+import net.minecraft.client.*;
+import net.minecraft.client.gui.*;
+import java.util.*;
 
 public class ModGuiFactoryHandler implements IModGuiFactory
 {
     @Override
-    public void initialize(Minecraft minecraftInstance)
-    {
-
-    }
+    public void initialize(final Minecraft minecraftInstance)
+    {}
 
     @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass()
-    {
-        return GuiBSConfig.class;
-    }
-
-    @Override
-    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories()
+    public Set<IModGuiFactory.RuntimeOptionCategoryElement> runtimeGuiCategories()
     {
         return null;
     }
 
     @Override
-    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element)
+    public boolean hasConfigGui()
     {
-        return null;
+        return true;
+    }
+
+    @Override
+    public GuiScreen createConfigGui(GuiScreen parentScreen)
+    {
+        return new GuiBSConfig(parentScreen);
     }
 }

@@ -1,7 +1,6 @@
 package bspkrs.bspkrscore.fml;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.*;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy
@@ -9,7 +8,11 @@ public class ClientProxy extends CommonProxy
     @Override
     protected void registerGameTickHandler()
     {
-        if (BSCClientTicker.allowUpdateCheck)
-            new BSCClientTicker();
+        /*
+         * if(BSCClientTicker.allowUpdateCheck)
+         * {
+         * new BSCClientTicker();
+         * }
+         */
     }
 }

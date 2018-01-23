@@ -1,61 +1,71 @@
 package bspkrs.bspkrscore.fml;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.*;
+import net.minecraft.client.*;
+import net.minecraftforge.common.*;
+import net.minecraftforge.fml.client.*;
+import net.minecraftforge.fml.common.gameevent.*;
+import net.minecraft.util.text.*;
+import net.minecraftforge.fml.common.eventhandler.*;
 
+@SuppressWarnings("unused")
 @SideOnly(Side.CLIENT)
 public class BSCClientTicker
 {
-    public static boolean allowUpdateCheck = bspkrsCoreMod.instance.allowUpdateCheck;
-    private Minecraft     mcClient;
-    public static boolean isRegistered     = false;
+    /*
+     * public static boolean allowUpdateCheck;
+     */
+    private Minecraft mcClient;
+    public static boolean isRegistered;
 
     public BSCClientTicker()
     {
-        if (!isRegistered)
+        if(!BSCClientTicker.isRegistered)
         {
-            mcClient = FMLClientHandler.instance().getClient();
-            FMLCommonHandler.instance().bus().register(this);
-            isRegistered = true;
+            this.mcClient = FMLClientHandler.instance().getClient();
+            MinecraftForge.EVENT_BUS.register(this);
+            BSCClientTicker.isRegistered = true;
         }
     }
 
     @SubscribeEvent
-    public void onTick(ClientTickEvent event)
+    public void onTick(final TickEvent.ClientTickEvent event)
     {
-        if (!event.phase.equals(Phase.START))
+        if(!event.phase.equals((Object)TickEvent.Phase.START))
         {
-            boolean keepTicking = !(mcClient != null && mcClient.thePlayer != null && mcClient.theWorld != null);
-
-            if (!keepTicking && isRegistered)
+            final boolean keepTicking = this.mcClient == null || this.mcClient.player == null || this.mcClient.world == null;
+            if(!keepTicking && BSCClientTicker.isRegistered)
             {
-                if (bspkrsCoreMod.instance.allowUpdateCheck && bspkrsCoreMod.instance.versionChecker != null)
-                    if (!bspkrsCoreMod.instance.versionChecker.isCurrentVersion())
-                        for (String msg : bspkrsCoreMod.instance.versionChecker.getInGameMessage())
-                            mcClient.thePlayer.addChatMessage(new ChatComponentText(msg));
-
-                allowUpdateCheck = false;
-
-                if (bspkrsCoreMod.instance.allowDebugOutput && !keepTicking && mcClient.theWorld.isRemote)
-                {
-                    //EntityPlayerHelper.addChatMessage(mcClient.thePlayer, new ChatComponentText("\2470\2470\2471\2472\2473\2474\2475\2476\2477\247e\247f"));
-                }
-
-                FMLCommonHandler.instance().bus().unregister(this);
-                isRegistered = false;
+                /*
+                 * if(bspkrsCoreMod.instance.allowUpdateCheck && bspkrsCoreMod.instance.versionChecker != null && !bspkrsCoreMod.instance.versionChecker.isCurrentVersion())
+                 * {
+                 * for(final String msg : bspkrsCoreMod.instance.versionChecker.getInGameMessage())
+                 * {
+                 * this.mcClient.player.sendMessage(new TextComponentString(msg));
+                 * }
+                 * }
+                 */
+                /*
+                 * BSCClientTicker.allowUpdateCheck = false;
+                 */
+                if(!bspkrsCoreMod.INSTANCE.allowDebugOutput || keepTicking || this.mcClient.world.isRemote)
+                {}
+                MinecraftForge.EVENT_BUS.unregister(this);
+                BSCClientTicker.isRegistered = false;
             }
         }
     }
 
     public static boolean isRegistered()
     {
-        return isRegistered;
+        return BSCClientTicker.isRegistered;
+    }
+
+    static
+    {
+        /*
+         * BSCClientTicker.allowUpdateCheck = bspkrsCoreMod.INSTANCE.allowUpdateCheck;
+         */
+        BSCClientTicker.isRegistered = false;
     }
 }

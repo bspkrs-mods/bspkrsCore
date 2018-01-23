@@ -1,38 +1,37 @@
 package bspkrs.bspkrscore.fml;
 
-import java.io.InputStream;
-import java.util.Properties;
+import net.minecraftforge.common.config.*;
+import java.util.*;
+import com.google.common.base.*;
+import java.io.*;
 
-import net.minecraftforge.common.config.Configuration;
-
-import com.google.common.base.Throwables;
-
+@SuppressWarnings("deprecation")
 public class Reference
 {
+    public static final String MODID = "bspkrscore";
+    public static final String NAME = "bspkrsCore";
+    public static final String MC_VERSION = "[1.12.2]";
+    public static final String VERSION = "7.02";
+    public static final String MINECRAFT = "minecraft";
+    public static final String PROXY_COMMON = "bspkrs.bspkrscore.fml.CommonProxy";
+    public static final String PROXY_CLIENT = "bspkrs.bspkrscore.fml.ClientProxy";
+    public static final String GUI_FACTORY = "bspkrs.bspkrscore.fml.gui.ModGuiFactoryHandler";
+    public static Configuration config;
+
     static
     {
-        Properties prop = new Properties();
-
+        final Properties prop = new Properties();
         try
         {
-            InputStream stream = Reference.class.getClassLoader().getResourceAsStream("version.properties");
+            final InputStream stream = Reference.class.getClassLoader().getResourceAsStream("version.properties");
             prop.load(stream);
             stream.close();
         }
-        catch (Exception e)
+        catch(Exception e)
         {
-            Throwables.propagate(e);
+            Throwables.propagate((Throwable)e);
         }
-
-        MC_VERSION = prop.getProperty("version.minecraft");
+        // MC_VERSION = prop.getProperty("version.minecraft");
+        Reference.config = null;
     }
-    public static final String  MODID        = "bspkrsCore";
-    public static final String  NAME         = "bspkrsCore";
-    public static final String  MC_VERSION;
-    public static final String  MINECRAFT    = "minecraft";
-    public static final String  PROXY_COMMON = "bspkrs.bspkrscore.fml.CommonProxy";
-    public static final String  PROXY_CLIENT = "bspkrs.bspkrscore.fml.ClientProxy";
-    public static final String  GUI_FACTORY  = "bspkrs.bspkrscore.fml.gui.ModGuiFactoryHandler";
-
-    public static Configuration config       = null;
 }

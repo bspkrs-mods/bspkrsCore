@@ -3,14 +3,17 @@ bspkrsCore
 bspkrs' bspkrsCore dependency mod for Minecraft.  Contains the set of shared classes used in all mods released by bspkrs.
 This repo contains source files for FML/Forge.
 
+## THIS IS THE bspkrsCore FULL UPDATE FOR MC 1.12.2 BY vrackfall.
+
 ## Links of Interest
+ - [Download bspkrsCore For Minecraft 1.12.2 (Requires MinecraftForge)](https://dl.neocube.xyz/mods_updates_and_downgrades/1.12.2/)
  - [Official Minecraft Forum Thread](http://www.minecraftforum.net/topic/1114612-)
  - [Player Downloads](http://bspk.rs/MC/bspkrsCore/index.html) - for Minecraft players to use
  - [Developer Downloads](http://bspk.rs/MC/bspkrsCore/deobf/index.html) - for developers to use in an IDE such as Eclipse
  - [Issue Tracking System](https://github.com/bspkrs/bspkrsCore/issues)
  - [Contributing](#contributing) - for those that want to help out  
  - [License](https://raw.github.com/bspkrs/bspkrsCore/master/src/main/resources/LICENSE)
-  
+
 ### Technical Info
  - [Setup Java](#setup-java)
  - [Setup Gradle](#setup-gradle)

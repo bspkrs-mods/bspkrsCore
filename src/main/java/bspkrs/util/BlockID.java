@@ -1,148 +1,154 @@
 package bspkrs.util;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraft.block.*;
+import net.minecraft.block.state.*;
+import net.minecraft.world.*;
+import net.minecraft.util.*;
+import net.minecraft.util.math.*;
 
 public class BlockID
 {
     public final String id;
-    public final int    metadata;
+    public final int metadata;
 
-    public BlockID(String id, int metadata)
+    public BlockID(final String id, final int metadata)
     {
         this.id = id;
         this.metadata = metadata;
     }
 
-    public BlockID(String block)
+    public BlockID(final String block)
     {
         this(block, -1);
     }
 
-    public BlockID(Block block, int metadata)
+    @SuppressWarnings("deprecation")
+    public BlockID(final Block block, final int metadata)
     {
-        this(GameData.getBlockRegistry().getNameForObject(block).toString(), metadata);
+        this(Block.REGISTRY.getNameForObject(block.getStateFromMeta(metadata).getBlock()).toString());
     }
 
-    public BlockID(Block block)
+    @SuppressWarnings("deprecation")
+    public BlockID(final Block block)
     {
-        this(GameData.getBlockRegistry().getNameForObject(block).toString(), -1);
+        this(Block.REGISTRY.getNameForObject(block.getStateFromMeta(-1).getBlock()).toString());
     }
 
-    public BlockID(Block block, IBlockState state)
+    public BlockID(final Block block, final IBlockState state)
     {
         this(block, block.getMetaFromState(state));
     }
 
-    public BlockID(IBlockState state)
+    public BlockID(final IBlockState state)
     {
         this(state.getBlock(), state);
     }
 
-    public BlockID(World world, BlockPos pos)
+    public BlockID(final World world, final BlockPos pos)
     {
         this(world.getBlockState(pos));
     }
 
-    public BlockID(World world, BlockPos pos, int metadata)
+    public BlockID(final World world, final BlockPos pos, final int metadata)
     {
         this(world.getBlockState(pos).getBlock(), metadata);
     }
 
     public boolean isValid()
     {
-        return getBlock() != null;
+        return this.getBlock() != null;
     }
 
     public Block getBlock()
     {
-        return GameData.getBlockRegistry().getObject(id);
+        return Block.REGISTRY.getObject(new ResourceLocation(this.id));
     }
 
     public static BlockID parse(String format)
     {
-        String id;
-        int metadata;
         int metadataModulus = 0;
         format = format.trim();
-        int comma = format.indexOf(",");
+        final int comma = format.indexOf(",");
         int tilde = format.indexOf("~");
-        if (tilde == -1)
+        if(tilde == -1)
+        {
             tilde = format.indexOf("%");
-
-        if ((comma == -1) && (tilde != -1))
-            throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" or \"%1$s\" was found, but no \",\" in format \"%2$s\". " +
-                    "Expected format is \"<blockidstring>, <integer metadata> %1$s <integer modulus>\". EG: \"minecraft:log, 0 %1$s 4\".", "%", format));
-
-        if ((tilde != -1) && (comma > tilde))
-            throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" or \"%1$s\" was found before a \",\" in format \"%2$s\". " +
-                    "Expected format is \"<blockidstring>, <integer metadata> %1$s <integer modulus>\". EG: \"minecraft:log, 0 %1$s 4\".", "%", format));
-
-        if (tilde == -1)
+        }
+        if(comma == -1 && tilde != -1)
+        {
+            throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" or \"%1$s\" was found, but no \",\" in format \"%2$s\". Expected format is \"<blockidstring>, <integer metadata> %1$s <integer modulus>\". EG: \"minecraft:log, 0 %1$s 4\".", "%", format));
+        }
+        if(tilde != -1 && comma > tilde)
+        {
+            throw new RuntimeException(String.format("ModulusBlockID format error: a \"~\" or \"%1$s\" was found before a \",\" in format \"%2$s\". Expected format is \"<blockidstring>, <integer metadata> %1$s <integer modulus>\". EG: \"minecraft:log, 0 %1$s 4\".", "%", format));
+        }
+        if(tilde == -1)
+        {
             tilde = format.length();
-
-        if (comma != -1)
+        }
+        String id;
+        if(comma != -1)
+        {
             id = format.substring(0, comma).trim();
+        }
         else
+        {
             id = format.trim();
-
-        metadata = CommonUtils.parseInt(format.substring(comma + 1, tilde).trim(), -1);
-        if (tilde != format.length())
+        }
+        final int metadata = CommonUtils.parseInt(format.substring(comma + 1, tilde).trim(), -1);
+        if(tilde != format.length())
+        {
             metadataModulus = CommonUtils.parseInt(format.substring(tilde + 1, format.length()).trim(), 0);
-
-        if ((metadata != -1) && (metadataModulus > 0))
+        }
+        if(metadata != -1 && metadataModulus > 0)
+        {
             return new ModulusBlockID(id, metadata, metadataModulus);
-        else
-            return new BlockID(id, metadata);
-    }
-
-    @Override
-    public BlockID clone()
-    {
+        }
         return new BlockID(id, metadata);
     }
 
-    @Override
-    public boolean equals(Object obj)
+    public BlockID clone()
     {
-        if (this == obj)
+        return new BlockID(this.id, this.metadata);
+    }
+
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if(this == obj)
+        {
             return true;
-
-        if (!(obj instanceof BlockID))
-            return false;
-
-        if ((((BlockID) obj).id != null) && !((BlockID) obj).id.equals(id))
-            return false;
-        else if ((((BlockID) obj).id == null) && (id != null))
-            return false;
-
-        if (obj instanceof ModulusBlockID)
-        {
-            ModulusBlockID o = (ModulusBlockID) obj;
-            return (metadata % o.metadataModulus) == (o.metadata % o.metadataModulus);
         }
-        else
+        if(!(obj instanceof BlockID))
         {
-            BlockID o = (BlockID) obj;
-            if ((o.metadata == -1) || (metadata == -1))
-                return true;
-            else
-                return metadata == o.metadata;
+            return false;
         }
+        if(((BlockID)obj).id != null && !((BlockID)obj).id.equals(this.id))
+        {
+            return false;
+        }
+        if(((BlockID)obj).id == null && this.id != null)
+        {
+            return false;
+        }
+        if(obj instanceof ModulusBlockID)
+        {
+            final ModulusBlockID o = (ModulusBlockID)obj;
+            return this.metadata % o.metadataModulus == o.metadata % o.metadataModulus;
+        }
+        final BlockID o2 = (BlockID)obj;
+        return o2.metadata == -1 || this.metadata == -1 || this.metadata == o2.metadata;
     }
 
     @Override
     public int hashCode()
     {
-        return id.hashCode() * 37;
+        return this.id.hashCode() * 37;
     }
 
     @Override
     public String toString()
     {
-        return (metadata == -1 ? id : id + ", " + metadata);
+        return (this.metadata == -1) ? this.id : (this.id + ", " + this.metadata);
     }
 }

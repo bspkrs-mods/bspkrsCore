@@ -1,40 +1,32 @@
 package bspkrs.bspkrscore.fml;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.command.*;
+import net.minecraft.server.MinecraftServer;
+import bspkrs.util.*;
+import net.minecraft.util.math.*;
+import net.minecraft.util.text.*;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import bspkrs.util.ModVersionChecker;
+import java.util.*;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings("unused")
 public class CommandBS extends CommandBase
 {
-    @SuppressWarnings("rawtypes")
-    private static List version = new ArrayList();
-
-    static
-    {
-        version.add("version");
-    }
+    private static List<String> version;
 
     @Override
-    public String getCommandName()
+    public String getName()
     {
         return "bs";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(final ICommandSender sender)
     {
         return "commands.bs.usage";
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender par1ICommandSender)
+    public boolean checkPermission(MinecraftServer server, ICommandSender par1ICommandSender)
     {
         return true;
     }
@@ -46,36 +38,53 @@ public class CommandBS extends CommandBase
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) throws WrongUsageException
+    public void execute(MinecraftServer server, final ICommandSender sender, final String[] args) throws CommandException
     {
-        if (!bspkrsCoreMod.instance.allowUpdateCheck)
-            throw new WrongUsageException("commands.bs.disabled");
-
-        if (args.length != 2)
-            throw new WrongUsageException("commands.bs.usage");
-
-        if (!args[0].equalsIgnoreCase("version"))
-            throw new WrongUsageException("commands.bs.usage");
-
-        String[] message = ModVersionChecker.checkVersionForMod(args[1]);
-
-        for (String s : message)
-            sender.addChatMessage(new ChatComponentText(s));
+        /*
+         * if(!bspkrsCoreMod.INSTANCE.allowUpdateCheck)
+         * {
+         * throw new WrongUsageException("commands.bs.disabled", new Object[0]);
+         * }
+         */
+        if(args.length != 2)
+        {
+            throw new WrongUsageException("commands.bs.usage", new Object[0]);
+        }
+        if(!args[0].equalsIgnoreCase("version"))
+        {
+            throw new WrongUsageException("commands.bs.usage", new Object[0]);
+        }
+        /*
+         * final String[] message = ModVersionChecker.checkVersionForMod(args[1]);
+         * for(final String s : message)
+         * {
+         * sender.sendMessage(new TextComponentString(s));
+         * }
+         */
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, final ICommandSender sender, final String[] args, final BlockPos pos)
     {
-        return args.length == 2 ? getListOfStringsMatchingLastWord(args, ModVersionChecker.getVersionCheckerMap().keySet().toArray(new String[] {})) : args.length == 1 ? version : null;
+        /*
+         * return (args.length == 2) ? getListOfStringsMatchingLastWord(args, (String[])ModVersionChecker.getVersionCheckerMap().keySet().toArray(new String[0])) : ((args.length == 1) ?
+         * CommandBS.version : null);
+         */
+        return null;
     }
 
     @Override
-    public int compareTo(Object object)
+    public int compareTo(final ICommand compareTo)
     {
-        if (object instanceof CommandBase)
-            return this.getCommandName().compareTo(((CommandBase) object).getCommandName());
-
+        if(compareTo instanceof CommandBase)
+        {
+            return this.getName().compareTo(((CommandBase)compareTo).getName());
+        }
         return 0;
+    }
+
+    static
+    {
+        (CommandBS.version = new ArrayList<String>()).add("version");
     }
 }

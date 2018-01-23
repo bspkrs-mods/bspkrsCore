@@ -1,10 +1,6 @@
 package bspkrs.util;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import bspkrs.bspkrscore.fml.Reference;
+import org.apache.logging.log4j.*;
 
 public enum BSLog
 {
@@ -14,48 +10,58 @@ public enum BSLog
 
     public Logger getLogger()
     {
-        if (logger == null)
-            init();
-
-        return logger;
+        if(this.logger == null)
+        {
+            this.init();
+        }
+        return this.logger;
     }
 
     private void init()
     {
-        if (logger != null)
+        if(this.logger != null)
+        {
             return;
-
-        logger = LogManager.getLogger(Reference.MODID);
+        }
+        this.logger = LogManager.getLogger("bspkrsCore");
     }
 
-    public static void info(String format, Object... args)
+    public static void info(final String format, final Object... args)
     {
-        INSTANCE.log(Level.INFO, format, args);
+        BSLog.INSTANCE.log(Level.INFO, format, args);
     }
 
-    public static void log(Level level, Throwable exception, String format, Object... args)
+    public static void log(final Level level, final Throwable exception, final String format, final Object... args)
     {
-        if (args != null && args.length > 0)
-            INSTANCE.getLogger().log(level, String.format(format, args), exception);
+        if(args != null && args.length > 0)
+        {
+            BSLog.INSTANCE.getLogger().log(level, String.format(format, args), exception);
+        }
         else
-            INSTANCE.getLogger().log(level, format, exception);
+        {
+            BSLog.INSTANCE.getLogger().log(level, format, exception);
+        }
     }
 
-    public static void severe(String format, Object... args)
+    public static void severe(final String format, final Object... args)
     {
-        INSTANCE.log(Level.ERROR, format, args);
+        BSLog.INSTANCE.log(Level.ERROR, format, args);
     }
 
-    public static void warning(String format, Object... args)
+    public static void warning(final String format, final Object... args)
     {
-        INSTANCE.log(Level.WARN, format, args);
+        BSLog.INSTANCE.log(Level.WARN, format, args);
     }
 
-    private void log(Level level, String format, Object... data)
+    private void log(final Level level, final String format, final Object... data)
     {
-        if (data != null && data.length > 0)
-            getLogger().log(level, String.format(format, data));
+        if(data != null && data.length > 0)
+        {
+            this.getLogger().log(level, String.format(format, data));
+        }
         else
-            getLogger().log(level, format);
+        {
+            this.getLogger().log(level, format);
+        }
     }
 }

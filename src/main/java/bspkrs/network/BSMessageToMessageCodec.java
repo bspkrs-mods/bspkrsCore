@@ -1,26 +1,21 @@
 package bspkrs.network;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
+import net.minecraftforge.fml.common.network.*;
+import io.netty.channel.*;
+import io.netty.buffer.*;
+import net.minecraft.network.*;
 
 public class BSMessageToMessageCodec extends FMLIndexedMessageToMessageCodec<BSPacket>
 {
-    public BSMessageToMessageCodec()
-    {}
-
-    @Override
-    public void encodeInto(ChannelHandlerContext ctx, BSPacket source, ByteBuf target) throws Exception
+    public void encodeInto(final ChannelHandlerContext ctx, final BSPacket source, ByteBuf target) throws Exception
     {
-        target = new PacketBuffer(target);
-        source.writeBytes((PacketBuffer) target);
+        target = (ByteBuf)new PacketBuffer(target);
+        source.writeBytes((PacketBuffer)target);
     }
 
-    @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, BSPacket target)
+    public void decodeInto(final ChannelHandlerContext ctx, ByteBuf source, final BSPacket target)
     {
-        source = new PacketBuffer(source);
-        target.readBytes((PacketBuffer) source);
+        source = (ByteBuf)new PacketBuffer(source);
+        target.readBytes((PacketBuffer)source);
     }
 }
