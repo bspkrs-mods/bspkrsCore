@@ -3,7 +3,7 @@ bspkrsCore
 bspkrs' bspkrsCore dependency mod for Minecraft.  Contains the set of shared classes used in all mods released by bspkrs.
 This repo contains source files for FML/Forge.
 
-## THIS IS THE bspkrsCore FULL UPDATE FOR MC 1.12.2 BY vrackfall.
+## THIS IS THE bspkrsCore FULL UPDATE FOR MC 1.12.2 MADE BY vrackfall.
 
 ## Links of Interest
  - [Download bspkrsCore For Minecraft 1.12.2 (Requires MinecraftForge)](https://dl.neocube.xyz/mods_updates_and_downgrades/1.12.2/)
