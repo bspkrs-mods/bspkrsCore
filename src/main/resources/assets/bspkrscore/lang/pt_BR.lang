@@ -1,0 +1,17 @@
+bspkrs.configgui.allowDebugOutput.tooltip=Não há descrição.
+bspkrs.configgui.allowDebugOutput=Permitir depuração de saída
+bspkrs.configgui.allowUpdateCheck.tooltip=Marque true para permitir a verificação de atualizações para TODOS os mods.
+bspkrs.configgui.allowUpdateCheck=Permitir verificação de atualização
+bspkrs.configgui.applyGlobally.tooltip=Aplicar Desfazer ou Restaurar padrões globais.
+bspkrs.configgui.applyGlobally=Aplicar globalmente
+bspkrs.configgui.generateUniqueNamesFile.tooltip=Ao marcar true, um arquivo nomeado UniqueNames.txt será criado na pasta de configurações. Os nomes encontrados no arquivo são representações escritas de blocos e itens no Minecraft. Mods como Treecapitator e StartingInventory usam estes arquivos em arquivos de configuração pois não há IDs.
+bspkrs.configgui.generateUniqueNamesFile=Criar arquivo UniqueNames.txt
+bspkrs.configgui.showMainMenuMobs.tooltip=Marque true para exibir o jogador atual e uma entidade aleatória no menu principal.
+bspkrs.configgui.showMainMenuMobs=Entidades no menu principal
+bspkrs.configgui.updateTimeoutMilliseconds.tooltip=O tempo limite, em milissegundos, para a verificação de atualização da versão.
+bspkrs.configgui.updateTimeoutMilliseconds=Tempo limite de verificação de atualização (ms)
+bspkrs.modversionchecker.error=Houve um erro ao verificar a versão do mod %s.
+bspkrs.modversionchecker.invalidmodid=ID inválida do mod especificado para verificação de versão.
+bspkrs.modversionchecker.uptodate=O mod %s está atualizado.
+commands.bs.disabled=A verificação de versão está desabilitada em bspkrsCore.cfg. Digite allowUpdateCheck=true para usar este comando.
+commands.bs.usage=bs version <modid>
