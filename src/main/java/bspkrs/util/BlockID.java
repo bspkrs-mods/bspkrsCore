@@ -2,9 +2,12 @@ package bspkrs.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+@Deprecated
 
 public class BlockID
 {
@@ -24,12 +27,12 @@ public class BlockID
 
     public BlockID(Block block, int metadata)
     {
-        this(GameData.getBlockRegistry().getNameForObject(block).toString(), metadata);
+        this(ForgeRegistries.BLOCKS.getKey(block).toString(), metadata);
     }
 
     public BlockID(Block block)
     {
-        this(GameData.getBlockRegistry().getNameForObject(block).toString(), -1);
+        this(ForgeRegistries.BLOCKS.getKey(block).toString(), -1);
     }
 
     public BlockID(Block block, IBlockState state)
@@ -57,11 +60,14 @@ public class BlockID
         return getBlock() != null;
     }
 
+    @Deprecated
     public Block getBlock()
     {
-        return GameData.getBlockRegistry().getObject(id);
+        return Blocks.AIR;
+//        return ForgeRegistries.BLOCKS.get.getObject(id);
     }
 
+    @Deprecated
     public static BlockID parse(String format)
     {
         String id;

@@ -13,22 +13,21 @@ public class ModGuiFactoryHandler implements IModGuiFactory
     {   
         
     }
-    
+
     @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass()
-    {
-        return GuiTestModConfig.class;
+    public boolean hasConfigGui() {
+        return false;
     }
-    
+
+    @Override
+    public GuiScreen createConfigGui(GuiScreen parentScreen) {
+        return new GuiTestModConfig(parentScreen);
+    }
+
     @Override
     public Set<RuntimeOptionCategoryElement> runtimeGuiCategories()
     {
         return null;
     }
-    
-    @Override
-    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element)
-    {
-        return null;
-    }
+
 }

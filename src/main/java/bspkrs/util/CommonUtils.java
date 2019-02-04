@@ -1,13 +1,6 @@
 package bspkrs.util;
 
-import java.io.File;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
-
+import bspkrs.bspkrscore.fml.bspkrsCoreMod;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -15,20 +8,26 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
-import bspkrs.bspkrscore.fml.bspkrsCoreMod;
+import java.io.File;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 
 /*
  * @Authors: DaftPVF, bspkrs
@@ -269,10 +268,10 @@ public final class CommonUtils
      * General Minecraft methods
      */
 
-    public void playAtPitch(int i, World world, EntityPlayer entityplayer)
+    public void playAtPitch(int i, World world, BlockPos pos, EntityPlayer entityplayer)
     {
         float f = (float) Math.pow(2D, (i - 12) / 12D);
-        world.playSoundAtEntity(entityplayer, "note.pling", 0.5F, f);
+        world.playSound(entityplayer, pos, SoundEvents.BLOCK_NOTE_PLING, SoundCategory.BLOCKS,0.5F, f);
     }
 
     public static boolean moveBlock(World world, BlockPos src, BlockPos tgt, boolean allowBlockReplacement)
@@ -532,7 +531,7 @@ public final class CommonUtils
         }
         catch (NoClassDefFoundError e)
         {
-            return MinecraftServer.getServer().getFile("").getAbsolutePath();
+            return Minecraft.getMinecraft().getIntegratedServer().getFile("").getAbsolutePath();
         }
     }
 
@@ -555,7 +554,7 @@ public final class CommonUtils
         }
     }
 
-    public static MovingObjectPosition getPlayerLookingSpot(EntityPlayer player, boolean restrict)
+    public static RayTraceResult getPlayerLookingSpot(EntityPlayer player, boolean restrict)
     {
         float scale = 1.0F;
         float pitch = player.prevRotationPitch + ((player.rotationPitch - player.prevRotationPitch) * scale);
@@ -563,7 +562,7 @@ public final class CommonUtils
         double x = player.prevPosX + ((player.posX - player.prevPosX) * scale);
         double y = (player.prevPosY + ((player.posY - player.prevPosY) * scale) + 1.62D);
         double z = player.prevPosZ + ((player.posZ - player.prevPosZ) * scale);
-        Vec3 vector1 = new Vec3(x, y, z);
+        Vec3d vector1 = new Vec3d(x, y, z);
         float cosYaw = MathHelper.cos((-yaw * 0.017453292F) - (float) Math.PI);
         float sinYaw = MathHelper.sin((-yaw * 0.017453292F) - (float) Math.PI);
         float cosPitch = -MathHelper.cos(-pitch * 0.017453292F);
@@ -573,21 +572,21 @@ public final class CommonUtils
         double distance = 500D;
         if ((player instanceof EntityPlayerMP) && restrict)
         {
-            distance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
+            distance = Minecraft.getMinecraft().playerController.getBlockReachDistance();
         }
-        Vec3 vector2 = vector1.addVector(pitchAdjustedSinYaw * distance, sinPitch * distance, pitchAdjustedCosYaw * distance);
-        return player.worldObj.rayTraceBlocks(vector1, vector2);
+        Vec3d vector2 = vector1.addVector(pitchAdjustedSinYaw * distance, sinPitch * distance, pitchAdjustedCosYaw * distance);
+        return player.world.rayTraceBlocks(vector1, vector2);
     }
 
     public static void spawnExplosionParticleAtEntity(Entity entity)
     {
         for (int i = 0; i < 20; ++i)
         {
-            double d0 = entity.worldObj.rand.nextGaussian() * 0.02D;
-            double d1 = entity.worldObj.rand.nextGaussian() * 0.02D;
-            double d2 = entity.worldObj.rand.nextGaussian() * 0.02D;
+            double d0 = entity.world.rand.nextGaussian() * 0.02D;
+            double d1 = entity.world.rand.nextGaussian() * 0.02D;
+            double d2 = entity.world.rand.nextGaussian() * 0.02D;
             double d3 = 10.0D;
-            entity.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (entity.posX + (entity.worldObj.rand.nextFloat() * entity.width * 2.0F)) - entity.width - (d0 * d3), (entity.posY + (entity.worldObj.rand.nextFloat() * entity.height)) - (d1 * d3), (entity.posZ + (entity.worldObj.rand.nextFloat() * entity.width * 2.0F)) - entity.width - (d2 * d3), d0, d1, d2);
+            entity.world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, (entity.posX + (entity.world.rand.nextFloat() * entity.width * 2.0F)) - entity.width - (d0 * d3), (entity.posY + (entity.world.rand.nextFloat() * entity.height)) - (d1 * d3), (entity.posZ + (entity.world.rand.nextFloat() * entity.width * 2.0F)) - entity.width - (d2 * d3), d0, d1, d2);
         }
     }
 }

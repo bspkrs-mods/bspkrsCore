@@ -7,3 +7,5 @@
 .project
 .classpath
 build.properties.old
+.idea/
+.DS_Store

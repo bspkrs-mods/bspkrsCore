@@ -5,8 +5,6 @@ import java.util.Properties;
 
 import net.minecraftforge.common.config.Configuration;
 
-import com.google.common.base.Throwables;
-
 public class Reference
 {
     static
@@ -21,7 +19,7 @@ public class Reference
         }
         catch (Exception e)
         {
-            Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
 
         MC_VERSION = prop.getProperty("version.minecraft");

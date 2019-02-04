@@ -1,14 +1,14 @@
 package bspkrs.bspkrscore.fml;
 
+import bspkrs.util.ModVersionChecker;
+import net.minecraft.command.*;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import bspkrs.util.ModVersionChecker;
 
 @SuppressWarnings("unchecked")
 public class CommandBS extends CommandBase
@@ -22,32 +22,18 @@ public class CommandBS extends CommandBase
     }
 
     @Override
-    public String getCommandName()
-    {
+    public String getName() {
         return "bs";
     }
 
+
     @Override
-    public String getCommandUsage(ICommandSender sender)
-    {
+    public String getUsage(ICommandSender sender) {
         return "commands.bs.usage";
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender par1ICommandSender)
-    {
-        return true;
-    }
-
-    @Override
-    public int getRequiredPermissionLevel()
-    {
-        return 1;
-    }
-
-    @Override
-    public void processCommand(ICommandSender sender, String[] args) throws WrongUsageException
-    {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (!bspkrsCoreMod.instance.allowUpdateCheck)
             throw new WrongUsageException("commands.bs.disabled");
 
@@ -60,21 +46,24 @@ public class CommandBS extends CommandBase
         String[] message = ModVersionChecker.checkVersionForMod(args[1]);
 
         for (String s : message)
-            sender.addChatMessage(new ChatComponentText(s));
+            sender.sendMessage(new TextComponentString(s));
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
+    public int getRequiredPermissionLevel()
     {
+        return 1;
+    }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         return args.length == 2 ? getListOfStringsMatchingLastWord(args, ModVersionChecker.getVersionCheckerMap().keySet().toArray(new String[] {})) : args.length == 1 ? version : null;
     }
 
     @Override
-    public int compareTo(Object object)
-    {
-        if (object instanceof CommandBase)
-            return this.getCommandName().compareTo(((CommandBase) object).getCommandName());
+    public int compareTo(ICommand p_compareTo_1_) {
+        if (p_compareTo_1_ instanceof CommandBase)
+            return this.getName().compareTo(p_compareTo_1_.getName());
 
         return 0;
     }
