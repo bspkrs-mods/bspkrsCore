@@ -1,0 +1,17 @@
+bspkrs.configgui.allowDebugOutput.tooltip=Nincs eszköztipp meghatározva.
+bspkrs.configgui.allowDebugOutput=Debug kimenet engedélyezése
+bspkrs.configgui.allowUpdateCheck.tooltip=Állítsd igaz-ra, hogy ellenőrizze az ÖSSZES modom frissítését, hamis-ra ennek tiltásához.
+bspkrs.configgui.allowUpdateCheck=Frissítés ellenőrzés engedélyezése
+bspkrs.configgui.applyGlobally.tooltip=Visszavont változtatások vagy alapbeállításokba való visszaállítás globális alkalmazása.
+bspkrs.configgui.applyGlobally=Globális alkalmazás
+bspkrs.configgui.generateUniqueNamesFile.tooltip=Ha igaz, létrehoz egy UniqueNames.txt fájlt a konfigurációs mappában a kényelem kedvéért. A fájlban található nevek szöveges reprezentációi a Minecraftban szereplő blokkoknak és tárgyaknak. Modok, mint a Treecapitator és a StartingInventory használják a beállítófájljaikban mivel (számszerű) ID-k  már nincsenek.
+bspkrs.configgui.generateUniqueNamesFile=UniqueNames.txt fájl generálása
+bspkrs.configgui.showMainMenuMobs.tooltip=Állítsd igaz-ra, hogy a bejelentkezett játékost és egy véletlenszerű mob-ot mutasson a főmenüben, hamis-ra ennek tiltásához.
+bspkrs.configgui.showMainMenuMobs=Mob-ok mutatása a főmenüben
+bspkrs.configgui.updateTimeoutMilliseconds.tooltip=Késleltetés ezred másodpercben a frissítés ellenőrzés indításához.
+bspkrs.configgui.updateTimeoutMilliseconds=Frissítésellenőrzés késleltetése (ms)
+bspkrs.modversionchecker.error=Hiba történt a(z) %s mod verzióellenőrzésekor.
+bspkrs.modversionchecker.invalidmodid=Érvénytelen mod azonosító van meghatározva a verzióellenőrzéshez.
+bspkrs.modversionchecker.uptodate=A(z) %s mod naprakész.
+commands.bs.disabled=A verzióellenőrzés le van tiltva a bspkrsCore.cfg fájlban. Állíts be: allowUpdateCheck=true a parancs használatához.
+commands.bs.usage=bs verzió <modid>
