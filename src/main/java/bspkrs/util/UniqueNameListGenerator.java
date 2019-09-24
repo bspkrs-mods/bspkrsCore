@@ -1,5 +1,7 @@
 package bspkrs.util;
 
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -7,8 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-
-import net.minecraftforge.fml.common.registry.GameData;
 
 public class UniqueNameListGenerator
 {
@@ -31,10 +31,10 @@ public class UniqueNameListGenerator
             ArrayList<String> blockList = new ArrayList<String>();
             ArrayList<String> itemList = new ArrayList<String>();
 
-            for (Object obj : GameData.getBlockRegistry().getKeys())
+            for (Object obj : ForgeRegistries.BLOCKS.getKeys())
                 blockList.add(obj.toString());
 
-            for (Object obj : GameData.getItemRegistry().getKeys())
+            for (Object obj : ForgeRegistries.ITEMS.getKeys())
                 itemList.add(obj.toString());
 
             Collections.sort(blockList);

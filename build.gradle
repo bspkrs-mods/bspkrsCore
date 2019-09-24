@@ -1,25 +1,14 @@
 buildscript {
     repositories {
-        mavenCentral()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
+        jcenter()
+        maven { url = "http://files.minecraftforge.net/maven" }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
+apply plugin: 'net.minecraftforge.gradle.forge'
 
-apply plugin: "forge"
-
-compileJava.options.encoding = 'UTF-8'
-
-// define the properties file
 ext.configFile = file "build.properties"
 
 configFile.withReader {
@@ -67,11 +56,11 @@ jar {
     appendix = config.appendix
 }
 
-// add a source jar
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-    appendix = 'src'
-}
+//// add a source jar
+//task sourceJar(type: Jar) {
+//    from sourceSets.main.allSource
+//    appendix = 'src'
+//}
 
 // because the normal output has been made to be obfuscated
 task deobfJar(type: Jar) {

@@ -1,8 +1,8 @@
 package bspkrs.testmod;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
 import bspkrs.bspkrscore.fml.bspkrsCoreMod;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -26,7 +26,7 @@ public class TMTicker
     @SubscribeEvent
     public void onTick(ClientTickEvent event)
     {
-        boolean keepTicking = !(mcClient != null && mcClient.thePlayer != null && mcClient.theWorld != null);
+        boolean keepTicking = !(mcClient != null && mcClient.player != null && mcClient.world != null);
         
         if (!event.phase.equals(Phase.START))
         {
@@ -34,7 +34,7 @@ public class TMTicker
                 if (TestMod.instance.versionChecker != null)
                     if (!TestMod.instance.versionChecker.isCurrentVersion())
                         for (String msg : TestMod.instance.versionChecker.getInGameMessage())
-                            mcClient.thePlayer.addChatMessage(new ChatComponentText(msg));
+                            mcClient.player.sendMessage(new TextComponentString(msg));
             
             if (!keepTicking)
             {

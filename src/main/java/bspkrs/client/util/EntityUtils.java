@@ -1,13 +1,8 @@
 package bspkrs.client.util;
 
-import java.lang.reflect.Field;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
-
+import bspkrs.bspkrscore.fml.bspkrsCoreMod;
+import bspkrs.util.BSLog;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.model.ModelBase;
@@ -15,15 +10,16 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import bspkrs.bspkrscore.fml.bspkrsCoreMod;
-import bspkrs.util.BSLog;
 
-import com.mojang.authlib.GameProfile;
+import java.lang.reflect.Field;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.*;
 
 public class EntityUtils
 {
@@ -76,9 +72,9 @@ public class EntityUtils
     public static float getModelSize(EntityLivingBase ent)
     {
         Render render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(ent);
-        if (render instanceof RendererLivingEntity)
+        if (render instanceof RenderLivingBase)
         {
-            RendererLivingEntity entRender = (RendererLivingEntity) render;
+            RenderLivingBase entRender = (RenderLivingBase) render;
             ModelBase mainModel;
             ModelBase renderPassModel;
             try
@@ -180,7 +176,7 @@ public class EntityUtils
             RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
             rendermanager.setPlayerViewY(180.0F);
             rendermanager.setRenderShadow(false);
-            rendermanager.renderEntityWithPosYaw(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
+            rendermanager.renderEntity(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
             rendermanager.setRenderShadow(true);
         }
         finally
@@ -217,7 +213,7 @@ public class EntityUtils
     {
         Random random = new Random();
         // Get a COPY dumbass!
-        Set entities = new TreeSet(EntityList.stringToClassMapping.keySet());
+        Set entities = new TreeSet(EntityList.getEntityNameList());
 
         if (blacklist != null)
             entities.removeAll(blacklist);
@@ -230,7 +226,8 @@ public class EntityUtils
         do
         {
             id = random.nextInt(entStrings.length);
-            clazz = (Class) EntityList.stringToClassMapping.get(entStrings[id]);
+            // @todo: might not be a solution
+            clazz = EntityList.getClassFromName(entStrings[id].toString());
         }
         while (!EntityLivingBase.class.isAssignableFrom(clazz)
                 && (++tries <= numberOfAttempts));
@@ -249,14 +246,14 @@ public class EntityUtils
                                         entry.getValue()), true));
             }
             else
-                return (EntityLivingBase) EntityList.createEntityByName(
-                        "Chicken", world);
+                return (EntityLivingBase) EntityList.createEntityByIDFromName(
+                        new ResourceLocation("Chicken"), world);
         }
 
         if (bspkrsCoreMod.instance.allowDebugOutput)
             BSLog.info(entStrings[id].toString());
 
-        return (EntityLivingBase) EntityList.createEntityByName(
-                (String) entStrings[id], world);
+        return (EntityLivingBase) EntityList.createEntityByIDFromName(
+                new ResourceLocation((String) entStrings[id]), world);
     }
 }

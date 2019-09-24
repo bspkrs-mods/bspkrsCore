@@ -1,6 +1,6 @@
 package bspkrs.testmod;
 
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy
 {
@@ -8,6 +8,6 @@ public class ClientProxy extends CommonProxy
     protected void registerTickHandler()
     {
         if (!TMTicker.isRegistered())
-            FMLCommonHandler.instance().bus().register(new TMTicker());
+            MinecraftForge.EVENT_BUS.register(new TMTicker());
     }
 }

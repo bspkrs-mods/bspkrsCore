@@ -12,14 +12,14 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = "TestMod", name = "TestMod", version = "2.0", dependencies = "required-after:bspkrsCore",
+@Mod(modid = "testmod", name = "TestMod", version = "2.0", dependencies = "required-after:bspkrsCore",
         guiFactory = "bspkrs.testmod.ModGuiFactoryHandler")
 public class TestMod
 {
-    @Metadata(value = "TestMod")
+    @Metadata(value = "testmod")
     public static ModMetadata   metadata;
     
-    @Instance(value = "TestMod")
+    @Instance(value = "testmod")
     public static TestMod       instance;
     
     @SidedProxy(clientSide = "bspkrs.testmod.ClientProxy", serverSide = "bspkrs.testmod.CommonProxy")
