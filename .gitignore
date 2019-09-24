@@ -7,3 +7,4 @@
 .project
 .classpath
 build.properties.old
+.idea/
