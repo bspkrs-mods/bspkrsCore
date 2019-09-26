@@ -20,7 +20,7 @@ import java.util.prefs.Preferences;
 
 public class ModVersionChecker
 {
-    private static final Map<String, ModVersionChecker> versionCheckerMap = new HashMap<String, ModVersionChecker>();
+    private static final Map<String, ModVersionChecker> versionCheckerMap = new HashMap<>();
     private URL                                         versionURL;
     private final String                                modID;
     private String                                      newVersion;

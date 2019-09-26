@@ -26,7 +26,7 @@ import bspkrs.util.Const;
 import bspkrs.util.ModVersionChecker;
 import bspkrs.util.UniqueNameListGenerator;
 
-@Mod(modid = Reference.MODID, name = Reference.NAME, version = "@MOD_VERSION@", useMetadata = true, guiFactory = Reference.GUI_FACTORY)
+@Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.MOD_VERSION, useMetadata = true, guiFactory = Reference.GUI_FACTORY)
 public class bspkrsCoreMod
 {
     // config stuff

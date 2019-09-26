@@ -24,8 +24,9 @@ public class Reference
 
         MC_VERSION = prop.getProperty("version.minecraft");
     }
-    public static final String  MODID        = "bspkrsCore";
-    public static final String  NAME         = "bspkrsCore";
+    public static final String  MODID        = "bspkrscore";
+    public static final String  NAME         = "bspkrs Core";
+    public static final String  MOD_VERSION  = "8.0.0";
     public static final String  MC_VERSION;
     public static final String  MINECRAFT    = "minecraft";
     public static final String  PROXY_COMMON = "bspkrs.bspkrscore.fml.CommonProxy";

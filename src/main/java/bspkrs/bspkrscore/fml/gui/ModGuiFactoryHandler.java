@@ -16,7 +16,7 @@ public class ModGuiFactoryHandler implements IModGuiFactory
 
     @Override
     public boolean hasConfigGui() {
-        return false;
+        return true;
     }
 
     @Override

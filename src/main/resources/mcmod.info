@@ -1,21 +1,16 @@
-{
-  "modListVersion": 2,
-  "modList": [{
-    "modid": "bspkrsCore",
-    "name": "bspkrsCore",
-    "description": "Shared classes used in the mods maintained by bspkrs.",
-    "version": "${mod_version}",
-    "mcversion": "${minecraft_version}",
-    "url": "http://www.minecraftforum.net/topic/1114612-/",
-    "updateUrl": "",
-    "authorList": [ "DaftPVF", "bspkrs" ],
-    "credits": "Much of this code was originally part of DaftPVF's mods that I maintain.",
-    "logoFile": "",
-    "screenshots": [],
-    "parent": "",
-    "requiredMods": ["Forge@[${forge_version},)"],
-    "dependencies": ["Forge@[${forge_version},)"],
-    "dependants": [],
-    "useDependencyInformation": "true"
-  }]
-}
+[
+    {
+        "modid": "bspkrscore",
+        "name": "bspkrsCore",
+        "description": "Shared classes used in the mods maintained by bspkrs.",
+        "version": "${mod_version}",
+        "mcversion": "${minecraft_version}",
+        "url": "http://www.minecraftforum.net/topic/1114612-/",
+        "updateUrl": "",
+        "authorList": [ "DaftPVF", "bspkrs", "Lumuns" ],
+        "credits": "Much of this code was originally part of DaftPVF's mods that I maintain.",
+        "logoFile": "",
+        "screenshots": [],
+        "dependencies": []
+    }
+]
