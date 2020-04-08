@@ -1,5 +1,7 @@
-bspkrsCore
-=================
+# bspkrsCore
+
+<a href="https://www.curseforge.com/minecraft/mc-mods/worldstatecheckpoints"><img src="http://cf.way2muchnoise.eu/full_59218_downloads.svg" /></a> <a href="https://www.curseforge.com/minecraft/mc-mods/worldstatecheckpoints"><img src="http://cf.way2muchnoise.eu/versions/59218.svg" /></a>
+
 bspkrs' bspkrsCore dependency mod for Minecraft.  Contains the set of shared classes used in all mods released by bspkrs.
 This repo contains source files for FML/Forge.
 
