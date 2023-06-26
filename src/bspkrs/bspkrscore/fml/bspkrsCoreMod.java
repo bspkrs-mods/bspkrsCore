@@ -33,7 +33,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class bspkrsCoreMod implements IConnectionHandler
 {
     // config stuff
-    public boolean              allowUpdateCheck          = true;
+    public boolean              allowUpdateCheck          = false;
     public boolean              allowDebugOutput          = false;
     public int                  updateTimeoutMilliseconds = 3000;
     
